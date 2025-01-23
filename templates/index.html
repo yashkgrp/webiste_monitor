@@ -4,6 +4,7 @@
     <title>Website Monitor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -42,6 +43,22 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .error-tooltip {
+            cursor: help;
+            color: #dc3545;
+            margin-left: 5px;
+            font-size: 1rem;
+        }
+        .status-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        [data-bs-toggle="tooltip"] {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -205,18 +222,34 @@
                 return;
             }
             
+            // Destroy existing tooltips
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(t => bootstrap.Tooltip.getInstance(t)?.dispose());
+            
             const urlsTable = document.getElementById('urls');
             urlsTable.innerHTML = '';
             
             data.forEach(site => {
                 const row = document.createElement('tr');
                 const isPaused = site.paused;
+                const isDown = !site.status.includes('Up');
+                const errorMessage = isDown ? site.status.replace('Down: ', '') : '';
+                
                 row.innerHTML = `
                     <td>${site.url}</td>
                     <td>
-                        <span class="${site.status.includes('Up') ? 'status-up' : 'status-down'}">
-                            ${isPaused ? 'Paused' : site.status}
-                        </span>
+                        <div class="status-cell">
+                            <span class="${site.status.includes('Up') ? 'status-up' : 'status-down'}">
+                                ${isPaused ? 'Paused' : (isDown ? 'Down' : site.status)}
+                            </span>
+                            ${isDown ? `
+                                <i class="bi bi-exclamation-circle-fill error-tooltip" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-html="true"
+                                   data-bs-placement="right" 
+                                   title="${errorMessage.replace('"', '&quot;')}"></i>
+                            ` : ''}
+                        </div>
                     </td>
                     <td class="response-time">${site.last_response_time.toFixed(2)} ms</td>
                     <td class="response-time">${site.avg_response_time.toFixed(2)} ms</td>
@@ -233,6 +266,10 @@
                 `;
                 urlsTable.appendChild(row);
             });
+
+            // Initialize new tooltips
+            const newTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            newTooltips.forEach(el => new bootstrap.Tooltip(el));
         }
 
         async function togglePause(url) {
@@ -349,16 +386,30 @@
         function groupDataByInterval(data, intervalMinutes) {
             const groups = new Map();
             const now = Date.now();
-            const dayInMs = 24 * 60 * 60 * 1000;
-            const weekInMs = 7 * dayInMs;
             
-            // Filter data based on interval for better performance
-            let filteredData = data;
-            if (intervalMinutes >= 1440) {
-                const cutoff = now - (intervalMinutes >= 10080 ? weekInMs * 2 : dayInMs * 4);
-                filteredData = data.filter(entry => entry.timestamp * 1000 > cutoff);
+            // First, find the earliest timestamp in the data
+            const earliestTimestamp = Math.min(...data.map(entry => entry.timestamp * 1000));
+            const dataAgeInMinutes = (now - earliestTimestamp) / (60 * 1000);
+            
+            // If selected interval is larger than available data, adjust dropdown
+            if (intervalMinutes > dataAgeInMinutes) {
+                const timeSelect = document.getElementById('timeInterval');
+                // Find the largest appropriate interval
+                for (let i = 0; i < timeSelect.options.length; i++) {
+                    if (parseInt(timeSelect.options[i].value) > dataAgeInMinutes) {
+                        timeSelect.selectedIndex = Math.max(0, i - 1);
+                        intervalMinutes = parseInt(timeSelect.value);
+                        break;
+                    }
+                }
+                showWarning(`Adjusted time interval to ${formatInterval(intervalMinutes)} based on available data`);
             }
             
+            // Filter data based on selected interval
+            const cutoffTime = now - (intervalMinutes * 60 * 1000);
+            const filteredData = data.filter(entry => entry.timestamp * 1000 > cutoffTime);
+            
+            // Group the filtered data
             filteredData.forEach(entry => {
                 const timestamp = entry.timestamp * 1000;
                 const intervalMs = intervalMinutes * 60 * 1000;
@@ -375,7 +426,6 @@
                 group.statuses.push(entry.status);
             });
             
-            // Sort data points by timestamp in ascending order
             return Array.from(groups.entries())
                 .sort((a, b) => a[0] - b[0])
                 .map(([timestamp, data]) => ({
@@ -386,13 +436,27 @@
                 }));
         }
 
+        function showWarning(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.className = 'alert alert-warning';
+            errorAlert.textContent = message;
+            errorAlert.style.display = 'block';
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+            }, 5000);
+        }
+
         function updateAnalyticsDashboard(data) {
-            // Update reliability stats
+            // Add data age information to stats
+            const earliestTimestamp = Math.min(...data.history.map(entry => entry.timestamp * 1000));
+            const dataAgeHours = ((Date.now() - earliestTimestamp) / (1000 * 60 * 60)).toFixed(1);
+            
             const stats = data.analysis.reliability;
             document.getElementById('reliabilityStats').innerHTML = `
                 <p>Uptime: ${stats.uptime}%</p>
                 <p>Average Response: ${stats.avg_response} ms</p>
                 <p>Total Checks: ${stats.total_checks}</p>
+                <p>Data Age: ${dataAgeHours} hours</p>
             `;
 
             // Get selected interval

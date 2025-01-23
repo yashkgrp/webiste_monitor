@@ -37,8 +37,25 @@ except Exception as e:
 
 stop_thread = False
 
+# Add default headers to mimic a real browser
+DEFAULT_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1'
+}
+
 def monitor_urls():
     session = requests.Session()
+    # Set default headers for all requests in the session
+    session.headers.update(DEFAULT_HEADERS)
+    
     while not stop_thread:
         try:
             for url, site in list(monitored_urls.items()):
@@ -51,8 +68,27 @@ def monitor_urls():
                 if not site.get('paused', False) and current_time - float(last_check) >= int(site.get('interval', 5)):
                     start = time.time()
                     try:
-                        r = session.get(url, timeout=5, verify=False)
+                        # Add Referer header for specific domains
+                        headers = session.headers.copy()
+                        if 'goindigo.in' in url:
+                            headers.update({
+                                'Referer': 'https://www.goindigo.in/',
+                                'Origin': 'https://www.goindigo.in'
+                            })
+                        
+                        r = session.get(
+                            url, 
+                            timeout=10, 
+                            verify=False, 
+                            headers=headers,
+                            allow_redirects=True
+                        )
                         status = "Up" if r.status_code == 200 else f"Error {r.status_code}"
+                        
+                        # Debug information
+                        logger.debug(f"Request to {url} - Status: {r.status_code}")
+                        logger.debug(f"Response headers: {dict(r.headers)}")
+                        
                     except requests.RequestException as e:
                         status = f"Down: {str(e)}"
                         logger.error(f"Error checking {url}: {e}")
