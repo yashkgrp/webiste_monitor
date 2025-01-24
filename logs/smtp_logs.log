@@ -1,0 +1,435 @@
+2025-01-23 15:38:45,582 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:38:45,836 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:38:46,301 - INFO - SMTP: Login attempt for user: None
+2025-01-23 15:38:46,952 - ERROR - SMTP: SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:38:46,953 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:38:47,423 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:38:47,871 - INFO - SMTP: Login attempt for user: None
+2025-01-23 15:38:48,519 - ERROR - SMTP: SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:39:37,930 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:39:38,180 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:39:38,626 - INFO - SMTP: Login attempt for user: None
+2025-01-23 15:39:39,287 - ERROR - SMTP: SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:39:39,288 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:39:39,541 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:39:39,994 - INFO - SMTP: Login attempt for user: None
+2025-01-23 15:39:40,647 - ERROR - SMTP: SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:43:30,363 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:43:30,707 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:43:31,213 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:43:32,320 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:43:32,571 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:43:33,043 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:43:33,790 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:43:34,038 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:43:34,506 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:43:35,531 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:43:35,781 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:43:36,247 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:44:41,930 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:44:42,189 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:44:42,648 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:44:43,636 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:44:43,891 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:44:44,349 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:44:46,843 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:44:47,538 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:44:48,005 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 15:44:48,200 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 15:44:48,449 - INFO - SMTP: TLS connection established successfully
+2025-01-23 15:44:48,904 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 16:23:20,246 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 16:23:20,747 - INFO - SMTP: TLS connection established successfully
+2025-01-23 16:23:21,218 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 16:23:23,597 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 16:23:24,080 - INFO - SMTP: TLS connection established successfully
+2025-01-23 16:23:24,562 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:15:28,182 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:15:28,667 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:15:29,151 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:15:31,365 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:15:31,615 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:15:32,079 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:15:44,114 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:15:44,364 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:15:44,829 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:15:47,041 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:15:47,290 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:15:47,742 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:00,146 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:00,610 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:01,076 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:03,233 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:03,492 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:03,945 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:16,322 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:16,594 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:17,048 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:19,135 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:19,386 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:19,853 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:31,035 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:31,286 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:31,733 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:33,868 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:34,116 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:34,570 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:46,252 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:46,503 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:46,953 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:16:49,023 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:16:49,271 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:16:49,725 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:01,511 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:01,774 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:02,227 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:04,346 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:04,601 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:05,059 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:16,691 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:16,938 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:17,390 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:19,446 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:19,695 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:20,160 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:32,171 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:32,418 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:32,867 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:34,951 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:35,457 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:35,915 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:47,571 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:47,819 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:48,290 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:17:50,332 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:17:50,580 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:17:51,033 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:02,732 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:03,005 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:03,490 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:05,923 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:06,169 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:06,622 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:18,846 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:19,100 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:19,589 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:22,030 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:22,280 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:22,739 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:34,818 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:35,098 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:35,577 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:38,056 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:38,306 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:38,766 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:50,574 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:50,825 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:51,317 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:18:53,471 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:18:53,727 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:18:54,194 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:19:05,477 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:19:05,804 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:19:06,268 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:19:08,867 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:19:09,149 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:19:09,603 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:19:21,677 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:19:21,931 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:19:25,403 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:19:27,759 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:19:28,010 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:19:28,484 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:19:46,606 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:19:46,852 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:19:47,314 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:19:49,623 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:19:49,882 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:19:50,378 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:02,008 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:02,263 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:02,735 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:05,979 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:06,247 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:06,716 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:18,804 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:19,052 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:19,515 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:21,690 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:21,941 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:22,393 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:35,081 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:35,334 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:35,790 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:38,025 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:39,291 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:40,043 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:52,021 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:52,269 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:52,736 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:20:54,759 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:20:55,633 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:20:56,098 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:08,095 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:08,356 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:08,819 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:11,753 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:12,027 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:12,480 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:24,260 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:24,511 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:24,984 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:27,107 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:27,355 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:27,806 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:39,467 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:39,721 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:40,194 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:42,564 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:42,819 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:43,278 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:55,049 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:55,299 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:55,752 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:21:57,913 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:21:58,159 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:21:58,620 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:22:10,895 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:22:11,152 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:22:11,613 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:22:13,681 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:22:13,934 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:22:14,393 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:30,876 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:31,435 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:31,902 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:33,084 - ERROR - SMTP: SMTP operation failed: {'y': (553, b'5.1.3 The recipient address <y> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d2e1a72fcca58-72dab7f0877sm13052312b3a.23 - gsmtp')}
+2025-01-23 18:33:33,086 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:33,559 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:34,293 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:35,504 - ERROR - SMTP: SMTP operation failed: {'a': (553, b'5.1.3 The recipient address <a> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3e14c5sm112716725ad.184 - gsmtp')}
+2025-01-23 18:33:35,505 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:35,765 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:36,221 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:37,414 - ERROR - SMTP: SMTP operation failed: {'s': (553, b'5.1.3 The recipient address <s> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2ceb9adfsm111990715ad.81 - gsmtp')}
+2025-01-23 18:33:37,415 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:37,669 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:38,118 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:39,325 - ERROR - SMTP: SMTP operation failed: {'h': (553, b'5.1.3 The recipient address <h> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. 41be03b00d2f7-a9bdf0b4503sm10868013a12.67 - gsmtp')}
+2025-01-23 18:33:39,327 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:39,575 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:40,025 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:41,211 - ERROR - SMTP: SMTP operation failed: {'': (555, b'5.5.2 Syntax error, cannot decode response. For more information, go to\n5.5.2  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.5.2 specifications. d9443c01a7336-21c2cea2e94sm112227535ad.28 - gsmtp')}
+2025-01-23 18:33:41,213 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:41,465 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:41,924 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:43,121 - ERROR - SMTP: SMTP operation failed: {'k': (553, b'5.1.3 The recipient address <k> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d2e1a72fcca58-72dab7f09besm12929373b3a.27 - gsmtp')}
+2025-01-23 18:33:43,122 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:43,376 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:43,835 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:45,011 - ERROR - SMTP: SMTP operation failed: {'g': (553, b'5.1.3 The recipient address <g> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. 98e67ed59e1d1-2f7e6a6595bsm3864032a91.9 - gsmtp')}
+2025-01-23 18:33:45,013 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:45,258 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:45,727 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:46,953 - ERROR - SMTP: SMTP operation failed: {'r': (553, b'5.1.3 The recipient address <r> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3a8a2bsm112931295ad.142 - gsmtp')}
+2025-01-23 18:33:46,955 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:47,207 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:47,682 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:48,883 - ERROR - SMTP: SMTP operation failed: {'p': (553, b'5.1.3 The recipient address <p> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3ace6asm111396165ad.125 - gsmtp')}
+2025-01-23 18:33:48,884 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:49,136 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:49,602 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:50,795 - ERROR - SMTP: SMTP operation failed: {'.': (553, b'5.1.3 The recipient address <.> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3a908asm112032285ad.150 - gsmtp')}
+2025-01-23 18:33:50,796 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:51,045 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:51,503 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:52,745 - ERROR - SMTP: SMTP operation failed: {'i': (553, b'5.1.3 The recipient address <i> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3a87e4sm113783635ad.111 - gsmtp')}
+2025-01-23 18:33:52,747 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:33:52,999 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:33:53,569 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:33:54,815 - ERROR - SMTP: SMTP operation failed: {'n': (553, b'5.1.3 The recipient address <n> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d2e1a72fcca58-72dab9c8eafsm13491903b3a.105 - gsmtp')}
+2025-01-23 18:38:09,504 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:38:09,757 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:38:10,227 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:38:12,371 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:38:12,940 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:38:13,409 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:46:51,843 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:46:52,330 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:46:52,794 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-23 18:46:54,907 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-23 18:46:55,397 - INFO - SMTP: TLS connection established successfully
+2025-01-23 18:46:55,861 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:43:22,057 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:43:22,057 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:43:22,563 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:43:22,563 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:43:23,023 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:43:23,034 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:43:25,068 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:43:25,193 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:43:25,544 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:43:25,649 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:43:26,008 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:43:26,117 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:44:47,710 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:44:47,976 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:44:48,478 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:44:48,485 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:44:48,934 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:44:48,949 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:44:50,924 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:44:51,051 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 13:44:51,652 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:44:51,691 - INFO - SMTP: TLS connection established successfully
+2025-01-24 13:44:52,123 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 13:44:52,169 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:04:19,958 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:04:21,923 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:04:23,085 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:04:25,189 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:04:25,435 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:04:25,898 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:04:34,364 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:04:35,050 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:04:36,100 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:04:39,094 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:04:39,766 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:04:40,570 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:07:39,457 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:07:43,263 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:07:45,599 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:07:47,589 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:07:47,847 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:07:48,301 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:08:05,267 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:08:05,777 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:08:06,225 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:08:08,254 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:08:08,721 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:08:09,175 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:29:12,379 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:29:12,640 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:29:13,084 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:29:15,363 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:29:15,614 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:29:16,092 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:29:24,384 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:29:24,637 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:29:25,086 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:29:27,097 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:29:27,349 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:29:27,798 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:48:04,038 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:48:05,372 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:48:06,193 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:48:09,066 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:48:09,319 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:48:09,776 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:48:17,012 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:48:17,278 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:48:17,730 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 14:48:19,775 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 14:48:20,025 - INFO - SMTP: TLS connection established successfully
+2025-01-24 14:48:20,475 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:00:44,999 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:00:45,274 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:00:45,325 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:00:45,734 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:00:45,903 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:00:46,359 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:00:47,930 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:00:48,178 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:00:48,510 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:00:48,634 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:00:48,760 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:00:49,211 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:00:57,389 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:00:57,639 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:00:57,641 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:00:57,888 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:00:58,091 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:00:58,345 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:01:00,206 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:01:00,455 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:01:00,457 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:01:00,706 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:01:00,918 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:01:01,167 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:48:27,872 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:28,277 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:39,935 - ERROR - SMTP: SMTP unknown failed: [Errno 11001] getaddrinfo failed
+2025-01-24 15:48:39,936 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:39,937 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:51,976 - ERROR - SMTP: SMTP unknown failed: [Errno 11001] getaddrinfo failed
+2025-01-24 15:48:51,976 - ERROR - SMTP: SMTP unknown failed: [Errno 11001] getaddrinfo failed
+2025-01-24 15:48:54,287 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:54,659 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:55,016 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:48:55,357 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:48:55,563 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:48:55,937 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:48:58,105 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:58,412 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:48:58,567 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:48:58,910 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:48:58,946 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:48:59,796 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:05,886 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:06,042 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:06,442 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:07,012 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:09,408 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:09,557 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:09,683 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:09,986 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:10,225 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:10,503 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:14,171 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:14,472 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:14,892 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:14,960 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:15,215 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:15,759 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:17,080 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:17,709 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:22,800 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:49:22,949 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:49:23,219 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:49:23,840 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:32,576 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:33,991 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:37,668 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:38,893 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:40,261 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:41,324 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:41,974 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:42,276 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:42,761 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:43,977 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:44,238 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:44,801 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:51,166 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:51,457 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:51,914 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:52,909 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:53,188 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:53,673 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:53,979 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:54,257 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:54,727 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:52:55,841 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:52:56,093 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:52:56,576 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:53:09,914 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:53:10,231 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:53:10,817 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:53:13,112 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:53:13,373 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:53:13,884 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:53:22,301 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:53:22,565 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:53:23,038 - INFO - SMTP: Login attempt for user: yash@kgrp.in
+2025-01-24 15:53:25,095 - INFO - SMTP: Connecting to smtp.gmail.com:587
+2025-01-24 15:53:25,368 - INFO - SMTP: TLS connection established successfully
+2025-01-24 15:53:25,851 - INFO - SMTP: Login attempt for user: yash@kgrp.in
