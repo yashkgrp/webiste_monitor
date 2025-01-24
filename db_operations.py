@@ -5,6 +5,7 @@ import logging
 from collections import defaultdict
 from statistics import mean
 from google.cloud.firestore import Query  # Add this import
+from firebase_logger import firebase_logger
 
 class FirestoreDB:
     def __init__(self, db):
@@ -62,6 +63,7 @@ class FirestoreDB:
         current_time = datetime.now(pytz.UTC)
         
         try:
+            firebase_logger.log_transaction('update_status', 'started')
             # Get current document
             doc = doc_ref.get()
             if doc.exists:
@@ -82,11 +84,14 @@ class FirestoreDB:
                     'last_check': current_time,
                 }
                 doc_ref.update(update_data)
+                firebase_logger.log_write('monitored_urls', doc_id, 'update_status')
+                firebase_logger.log_transaction('update_status', 'completed')
 
                 # Add to history
                 self._add_history_entry(doc_ref, current_time, status, response_time)
                 
         except Exception as e:
+            firebase_logger.log_error('update_status', str(e), {'url': url})
             logging.error(f"Error updating URL status: {e}")
             raise
 
@@ -173,18 +178,18 @@ class FirestoreDB:
             logging.error(f"Error syncing URLs: {e}")
             return {}
 
-    def get_url_history(self, url, limit=1000):
-        """Get historical data for a URL"""
+    def get_url_history(self, url, limit=None):
         doc_id = self._encode_url(url)
         doc_ref = self.urls_ref.document(doc_id)
         history = []
-        
         try:
-            # Use Query.DESCENDING instead of 'desc'
-            for doc in doc_ref.collection('history').order_by(
-                'timestamp', 
-                direction=Query.DESCENDING
-            ).limit(limit).stream():
+            query = doc_ref.collection('history').order_by(
+                'timestamp',
+                direction=Query.ASCENDING
+            )
+            if limit:
+                query = query.limit(limit)
+            for doc in query.stream():
                 data = doc.to_dict()
                 data['timestamp'] = self._convert_timestamp(data['timestamp'])
                 history.append(data)
@@ -235,11 +240,186 @@ class FirestoreDB:
         if not total:
             return {'uptime': 0, 'avg_response': 0, 'total_checks': 0}
         
-        up_count = sum(1 for entry in history if 'Up' in entry['status'])
+        # Count both 'Up' and 'Slow' as uptime
+        up_count = sum(1 for entry in history if entry['status'] in ['Up', 'Slow'])
         avg_response = mean(entry['response_time'] for entry in history)
+        
+        # Get last down and slow times using direct queries
+        last_down = self.get_last_status_time(url, 'down')
+        last_slow = self.get_last_status_time(url, 'slow')
         
         return {
             'uptime': round((up_count / total) * 100, 2),
             'avg_response': round(avg_response, 2),
-            'total_checks': total
+            'total_checks': total,
+            'last_down_period': last_down,
+            'last_slow_period': last_slow
         }
+
+    def _find_last_status_period(self, history, status_check):
+        """Find the most recent period for a given status"""
+        if not history:
+            return "Never"
+
+        period_end = None
+        period_start = None
+        
+        # Look through history in reverse to find most recent period
+        for entry in reversed(history):
+            is_status = status_check(entry['status'])
+            
+            if period_end is None and is_status:
+                # Found the end of the most recent period
+                period_end = entry['timestamp']
+            elif period_end is not None and not is_status:
+                # Found the start of the period
+                period_start = entry['timestamp']
+                break
+            
+        if period_end is None:
+            return "Never"
+            
+        if period_start is None:
+            # Status continues from the beginning of our data
+            period_start = history[0]['timestamp']
+
+        duration_seconds = period_end - period_start
+        duration_str = self._format_duration(duration_seconds)
+        
+        end_time = datetime.fromtimestamp(period_end).strftime('%Y-%m-%d %H:%M:%S')
+        start_time = datetime.fromtimestamp(period_start).strftime('%Y-%m-%d %H:%M:%S')
+        
+        return f"Was down for {duration_str} ({start_time} to {end_time})"
+
+    def _format_duration(self, seconds):
+        """Format duration in seconds to human readable string"""
+        if seconds < 60:
+            return f"{int(seconds)} seconds"
+        minutes = seconds / 60
+        if minutes < 60:
+            return f"{int(minutes)} minutes"
+        hours = minutes / 60
+        if hours < 24:
+            return f"{int(hours)} hours"
+        days = hours / 24
+        return f"{int(days)} days"
+
+    def get_last_status_time(self, url, status_type):
+        """Get the last time a specific status occurred using direct Firebase query"""
+        try:
+            doc_id = self._encode_url(url)
+            doc_ref = self.urls_ref.document(doc_id)
+            
+            firebase_logger.log_query(
+                'history',
+                f'get_last_{status_type}_status',
+                {'url': url}
+            )
+            
+            try:
+                # Query directly with timestamp ordering
+                if status_type == 'down':
+                    query = doc_ref.collection('history')\
+                        .where('status', '==', 'Down')\
+                        .order_by('status')\
+                        .order_by('timestamp', direction=Query.DESCENDING)\
+                        .limit(1)
+                else:  # For slow status
+                    query = doc_ref.collection('history')\
+                        .where('status', '==', 'Slow')\
+                        .order_by('timestamp', direction=Query.DESCENDING)\
+                        .limit(1)
+
+                docs = list(query.stream())
+                
+                firebase_logger.log_query(
+                    'history',
+                    'query_results',
+                    {'count': len(docs), 'url': url, 'status_type': status_type}
+                )
+                
+                if docs:
+                    last_entry = docs[0].to_dict()
+                    if not last_entry or 'timestamp' not in last_entry:
+                        firebase_logger.log_error(
+                            'get_last_status_time', 
+                            'Invalid document format', 
+                            {'url': url, 'doc_data': str(last_entry)}
+                        )
+                        return "Error fetching status"
+                        
+                    timestamp = self._convert_timestamp(last_entry['timestamp'])
+                    now = datetime.now(pytz.UTC).timestamp()
+                    duration = now - timestamp
+                    
+                    end_time = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                    status_msg = f"Last {status_type} at {end_time} ({self._format_duration(duration)} ago)"
+                    
+                    firebase_logger.log_query(
+                        'history',
+                        'found_status',
+                        {'status': status_msg, 'timestamp': end_time}
+                    )
+                    
+                    return status_msg
+                else:
+                    firebase_logger.log_query(
+                        'history',
+                        'no_status_found',
+                        {'url': url, 'status_type': status_type}
+                    )
+                    return "Never"
+                
+            except Exception as query_error:
+                firebase_logger.log_error(
+                    'get_last_status_time_query', 
+                    str(query_error), 
+                    {'url': url, 'status_type': status_type}
+                )
+                return "Error fetching status"
+                
+        except Exception as e:
+            firebase_logger.log_error('get_last_status_time', str(e), {'url': url, 'status_type': status_type})
+            logging.error(f"Error getting last status time: {e}")
+            return "Error fetching status"
+
+    def _format_time_ago(self, seconds):
+        """Format seconds into a human-readable time ago string"""
+        if seconds is None:
+            return "Never"
+        
+        minutes = seconds / 60
+        hours = minutes / 60
+        days = hours / 24
+        
+        if days > 1:
+            return f"{int(days)} days ago"
+        if hours > 1:
+            return f"{int(hours)} hours ago"
+        if minutes > 1:
+            return f"{int(minutes)} minutes ago"
+        return "Just now"
+
+    def get_notification_emails(self):
+        """Get list of notification emails from Firestore"""
+        try:
+            firebase_logger.log_query('notification_email_list_file_upload', 'get_emails')
+            # Changed collection and document names to match file_upload implementation
+            doc = self.db.collection('notification _email_list_file_upload').document('email').get()
+            if doc.exists:
+                emails = doc.to_dict().get('emails', [])
+                logging.info(f"Found notification emails: {emails}")
+                return emails
+            logging.warning("No notification emails document found")
+            return []
+        except Exception as e:
+            firebase_logger.log_error('get_notification_emails', str(e))
+            logging.error(f"Error fetching notification emails: {e}")
+            # Fallback to email document
+            try:
+                doc = self.db.collection('notification_email_list_file_upload').document('emails').get()
+                if doc.exists:
+                    return doc.to_dict().get('email', [])
+                return []
+            except Exception:
+                return []

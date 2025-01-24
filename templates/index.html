@@ -38,6 +38,7 @@
         }
         .status-up { color: #28a745; }
         .status-down { color: #dc3545; }
+        .status-slow { color: #ffc107; }  /* Add this line for slow status */
         .response-time { font-size: 0.9em; color: #6c757d; }
         .table-responsive {
             background: white;
@@ -111,6 +112,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Spinner for analytics loading -->
+                    <div id="analyticsSpinner" class="text-center my-3" style="display: none;">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="timeInterval" class="form-label">Time Interval</label>
@@ -232,22 +239,23 @@
             data.forEach(site => {
                 const row = document.createElement('tr');
                 const isPaused = site.paused;
-                const isDown = !site.status.includes('Up');
+                const isDown = site.status.startsWith('Down:');
+                const isSlow = site.status === 'Slow';
                 const errorMessage = isDown ? site.status.replace('Down: ', '') : '';
                 
                 row.innerHTML = `
                     <td>${site.url}</td>
                     <td>
                         <div class="status-cell">
-                            <span class="${site.status.includes('Up') ? 'status-up' : 'status-down'}">
+                            <span class="${isDown ? 'status-down' : 
+                                       isSlow ? 'status-slow' : 'status-up'}">
                                 ${isPaused ? 'Paused' : (isDown ? 'Down' : site.status)}
                             </span>
                             ${isDown ? `
                                 <i class="bi bi-exclamation-circle-fill error-tooltip" 
                                    data-bs-toggle="tooltip" 
-                                   data-bs-html="true"
-                                   data-bs-placement="right" 
-                                   title="${errorMessage.replace('"', '&quot;')}"></i>
+                                   data-bs-placement="right"
+                                   title="${errorMessage.replace(/"/g, '&quot;')}"></i>
                             ` : ''}
                         </div>
                     </td>
@@ -272,33 +280,49 @@
             newTooltips.forEach(el => new bootstrap.Tooltip(el));
         }
 
+        function showLoading(button, loadingText = 'Loading...') {
+            button.disabled = true;
+            button.dataset.originalText = button.innerText;
+            button.innerHTML = `<span class="spinner-border spinner-border-sm"></span> ${loadingText}`;
+        }
+
+        function hideLoading(button) {
+            button.disabled = false;
+            button.innerHTML = button.dataset.originalText || 'Button';
+            delete button.dataset.originalText;
+        }
+
         async function togglePause(url) {
+            const button = event.target;
+            showLoading(button, 'Pausing...');
             try {
                 await fetch('/toggle_pause', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `url=${encodeURIComponent(url)}`
                 });
             } catch (error) {
                 console.error('Error toggling pause:', error);
+            } finally {
+                hideLoading(button);
             }
         }
 
         async function deleteUrl(url) {
-            if (confirm('Are you sure you want to delete this URL?')) {
-                try {
+            const button = event.target;
+            showLoading(button, 'Deleting...');
+            try {
+                if (confirm('Are you sure you want to delete this URL?')) {
                     await fetch('/delete_url', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: `url=${encodeURIComponent(url)}`
                     });
-                } catch (error) {
-                    console.error('Error deleting URL:', error);
                 }
+            } catch (error) {
+                console.error('Error deleting URL:', error);
+            } finally {
+                hideLoading(button);
             }
         }
 
@@ -360,6 +384,19 @@
         let hourlyChart = null;
 
         async function showAnalytics(url) {
+            // Show modal immediately
+            const modal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+            modal.show();
+            
+            // Show loading state
+            showAnalyticsSpinner();
+            document.getElementById('reliabilityStats').innerHTML = '';
+            if (historyChart) historyChart.destroy();
+            if (hourlyChart) hourlyChart.destroy();
+            
+            const button = event.target;
+            showLoading(button, 'Loading...');
+            
             try {
                 const response = await fetch(`/get_url_history/${encodeURIComponent(url)}`);
                 const result = await response.json();
@@ -367,14 +404,34 @@
                 if (result.status === 'success') {
                     currentAnalyticsData = result.data;
                     updateAnalyticsDashboard(result.data);
-                    new bootstrap.Modal(document.getElementById('analyticsModal')).show();
                 } else {
                     showError('Failed to load analytics data');
                 }
             } catch (error) {
                 console.error('Error loading analytics:', error);
                 showError('Failed to load analytics');
+                hideAnalyticsSpinner();
+            } finally {
+                hideLoading(button);
             }
+        }
+        
+        function showAnalyticsSpinner() {
+            // Clear existing charts and stats
+            document.getElementById('reliabilityStats').innerHTML = `
+                <div class="d-flex justify-content-center align-items-center" style="min-height: 200px">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('hourlyChart').style.display = 'none';
+            document.getElementById('historyChart').style.display = 'none';
+        }
+
+        function hideAnalyticsSpinner() {
+            document.getElementById('hourlyChart').style.display = 'block';
+            document.getElementById('historyChart').style.display = 'block';
         }
 
         function updateCharts() {
@@ -384,55 +441,45 @@
         }
 
         function groupDataByInterval(data, intervalMinutes) {
+            if (!data || data.length === 0) return [];
+            
+            // Sort data chronologically
+            const sortedData = data.sort((a, b) => a.timestamp - b.timestamp);
+            
+            // Calculate time range that includes all data points
+            const startTime = sortedData[0].timestamp * 1000;  // Convert to milliseconds
+            const endTime = sortedData[sortedData.length - 1].timestamp * 1000;
+            const intervalMs = intervalMinutes * 60 * 1000;
+            
+            // Create empty groups for each interval in the range
             const groups = new Map();
-            const now = Date.now();
-            
-            // First, find the earliest timestamp in the data
-            const earliestTimestamp = Math.min(...data.map(entry => entry.timestamp * 1000));
-            const dataAgeInMinutes = (now - earliestTimestamp) / (60 * 1000);
-            
-            // If selected interval is larger than available data, adjust dropdown
-            if (intervalMinutes > dataAgeInMinutes) {
-                const timeSelect = document.getElementById('timeInterval');
-                // Find the largest appropriate interval
-                for (let i = 0; i < timeSelect.options.length; i++) {
-                    if (parseInt(timeSelect.options[i].value) > dataAgeInMinutes) {
-                        timeSelect.selectedIndex = Math.max(0, i - 1);
-                        intervalMinutes = parseInt(timeSelect.value);
-                        break;
-                    }
-                }
-                showWarning(`Adjusted time interval to ${formatInterval(intervalMinutes)} based on available data`);
+            for (let time = startTime; time <= endTime; time += intervalMs) {
+                groups.set(time, {
+                    times: [],
+                    statuses: []
+                });
             }
             
-            // Filter data based on selected interval
-            const cutoffTime = now - (intervalMinutes * 60 * 1000);
-            const filteredData = data.filter(entry => entry.timestamp * 1000 > cutoffTime);
-            
-            // Group the filtered data
-            filteredData.forEach(entry => {
-                const timestamp = entry.timestamp * 1000;
-                const intervalMs = intervalMinutes * 60 * 1000;
-                const groupTime = Math.floor(timestamp / intervalMs) * intervalMs;
+            // Distribute data points into intervals
+            sortedData.forEach(entry => {
+                const entryTime = entry.timestamp * 1000;
+                const intervalStart = startTime + (Math.floor((entryTime - startTime) / intervalMs) * intervalMs);
                 
-                if (!groups.has(groupTime)) {
-                    groups.set(groupTime, {
-                        times: [],
-                        statuses: []
-                    });
+                const group = groups.get(intervalStart);
+                if (group) {
+                    group.times.push(entry.response_time);
+                    group.statuses.push(entry.status);
                 }
-                const group = groups.get(groupTime);
-                group.times.push(entry.response_time);
-                group.statuses.push(entry.status);
             });
             
+            // Convert to array format and calculate statistics
             return Array.from(groups.entries())
-                .sort((a, b) => a[0] - b[0])
-                .map(([timestamp, data]) => ({
-                    timestamp: timestamp,
-                    response_time: data.times.reduce((a, b) => a + b, 0) / data.times.length,
-                    count: data.times.length,
-                    uptime: (data.statuses.filter(s => s === 'Up').length / data.statuses.length) * 100
+                .filter(([_, group]) => group.times.length > 0)  // Only keep intervals with data
+                .map(([timestamp, group]) => ({
+                    timestamp,
+                    response_time: group.times.reduce((a, b) => a + b, 0) / group.times.length,
+                    count: group.times.length,
+                    uptime: (group.statuses.filter(s => s.includes('Up')).length / group.statuses.length) * 100
                 }));
         }
 
@@ -447,16 +494,17 @@
         }
 
         function updateAnalyticsDashboard(data) {
-            // Add data age information to stats
-            const earliestTimestamp = Math.min(...data.history.map(entry => entry.timestamp * 1000));
-            const dataAgeHours = ((Date.now() - earliestTimestamp) / (1000 * 60 * 60)).toFixed(1);
-            
+            hideAnalyticsSpinner();
             const stats = data.analysis.reliability;
             document.getElementById('reliabilityStats').innerHTML = `
-                <p>Uptime: ${stats.uptime}%</p>
-                <p>Average Response: ${stats.avg_response} ms</p>
-                <p>Total Checks: ${stats.total_checks}</p>
-                <p>Data Age: ${dataAgeHours} hours</p>
+                <div class="mb-3">
+                    <p class="mb-2"><strong>Uptime:</strong> ${stats.uptime}%</p>
+                    <p class="mb-2"><strong>Average Response:</strong> ${stats.avg_response} ms</p>
+                    <p class="mb-2"><strong>Total Checks:</strong> ${stats.total_checks}</p>
+                    <p class="mb-2"><strong>Last Down Period:</strong> <span class="text-danger">${stats.last_down_period || 'Never'}</span></p>
+                    <p class="mb-2"><strong>Last Slow Period:</strong> <span class="text-warning">${stats.last_slow_period || 'Never'}</span></p>
+                    <p class="mb-2"><strong>Data Age:</strong> ${((Date.now() - Math.min(...data.history.map(entry => entry.timestamp * 1000))) / (1000 * 60 * 60)).toFixed(1)} hours</p>
+                </div>
             `;
 
             // Get selected interval
@@ -499,10 +547,11 @@
                 data: {
                     labels: groupedData.map(d => new Date(d.timestamp).toLocaleString()),
                     datasets: [{
-                        label: `Response Time (${formatInterval(intervalMinutes)})`,
+                        label: `Response Time (${formatInterval(intervalMinutes)} intervals)`,
                         data: groupedData.map(d => d.response_time.toFixed(2)),
                         borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
+                        tension: 0.1,
+                        pointRadius: 2  // Make points smaller for dense data
                     }]
                 },
                 options: {
@@ -518,9 +567,10 @@
                         x: {
                             ticks: {
                                 maxRotation: 45,
-                                minRotation: 45
-                            },
-                            reverse: false  // Ensure chronological order
+                                minRotation: 45,
+                                autoSkip: true,
+                                maxTicksLimit: 20  // Limit number of x-axis labels
+                            }
                         }
                     },
                     plugins: {
@@ -530,7 +580,7 @@
                                     const dataPoint = groupedData[context.dataIndex];
                                     return [
                                         `Response Time: ${context.raw} ms`,
-                                        `Samples: ${dataPoint.count}`,
+                                        `Samples in interval: ${dataPoint.count}`,
                                         `Uptime: ${dataPoint.uptime.toFixed(1)}%`
                                     ];
                                 }

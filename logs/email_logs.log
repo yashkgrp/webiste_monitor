@@ -1,0 +1,84 @@
+2025-01-23 15:36:33,189 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Website Down Alert - https://localhost:3000 | Error: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:36:34,541 - ERROR - Failed to send email | To: punit@kgrp.in | Subject: Website Down Alert - https://localhost:3000 | Error: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:38:46,952 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Website Down Alert - https://localhost:3000 | Error: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:38:48,519 - ERROR - Failed to send email | To: punit@kgrp.in | Subject: Website Down Alert - https://localhost:3000 | Error: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:39:39,288 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Error: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:39:40,647 - ERROR - Failed to send email | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Error: 'NoneType' object has no attribute 'encode'
+2025-01-23 15:43:33,789 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:43:35,530 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:43:36,890 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:43:38,559 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:44:46,842 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:44:48,198 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:44:50,616 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 15:44:51,597 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 16:23:23,596 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://allianceair.co.in/gst/ | Type: DOWN
+2025-01-23 16:23:27,038 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - https://allianceair.co.in/gst/ | Type: DOWN
+2025-01-23 18:15:31,364 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:15:34,610 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:15:47,040 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:15:50,522 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:03,232 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:06,253 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:19,134 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:21,862 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:33,867 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:36,648 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:49,022 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:16:51,867 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:04,345 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:07,154 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:19,444 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:22,223 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:34,950 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:38,017 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:50,331 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:17:53,161 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:05,922 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:09,070 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:22,029 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:25,075 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:38,055 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:41,051 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:53,470 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:18:56,313 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:19:08,866 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:19:11,721 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:19:27,758 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:19:30,961 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:19:49,622 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:19:52,493 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:05,978 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:08,980 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:21,689 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:24,619 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:38,024 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:42,488 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:54,758 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:20:58,394 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:11,751 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:14,601 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:27,106 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:29,880 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:42,562 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:45,316 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:21:57,912 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:22:01,012 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:22:13,680 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:22:16,509 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:33:33,085 - ERROR - Failed to send email | To: y | Subject: Website Down Alert - http://localhost:3000 | Error: {'y': (553, b'5.1.3 The recipient address <y> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d2e1a72fcca58-72dab7f0877sm13052312b3a.23 - gsmtp')}
+2025-01-23 18:33:35,504 - ERROR - Failed to send email | To: a | Subject: Website Down Alert - http://localhost:3000 | Error: {'a': (553, b'5.1.3 The recipient address <a> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3e14c5sm112716725ad.184 - gsmtp')}
+2025-01-23 18:33:37,415 - ERROR - Failed to send email | To: s | Subject: Website Down Alert - http://localhost:3000 | Error: {'s': (553, b'5.1.3 The recipient address <s> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2ceb9adfsm111990715ad.81 - gsmtp')}
+2025-01-23 18:33:39,326 - ERROR - Failed to send email | To: h | Subject: Website Down Alert - http://localhost:3000 | Error: {'h': (553, b'5.1.3 The recipient address <h> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. 41be03b00d2f7-a9bdf0b4503sm10868013a12.67 - gsmtp')}
+2025-01-23 18:33:41,212 - ERROR - Failed to send email | To: @ | Subject: Website Down Alert - http://localhost:3000 | Error: {'': (555, b'5.5.2 Syntax error, cannot decode response. For more information, go to\n5.5.2  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.5.2 specifications. d9443c01a7336-21c2cea2e94sm112227535ad.28 - gsmtp')}
+2025-01-23 18:33:43,121 - ERROR - Failed to send email | To: k | Subject: Website Down Alert - http://localhost:3000 | Error: {'k': (553, b'5.1.3 The recipient address <k> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d2e1a72fcca58-72dab7f09besm12929373b3a.27 - gsmtp')}
+2025-01-23 18:33:45,012 - ERROR - Failed to send email | To: g | Subject: Website Down Alert - http://localhost:3000 | Error: {'g': (553, b'5.1.3 The recipient address <g> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. 98e67ed59e1d1-2f7e6a6595bsm3864032a91.9 - gsmtp')}
+2025-01-23 18:33:46,954 - ERROR - Failed to send email | To: r | Subject: Website Down Alert - http://localhost:3000 | Error: {'r': (553, b'5.1.3 The recipient address <r> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3a8a2bsm112931295ad.142 - gsmtp')}
+2025-01-23 18:33:48,884 - ERROR - Failed to send email | To: p | Subject: Website Down Alert - http://localhost:3000 | Error: {'p': (553, b'5.1.3 The recipient address <p> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3ace6asm111396165ad.125 - gsmtp')}
+2025-01-23 18:33:50,795 - ERROR - Failed to send email | To: . | Subject: Website Down Alert - http://localhost:3000 | Error: {'.': (553, b'5.1.3 The recipient address <.> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3a908asm112032285ad.150 - gsmtp')}
+2025-01-23 18:33:52,746 - ERROR - Failed to send email | To: i | Subject: Website Down Alert - http://localhost:3000 | Error: {'i': (553, b'5.1.3 The recipient address <i> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d9443c01a7336-21c2d3a87e4sm113783635ad.111 - gsmtp')}
+2025-01-23 18:33:54,815 - ERROR - Failed to send email | To: n | Subject: Website Down Alert - http://localhost:3000 | Error: {'n': (553, b'5.1.3 The recipient address <n> is not a valid RFC 5321 address. For more\n5.1.3 information, go to\n5.1.3  https://support.google.com/a/answer/3221692 and review RFC 5321\n5.1.3 specifications. d2e1a72fcca58-72dab9c8eafsm13491903b3a.105 - gsmtp')}
+2025-01-23 18:38:12,369 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - http://localhost:3000 | Type: UP
+2025-01-23 18:38:15,579 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Recovered - http://localhost:3000 | Type: UP
+2025-01-23 18:46:54,906 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN
+2025-01-23 18:46:58,325 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - http://localhost:3000 | Type: DOWN

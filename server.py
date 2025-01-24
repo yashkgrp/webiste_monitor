@@ -3,8 +3,12 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import requests, time, threading, logging
 import urllib3
+from statistics import mean  # Add this import
 from config import initialize_firebase
 from db_operations import FirestoreDB
+from datetime import datetime
+import os
+from email_utils import send_email, generate_status_email  # New import
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,15 +55,35 @@ DEFAULT_HEADERS = {
     'Sec-Fetch-User': '?1'
 }
 
+# Add email configuration
+EMAIL_CONFIG = {
+    'SMTP_SERVER': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
+    'SMTP_PORT': os.getenv('SMTP_PORT', 587),
+    'SMTP_USER': os.getenv('SMTP_USER'),
+    'SMTP_PASSWORD': os.getenv('SMTP_PASSWORD'),
+    'NOTIFICATION_EMAIL': os.getenv('SMTP_NOTIFICATIONEMAIL')
+}
+
 def monitor_urls():
     session = requests.Session()
-    # Set default headers for all requests in the session
     session.headers.update(DEFAULT_HEADERS)
+    status_notification_sent = {}  # Track notification status for each URL
+    last_notification_time = {}  # Track last notification time for each URL
+    
+    # Get notification emails
+    notification_emails = db_ops.get_notification_emails()
+    if not notification_emails:
+        logger.warning("No notification emails configured")
     
     while not stop_thread:
         try:
             for url, site in list(monitored_urls.items()):
                 current_time = time.time()
+                
+                # Check if enough time has passed since last notification (5 seconds minimum)
+                if url in last_notification_time and current_time - last_notification_time[url] < 5:
+                    continue
+
                 last_check = site.get('last_check', 0)
                 # Convert Firebase timestamp to Unix timestamp if needed
                 if hasattr(last_check, 'timestamp'):
@@ -83,7 +107,27 @@ def monitor_urls():
                             headers=headers,
                             allow_redirects=True
                         )
-                        status = "Up" if r.status_code == 200 else f"Error {r.status_code}"
+                        
+                        end = time.time()
+                        response_time = round((end - start) * 1000, 2)
+                        
+                        if r.status_code == 200:
+                            # Get last 5 responses only
+                            recent_history = db_ops.get_url_history(url, limit=5)
+                            recent_times = [h['response_time'] for h in recent_history]
+                            recent_times.append(response_time)  # Include current response
+                            
+                            # Calculate rolling average of last 5 responses
+                            rolling_avg = mean(recent_times[-5:])  # Take only last 5 values
+                            
+                            if rolling_avg > 100:  # If rolling average > 100ms
+                                status = "Slow"
+                            else:
+                                status = "Up"
+                            
+                            logger.debug(f"Rolling average for {url}: {rolling_avg}ms")
+                        else:
+                            status = f"Down: Error {r.status_code}"
                         
                         # Debug information
                         logger.debug(f"Request to {url} - Status: {r.status_code}")
@@ -97,6 +141,59 @@ def monitor_urls():
                     response_time = round((end - start) * 1000, 2)
                     
                     try:
+                        # Check if status changed from previous state
+                        previous_status = site.get('status', '')
+                        current_status = status  # New status we just determined
+                        
+                        # Only send notifications for significant status changes
+                        should_notify = False
+                        notification_type = None
+
+                        # Case 1: Site goes down from Up or Slow state
+                        if current_status.startswith('Down:') and (
+                            previous_status == 'Up' or 
+                            previous_status == 'Slow' or 
+                            previous_status == 'Initializing...'
+                        ):
+                            should_notify = True
+                            notification_type = 'down'
+
+                        # Case 2: Site recovers from Down state
+                        elif (current_status == 'Up' or current_status == 'Slow') and (
+                            previous_status.startswith('Down:')
+                        ):
+                            should_notify = True
+                            notification_type = 'up'
+
+                        if should_notify and notification_emails:
+                            current_time = time.time()
+                            # Ensure at least 5 seconds between notifications
+                            if url not in last_notification_time or current_time - last_notification_time[url] >= 5:
+                                for email in notification_emails:
+                                    if notification_type == 'down':
+                                        send_email(
+                                            subject=f"Website Down Alert - {url}",
+                                            body=generate_status_email(
+                                                url=url,
+                                                status="down",
+                                                error_message=current_status.replace('Down: ', ''),
+                                                timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                            ),
+                                            to_email=email
+                                        )
+                                    else:  # notification_type == 'up'
+                                        send_email(
+                                            subject=f"Website Recovered - {url}",
+                                            body=generate_status_email(
+                                                url=url,
+                                                status="up",
+                                                downtime_duration=db_ops._format_duration(current_time - last_notification_time.get(url, current_time)),
+                                                timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                            ),
+                                            to_email=email
+                                        )
+                                last_notification_time[url] = current_time
+
                         # Update Firebase and get fresh data
                         db_ops.update_url_status(url, status, response_time)
                         updated_data = db_ops.get_url_data(url)
@@ -205,7 +302,8 @@ def sync_data():
 @app.route('/get_url_history/<path:url>', methods=['GET'])
 def get_url_history(url):
     try:
-        history_data = db_ops.get_url_history(url)
+        # Remove fixed limit by passing None
+        history_data = db_ops.get_url_history(url, limit=None)
         return jsonify({
             "status": "success",
             "data": {
