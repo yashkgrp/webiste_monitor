@@ -61,6 +61,17 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .tooltip-error {
+            cursor: help;
+            text-decoration: underline dotted;
+        }
+        .status-failed {
+            cursor: help;
+        }
+        .status-badge {
+            position: relative;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -122,6 +133,7 @@
                                 <th>GSTIN</th>
                                 <th>Next Run</th>
                                 <th>Auto Run</th>
+                                <th>DOM Changes</th> <!-- Add this line for DOM changes column -->
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -138,6 +150,7 @@
                                 <td id="autoRunStatus">
                                     <span class="badge bg-secondary">Disabled</span>
                                 </td>
+                                <td id="domChangesCell"><span class="badge bg-secondary">-</span></td> <!-- Add this line for DOM changes cell -->
                                 <td>
                                     <button class="btn btn-sm btn-primary" onclick="viewScraper()">
                                         View Scraper
@@ -662,10 +675,20 @@
                 const data = await response.json();
                 
                 if (data.success && data.data) {
+                    // Ensure error message is preserved in the state
+                    if (data.data.state === 'failed' && !data.data.error) {
+                        data.data.error = 'Error details not available';
+                    }
                     updateScraperTableRow(data.data);
+                    initializeTooltips(); // Re-initialize tooltips after updating
                 }
             } catch (error) {
                 console.error('Error loading scraper status:', error);
+                // Show error state with generic message
+                updateScraperTableRow({
+                    state: 'failed',
+                    error: 'Failed to load status'
+                });
             }
         }
 
@@ -677,12 +700,44 @@
                 'idle': 'bg-secondary'
             };
 
+            // Destroy existing tooltips before updating
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(t => bootstrap.Tooltip.getInstance(t)?.dispose());
+
             document.getElementById('lastRunTime').textContent = data.last_run ? new Date(data.last_run).toLocaleString() : '-';
             document.getElementById('scraperStatus').innerHTML = `
-                <span class="badge ${statusColors[data.state] || 'bg-secondary'}">
+                <span class="status-badge ${statusColors[data.state] || 'bg-secondary'} ${data.state === 'failed' ? 'status-failed' : ''}"
+                      ${data.state === 'failed' ? `data-bs-toggle="tooltip" data-bs-placement="top" title="${data.error || 'Unknown error'}"` : ''}>
                     ${data.state || 'Not Started'}
                 </span>
             `;
+            
+            // Add DOM changes display
+            function updateDOMChanges() {
+                fetch('/scraper/dom_changes')
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success && result.data.length > 0) {
+                            const changes = result.data;
+                            document.getElementById('domChangesCell').innerHTML = `
+                                <button onclick="handleDOMChangesClick(event, '${encodeURIComponent(JSON.stringify(changes))}')" 
+                                        class="badge bg-danger border-0" 
+                                        style="cursor: pointer;">
+                                    Yes (${changes.length})
+                                </button>`;
+                        } else {
+                            document.getElementById('domChangesCell').innerHTML = 
+                                '<span class="badge bg-success">No Changes</span>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching DOM changes:', error);
+                        document.getElementById('domChangesCell').innerHTML = 
+                            '<span class="badge bg-warning">Error</span>';
+                    });
+            }
+
+            // Rest of the updateScraperTableRow function...
             document.getElementById('currentPNR').textContent = data.pnr || '-';
             document.getElementById('currentGSTIN').textContent = data.gstin || '-';
             document.getElementById('nextRunTime').textContent = data.next_run ? new Date(data.next_run).toLocaleString() : '-';
@@ -691,11 +746,129 @@
                     ${data.auto_run ? 'Enabled' : 'Disabled'}
                 </span>
             `;
+
+            // Call updateDOMChanges
+            updateDOMChanges();
+
+            // Initialize tooltips for new elements
+            initializeTooltips();
+        }
+
+        // Add new function to handle the click event
+        function handleDOMChangesClick(event, encodedChanges) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            try {
+                const changes = JSON.parse(decodeURIComponent(encodedChanges));
+                if (!changes || changes.length === 0) {
+                    showError('No DOM changes available');
+                    return;
+                }
+                
+                const win = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>DOM Changes Log</title>
+                        <style>
+                            body { 
+                                font-family: monospace; 
+                                padding: 20px; 
+                                margin: 0;
+                                line-height: 1.6;
+                            }
+                            .change { 
+                                margin: 20px 0; 
+                                border-bottom: 1px solid #eee; 
+                                padding-bottom: 20px;
+                                background: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            }
+                            .timestamp { 
+                                color: #666; 
+                                margin-bottom: 10px;
+                                font-weight: bold;
+                            }
+                            .diff { 
+                                white-space: pre-wrap; 
+                                background: #f8f9fa; 
+                                padding: 15px; 
+                                border-radius: 4px;
+                                border: 1px solid #e9ecef;
+                                font-size: 13px;
+                            }
+                            .page-id { 
+                                color: #007bff; 
+                                margin-bottom: 5px;
+                                font-weight: bold;
+                            }
+                            .type { 
+                                color: #28a745;
+                                margin-bottom: 10px;
+                            }
+                            h2 {
+                                color: #333;
+                                border-bottom: 2px solid #007bff;
+                                padding-bottom: 10px;
+                                margin-bottom: 20px;
+                            }
+                            .change-item { 
+                                border-left: 3px solid #007bff;
+                                margin: 5px 0;
+                                padding: 5px;
+                            }
+                            .change-item.addition { border-left-color: #28a745; }
+                            .change-item.removal { border-left-color: #dc3545; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>DOM Structure Changes Log</h2>
+                        ${changes.map(change => `
+                            <div class="change">
+                                <div class="timestamp">Time: ${new Date(change.timestamp).toLocaleString()}</div>
+                                <div class="page-id">Page: ${change.page_id}</div>
+                                <div class="type">Type: ${change.type}</div>
+                                <div class="metadata">
+                                    <strong>GSTIN:</strong> ${change.gstin || 'N/A'}<br>
+                                    <strong>PNR:</strong> ${change.pnr || 'N/A'}
+                                </div>
+                                <div class="diff">
+                                    ${change.changes.map(line => `
+                                        <div class="change-item ${line.startsWith('+') ? 'addition' : 'removal'}">
+                                            ${line}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </body>
+                    </html>
+                `);
+                win.document.close();
+            } catch (error) {
+                console.error('Error displaying DOM changes:', error);
+                showError('Error displaying DOM changes');
+            }
         }
 
         function viewScraper() {
             window.location.href = '/scraper';
         }
+
+        function initializeTooltips() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
+        // Initialize tooltips on page load and after content updates
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTooltips();
+        });
 
         // Load scraper status on page load
         document.addEventListener('DOMContentLoaded', () => {

@@ -13,13 +13,13 @@ class FirestoreDB:
     def __init__(self, db):
         self.db = db
         self.urls_ref = self.db.collection('monitored_urls')
-        # Create reference to sky_air document
-        self.sky_air_ref = self.urls_ref.document('sky_air')
+        # Create reference to star_air document
+        self.star_air_ref = self.urls_ref.document('star_air')
         
-        # Initialize subcollections under sky_air
-        self.scraper_state_ref = self.sky_air_ref.collection('scraper_states')
-        self.scraper_history_ref = self.sky_air_ref.collection('scraper_history')
-        self.dom_changes_ref = self.sky_air_ref.collection('dom_changes')
+        # Initialize subcollections under star_air
+        self.scraper_state_ref = self.star_air_ref.collection('scraper_states')
+        self.scraper_history_ref = self.star_air_ref.collection('scraper_history')
+        self.dom_changes_ref = self.star_air_ref.collection('dom_changes')
 
     def _encode_url(self, url):
         """Convert URL to safe document ID"""
@@ -475,7 +475,10 @@ class FirestoreDB:
                         'timestamp': datetime.now(pytz.UTC),
                         'page_id': page_id,
                         'changes': diff,
-                        'type': 'structural'
+                        'type': 'structural',
+                        'page_url': f"https://yourwebsite.com/{page_id}",  # New field
+                        'detected_by': 'ScraperModule',  # New field
+                        'change_summary': 'Structural changes detected in the DOM.'  # New field
                     }
                     self.dom_changes_ref.add(change_doc)
             else:
@@ -647,3 +650,69 @@ class FirestoreDB:
         except Exception as e:
             logging.error(f"Error getting scraper analytics: {e}")
             return None
+
+    def get_recent_dom_changes(self):
+        """Get recent DOM changes from Firestore"""
+        try:
+            changes = []
+            docs = self.dom_changes_ref.order_by(
+                'timestamp', 
+                direction=Query.DESCENDING
+            ).limit(50).stream()
+            
+            for doc in docs:
+                data = doc.to_dict()
+                if data and data.get('changes'):  # Only include if there are actual changes
+                    changes.append({
+                        'timestamp': data.get('timestamp'),
+                        'page_id': data.get('page_id'),
+                        'changes': [
+                            change for change in data.get('changes', [])
+                            if any(tag in change for tag in ['<div', '<form', '<input', '<button', '<nav'])
+                        ],
+                        'type': data.get('type'),
+                        'gstin': data.get('gstin'),
+                        'pnr': data.get('pnr')
+                    })
+            
+            # Only return entries that have meaningful changes
+            return [change for change in changes if change['changes']]
+        except Exception as e:
+            logging.error(f"Error getting DOM changes: {e}")
+            return []
+
+    def get_dom_snapshot(self, page_id):
+        """Get the latest DOM snapshot for a page"""
+        try:
+            doc = self.db.collection('dom_snapshots').document(page_id).get()
+            return doc.to_dict() if doc.exists else None
+        except Exception as e:
+            logging.error(f"Error getting DOM snapshot: {e}")
+            return None
+            
+    def store_dom_data(self, data, page_id):
+        """Store DOM snapshot and changes"""
+        try:
+            # Store snapshot
+            self.db.collection('dom_snapshots').document(page_id).set(data['snapshot'])
+            
+            # Store changes in a subcollection
+            changes_ref = self.db.collection('dom_changes').document()
+            changes_ref.set(data['changes'])
+            
+            return True
+        except Exception as e:
+            logger.error(f"Error storing DOM data: {e}")
+            return False
+            
+    def get_dom_changes(self, limit=10):
+        """Get recent DOM changes"""
+        try:
+            changes = self.db.collection('dom_changes')\
+                .order_by('timestamp', direction='DESCENDING')\
+                .limit(limit)\
+                .stream()
+            return [change.to_dict() for change in changes]
+        except Exception as e:
+            logger.error(f"Error getting DOM changes: {e}")
+            return []

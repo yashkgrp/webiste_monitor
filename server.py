@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 import re
 from urllib.parse import urljoin
 from scraper_utils import run_scraper
+from dom_utils import DOMChangeTracker  # New import
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -39,6 +40,9 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Initialize socket logger
 socket_logger = SocketLogger()
+
+# Initialize DOM tracker
+dom_tracker = DOMChangeTracker(db_ops)
 
 # Load initial state from Firebase
 try:
@@ -396,28 +400,29 @@ def run_starair_scraper():
         # Run scraper
         result = run_scraper(data, db_ops, socketio)
         
-        # Update final state
+        # Update final state with error message if failed
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'success' if result['success'] else 'failed',
-            result.get('message')
+            result.get('error') if not result['success'] else None  # Store error message
         )
         
         return jsonify(result)
 
     except Exception as e:
-        logger.error(f"Error running scraper: {e}")
-        # Store error state
+        error_msg = str(e)
+        # Store error state with message
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'failed',
-            str(e)
+            error_msg
         )
         return jsonify({
             "success": False,
-            "message": str(e)
+            "message": error_msg,
+            "error": error_msg
         }), 500
 
 @app.route('/scraper/analytics')
@@ -450,7 +455,8 @@ def get_last_scraper_state():
                     "state": "idle",
                     "last_run": None,
                     "next_run": None,
-                    "auto_run": False
+                    "auto_run": False,
+                    "error": None  # Add default error field
                 }
             })
             
@@ -461,6 +467,12 @@ def get_last_scraper_state():
         state.setdefault('last_run', None)
         state.setdefault('next_run', None)
         state.setdefault('auto_run', False)
+        state.setdefault('error', None)  # Add default error field
+        
+        # Ensure error message is preserved from Firebase
+        if state.get('state') == 'failed' and not state.get('error'):
+            # Try to get error from message field if error field is empty
+            state['error'] = state.get('message') or 'Error details not available'
         
         return jsonify({
             "success": True,
@@ -472,6 +484,29 @@ def get_last_scraper_state():
             "success": False,
             "message": str(e),
             "data": None
+        }), 500
+
+@app.route('/scraper/dom_changes', methods=['GET'])
+def get_dom_changes():
+    """Get DOM changes for latest scrape"""
+    try:
+        changes = dom_tracker.get_recent_changes()
+        if not changes:
+            return jsonify({
+                "success": True,
+                "data": [],
+                "message": "No DOM changes found"
+            })
+            
+        return jsonify({
+            "success": True,
+            "data": changes
+        })
+    except Exception as e:
+        logger.error(f"Error getting DOM changes: {e}")
+        return jsonify({
+            "success": False,
+            "message": str(e)
         }), 500
 
 @socketio.on('scraper_status')

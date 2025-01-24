@@ -142,3 +142,5 @@
 2025-01-24 15:53:15,931 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
 2025-01-24 15:53:25,094 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
 2025-01-24 15:53:27,960 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-01-24 18:19:47,049 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://starair.in/customer/gstinvoice | Type: DOWN
+2025-01-24 18:19:49,844 - INFO - Email sent successfully | To: punit@kgrp.in | Subject: Website Down Alert - https://starair.in/customer/gstinvoice | Type: DOWN
