@@ -45,12 +45,96 @@
       .event-item.error {
         border-left-color: #dc3545;
       }
-      .tooltip-error {
-        cursor: help;
-        text-decoration: underline dotted;
+      .change-row {
+        cursor: pointer;
       }
-      .stage.error:hover {
-        background: #f5c2c7;
+      .change-row:hover {
+        background-color: #f8f9fa;
+      }
+      .change-details {
+        display: none;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+      }
+      .change-addition {
+        color: #28a745;
+        background-color: #e8f5e9;
+        padding: 2px 5px;
+        margin: 2px 0;
+        border-radius: 3px;
+      }
+      .change-removal {
+        color: #dc3545;
+        background-color: #ffebee;
+        padding: 2px 5px;
+        margin: 2px 0;
+        border-radius: 3px;
+      }
+      .expand-button {
+        background: none;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .expand-button.expanded {
+        transform: rotate(90deg);
+      }
+      .change-details-row {
+        background-color: #f8f9fa;
+        display: none;
+      }
+      .change-details-row td {
+        padding: 20px !important;
+      }
+      .change-details-content {
+        border-left: 3px solid #6c757d;
+        padding-left: 15px;
+      }
+      .change-item {
+        font-family: monospace;
+        padding: 8px;
+        margin: 4px 0;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+      }
+      .change-path {
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 4px;
+      }
+      .change-element {
+        font-weight: bold;
+      }
+      .change-description {
+        margin-top: 4px;
+        font-style: italic;
+      }
+      .change-addition {
+        background-color: #e8f5e9;
+        border-left: 4px solid #28a745;
+      }
+      .change-removal {
+        background-color: #ffebee;
+        border-left: 4px solid #dc3545;
+      }
+      .change-modification {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+      }
+      .btn-icon {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 0.2rem;
+      }
+      .rotate-icon {
+        transition: transform 0.2s;
+      }
+      .rotate-icon.rotated {
+        transform: rotate(90deg);
       }
     </style>
   </head>
@@ -139,6 +223,86 @@
           </div>
         </div>
       </div>
+
+      <!-- After other cards, add this section -->
+      <div class="card mt-4" id="domChangesSection">
+        <div class="card-header">
+          <h5 class="mb-0">DOM Changes History</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="domChangesTable">
+              <thead>
+                <tr>
+                  <th style="width: 5%"></th>
+                  <th style="width: 20%">Timestamp</th>
+                  <th style="width: 15%">Page ID</th>
+                  <th style="width: 15%">Type</th>
+                  <th style="width: 15%">Changes Count</th>
+                  <th style="width: 15%">GSTIN</th>
+                  <th style="width: 15%">PNR</th>
+                  <th style="width: 5%">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Will be filled dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Change Details Modal -->
+      <div class="modal fade" id="changeDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">DOM Change Details</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="change-metadata mb-3">
+                <div class="row">
+                  <div class="col-md-6">
+                    <p>
+                      <strong>Timestamp:</strong>
+                      <span id="detailTimestamp"></span>
+                    </p>
+                    <p>
+                      <strong>Page ID:</strong> <span id="detailPageId"></span>
+                    </p>
+                    <p><strong>Type:</strong> <span id="detailType"></span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p>
+                      <strong>GSTIN:</strong> <span id="detailGstin"></span>
+                    </p>
+                    <p><strong>PNR:</strong> <span id="detailPnr"></span></p>
+                    <p>
+                      <strong>Changes:</strong>
+                      <span id="detailChangeCount"></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="change-content">
+                <h6>Changes:</h6>
+                <div
+                  id="detailChanges"
+                  class="bg-light p-3"
+                  style="max-height: 400px; overflow-y: auto"
+                >
+                  <!-- Changes will be displayed here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -164,10 +328,6 @@
           const lastStateData = await lastStateResponse.json();
 
           if (lastStateData.success && lastStateData.data) {
-            // Ensure error message is preserved in the state
-            if (lastStateData.data.state === 'failed' && !lastStateData.data.error) {
-              lastStateData.data.error = 'Error details not available';
-            }
             // Update last run status
             updateLastRunStatus(lastStateData.data);
 
@@ -178,27 +338,14 @@
             if (lastStateData.data.pnr) {
               document.getElementById("pnr").value = lastStateData.data.pnr;
             }
-
-            // Update scraper status if in error state
-            if (lastStateData.data.state === 'failed') {
-              scrapperStatus.innerHTML = `
-                  <p class="text-danger">
-                      <span class="tooltip-error" data-bs-toggle="tooltip" data-bs-placement="top" 
-                            title="${lastStateData.data.error}">
-                          Last run failed - Hover for details
-                      </span>
-                  </p>
-              `;
-              initializeTooltips();
-            } else {
-              scrapperStatus.innerHTML = '<p class="text-muted">Ready to start</p>';
-            }
-          } else {
-            scrapperStatus.innerHTML = '<p class="text-muted">Ready to start</p>';
           }
+
+          // Always show ready to start
+          scrapperStatus.innerHTML = '<p class="text-muted">Ready to start</p>';
         } catch (error) {
           console.error("Error loading initial state:", error);
-          statusDiv.innerHTML = '<p class="text-danger">Failed to load status</p>';
+          statusDiv.innerHTML =
+            '<p class="text-danger">Failed to load status</p>';
           scrapperStatus.innerHTML = '<p class="text-muted">Ready to start</p>';
         }
       }
@@ -243,38 +390,10 @@
 
       socket.on("scraper_error", function (data) {
         console.error("Scraper error:", data);
-        // Update last run status immediately with error
-        const errorMessage = data.error || data.message || "Unknown error occurred";
-        updateLastRunStatus({
-          state: 'failed',
-          last_run: new Date().toISOString(),
-          error: errorMessage,
-          pnr: document.getElementById("pnr").value,
-          gstin: document.getElementById("gstin").value
-        });
-
-        // Update scraper status to show error
-        const scrapperStatus = document.getElementById("scrapperStatus");
-        scrapperStatus.innerHTML = `
-          <p class="text-danger">
-            <span class="tooltip-error" data-bs-toggle="tooltip" data-bs-placement="top" 
-                  title="${errorMessage}">
-              Scraper failed - Hover for details
-            </span>
-          </p>
-        `;
-
-        // Re-initialize tooltips after adding new elements
-        initializeTooltips();
-
         addEventLog({
           type: "error",
-          message: errorMessage
+          message: data.error || "Unknown error occurred",
         });
-
-        // Update state
-        scraperState.status = "failed";
-        scraperState.error = errorMessage;
       });
 
       socket.on("scraper_general_status", function (data) {
@@ -294,6 +413,12 @@
             `;
       });
 
+      // Add socket listener for the refresh event
+      socket.on('refresh_dom_table', function() {
+        // Refresh the DOM changes table
+        loadDOMChangesTable();
+      });
+
       // Load last state on page load
       document.addEventListener("DOMContentLoaded", () => {
         loadInitialState(); // Load initial state
@@ -308,6 +433,20 @@
             }
           }, 3000);
         }
+
+        loadDOMChangesTable();
+
+        // Remove the setInterval for auto-reload
+        // setInterval(loadDOMChangesTable, 30000);
+
+        // Check for anchor link and add smooth scrolling
+        if (window.location.hash === "#domChangesSection") {
+          setTimeout(() => {
+            document.getElementById("domChangesSection").scrollIntoView({ 
+              behavior: 'smooth' 
+            });
+          }, 500);
+        }
       });
 
       function updateLastRunStatus(state) {
@@ -318,9 +457,6 @@
         }
 
         try {
-          // Get error message from state
-          const errorMessage = state.state === 'failed' ? (state.error || state.message || 'Error details not available') : '';
-
           const lastRunTime = new Date(state.last_run).toLocaleString();
           const nextRunTime = state.next_run
             ? new Date(state.next_run).toLocaleString()
@@ -336,15 +472,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Last Run:</strong> ${lastRunTime}</p>
-                            <p><strong>Status:</strong> 
-                                <span class="${statusClass}" 
-                                     ${state.state === 'failed' ? `data-bs-toggle="tooltip" data-bs-placement="top" title="${errorMessage}"` : ''}
-                                >
-                                    ${state.state || "Unknown"}
-                                </span>
-                            </p>
+                            <p><strong>Status:</strong> <span class="${statusClass}">${
+            state.state || "Unknown"
+          }</span></p>
                             <p><strong>PNR:</strong> ${state.pnr || "N/A"}</p>
-                            <p><strong>GSTIN:</strong> ${state.gstin || "N/A"}</p>
+                            <p><strong>GSTIN:</strong> ${
+                              state.gstin || "N/A"
+                            }</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Next Run:</strong> ${nextRunTime}</p>
@@ -354,9 +488,6 @@
                         </div>
                     </div>
                 `;
-          
-          // Initialize tooltips after updating content
-          initializeTooltips();
         } catch (error) {
           console.error("Error updating last run status:", error);
           statusDiv.innerHTML =
@@ -456,43 +587,19 @@
 
         if (stageElement && statusElement) {
           stageElement.classList.remove("active", "completed", "error");
-          let newClass = "active";
-          
-          if (data.status === "error") {
-            newClass = "error";
-            const errorMessage = data.error || data.message || "Unknown error";
-            // Add tooltip for error state
-            statusElement.setAttribute("data-bs-toggle", "tooltip");
-            statusElement.setAttribute("data-bs-placement", "top");
-            statusElement.setAttribute("title", errorMessage);
-            statusElement.classList.add("tooltip-error");
-            // Stop the process on error
-            scraperState.status = "failed";
-            scraperState.error = errorMessage;
-            updateLastRunStatus({
-              state: 'failed',
-              last_run: new Date().toISOString(),
-              error: errorMessage,
-              pnr: document.getElementById("pnr").value,
-              gstin: document.getElementById("gstin").value
-            });
-          } else if (data.status === "completed") {
-            newClass = "completed";
-            statusElement.removeAttribute("data-bs-toggle");
-            statusElement.removeAttribute("data-bs-placement");
-            statusElement.removeAttribute("title");
-            statusElement.classList.remove("tooltip-error");
-          }
-          
-          stageElement.classList.add(newClass);
+          stageElement.classList.add(
+            data.status === "error"
+              ? "error"
+              : data.status === "completed"
+              ? "completed"
+              : "active"
+          );
+
           statusElement.textContent = data.message;
 
           if (data.timing) {
             timingElement.textContent = `Time: ${data.timing}s`;
           }
-
-          // Initialize tooltips after updating content
-          initializeTooltips();
 
           // Update state
           scraperState.stages[data.stage] = {
@@ -527,25 +634,161 @@
         });
       }
 
-      function initializeTooltips() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+      function formatChange(change) {
+        const typeColors = {
+            'added': 'success',
+            'removed': 'danger',
+            'modified': 'warning'
+        };
+        
+        // Helper function to escape HTML correctly
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;  // This ensures proper HTML escaping
+            return div.innerHTML;
+        }
+        
+        // Function to display HTML tags with syntax highlighting
+        function formatElementString(text) {
+            // First escape HTML to show tags as text
+            let escaped = escapeHtml(text);
+            
+            // Then add syntax highlighting classes without making it render as HTML
+            escaped = escaped
+                // Color HTML tags
+                .replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9]*)/g, '<span style="color: #22863a">$1</span>')
+                // Color attributes
+                .replace(/([a-zA-Z-]+)=(&quot;|&#39;)([^&]*)(&quot;|&#39;)/g, 
+                    '<span style="color: #6f42c1">$1</span>=<span style="color: #032f62">$2$3$4</span>');
+            
+            return escaped;
+        }
+        
+        return `
+            <div class="change-item border-${typeColors[change.type]} p-3 mb-2">
+                <div class="change-path text-muted mb-2">
+                    <strong>Path:</strong> ${escapeHtml(change.path)}
+                </div>
+                <div class="change-element font-monospace">
+                    <strong>Element:</strong>
+                    <pre class="mb-0 mt-1 p-2 bg-light rounded"><code>${formatElementString(change.element)}</code></pre>
+                </div>
+                <div class="change-description text-${typeColors[change.type]} mt-2">
+                    ${escapeHtml(change.description)}
+                </div>
+            </div>
+        `;
+    }
+  
+    function loadDOMChangesTable() {
+        // Add loading indicator
+        const tableBody = document.querySelector('#domChangesTable tbody');
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span class="ms-2">Updating DOM changes...</span>
+                </td>
+            </tr>
+        `;
+        
+        fetch('/scraper/dom_changes')
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const tableBody = document.querySelector('#domChangesTable tbody');
+                    tableBody.innerHTML = '';
+                    
+                    result.data.forEach((change, index) => {
+                        // Create main row with detailed timestamp
+                        const row = document.createElement('tr');
+                        row.className = 'change-row';
+                        row.dataset.index = index;
+                        row.innerHTML = `
+                            <td>
+                                <button class="btn btn-icon btn-link p-0 me-2" onclick="toggleChanges(${index})">
+                                    <i class="bi bi-chevron-right rotate-icon" id="toggle-icon-${index}"></i>
+                                </button>
+                            </td>
+                            <td>${new Date(change.timestamp).toLocaleString()}</td>
+                            <td>${change.page_id}</td>
+                            <td>${change.type || 'structural'}</td>
+                            <td>${change.changes?.length || 0}</td>
+                            <td>${change.gstin || 'N/A'}</td>
+                            <td>${change.pnr || 'N/A'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="showChangeDetails(${index})">
+                                    View Details
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                        
+                        // Create expandable details row with formatted changes
+                        const detailsRow = document.createElement('tr');
+                        detailsRow.className = 'change-details-row';
+                        detailsRow.id = `details-${index}`;
+                        detailsRow.innerHTML = `
+                            <td colspan="8">
+                                <div class="change-details-content">
+                                    <h6 class="mb-3">Changes:</h6>
+                                    <div class="changes-list">
+                                        ${change.changes?.map(formatChange).join('') || 'No changes available'}
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        tableBody.appendChild(detailsRow);
+                    });
+                    
+                    window.domChangesData = result.data;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading DOM changes:', error);
+            });
+    }
+
+    function toggleChanges(index) {
+        const detailsRow = document.getElementById(`details-${index}`);
+        const icon = document.getElementById(`toggle-icon-${index}`);
+
+        if (detailsRow.style.display === "table-row") {
+          detailsRow.style.display = "none";
+          icon.classList.remove("rotated");
+        } else {
+          detailsRow.style.display = "table-row";
+          icon.classList.add("rotated");
+        }
       }
 
-      // Initialize tooltips on page load
-      document.addEventListener('DOMContentLoaded', function() {
-        initializeTooltips();
-      });
+      function showChangeDetails(index) {
+        const change = window.domChangesData[index];
+        const modal = new bootstrap.Modal(
+          document.getElementById("changeDetailsModal")
+        );
+
+        // Fill in modal details
+        document.getElementById("detailTimestamp").textContent = new Date(
+          change.timestamp
+        ).toLocaleString();
+        document.getElementById("detailPageId").textContent = change.page_id;
+        document.getElementById("detailType").textContent =
+          change.type || "structural";
+        document.getElementById("detailGstin").textContent =
+          change.gstin || "N/A";
+        document.getElementById("detailPnr").textContent = change.pnr || "N/A";
+        document.getElementById("detailChangeCount").textContent =
+          change.changes.length;
+
+        const changesContainer = document.getElementById("detailChanges");
+        changesContainer.innerHTML = change.changes.map(formatChange).join('');
+        
+        modal.show();
+      }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      // Initialize tooltips
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl)
-      })
-    </script>
   </body>
 </html>

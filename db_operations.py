@@ -104,18 +104,19 @@ class FirestoreDB:
             logging.error(f"Error updating URL status: {e}")
             raise
 
-    def _add_history_entry(self, doc_ref, timestamp, status, response_time):
-        """Add a history entry for a URL"""
-        try:
-            timestamp_str = timestamp.strftime('%Y%m%d_%H%M%S_%f')
-            history_ref = doc_ref.collection('history').document(timestamp_str)
-            history_ref.set({
-                'timestamp': timestamp,
-                'status': status,
-                'response_time': float(response_time)
-            })
-        except Exception as e:
-            logging.error(f"Error adding history entry: {e}")
+    def _add_history_entry(self, doc_ref, timestamp, status, response_time, changes=None):
+        """
+        Create a record in the 'history' sub-collection.
+        Include an empty or "No Changes" record for consistent logging.
+        """
+        if changes is None:
+            changes = []
+        doc_ref.collection("history").add({
+            "timestamp": timestamp,
+            "status": status,
+            "response_time": response_time,
+            "changes": changes if changes else ["No Changes"]
+        })
 
     def delete_url(self, url):
         doc_id = self._encode_url(url)
@@ -187,17 +188,16 @@ class FirestoreDB:
             logging.error(f"Error syncing URLs: {e}")
             return {}
 
-    def get_url_history(self, url, limit=None):
+    def get_url_history(self, url, offset=0, limit=5000):
         doc_id = self._encode_url(url)
         doc_ref = self.urls_ref.document(doc_id)
         history = []
         try:
-            query = doc_ref.collection('history').order_by(
-                'timestamp',
-                direction=Query.ASCENDING
-            )
-            if limit:
-                query = query.limit(limit)
+            query = doc_ref.collection('history')\
+                .order_by('timestamp', direction=Query.DESCENDING)\
+                .offset(offset)\
+                .limit(limit)
+                
             for doc in query.stream():
                 data = doc.to_dict()
                 data['timestamp'] = self._convert_timestamp(data['timestamp'])
@@ -591,14 +591,24 @@ class FirestoreDB:
             logging.error(f"Error getting scraper states: {e}")
             return {}
 
-    def get_scraper_analytics(self, gstin=None, pnr=None):
-        """Get analytics for scraper runs"""
+    def get_scraper_analytics(self, gstin=None, pnr=None, last_timestamp=None):
+        """Get analytics for scraper runs with pagination support"""
         try:
             query = self.scraper_history_ref
             if gstin and pnr:
                 query = query.where('gstin', '==', gstin).where('pnr', '==', pnr)
             
-            docs = query.order_by('timestamp', direction=Query.DESCENDING).limit(100).stream()
+            query = query.order_by('timestamp', direction=Query.DESCENDING).limit(1000)
+            
+            if last_timestamp:
+                # Create a cursor to start after the last fetched timestamp
+                last_doc = self.scraper_history_ref.where('timestamp', '<', last_timestamp)\
+                    .order_by('timestamp', direction=Query.DESCENDING).limit(1).stream()
+                last_doc = list(last_doc)
+                if last_doc:
+                    query = query.start_after({'timestamp': last_timestamp})
+            
+            docs = query.stream()
             
             analytics = {
                 'total_runs': 0,
@@ -646,7 +656,7 @@ class FirestoreDB:
             } for doc in dom_changes]
             
             return analytics
-            
+                
         except Exception as e:
             logging.error(f"Error getting scraper analytics: {e}")
             return None
@@ -716,3 +726,53 @@ class FirestoreDB:
         except Exception as e:
             logger.error(f"Error getting DOM changes: {e}")
             return []
+
+    def get_last_dom_comparison_result(self, page_id):
+        """Get the latest DOM comparison result"""
+        try:
+            doc = self.dom_changes_ref.document(page_id).get()
+            if doc.exists:
+                data = doc.to_dict()
+                return {
+                    'has_changes': data.get('has_changes', False),
+                    'last_check': data.get('timestamp'),
+                    'changes_count': len(data.get('changes', []))
+                }
+            return {
+                'has_changes': False,
+                'last_check': None,
+                'changes_count': 0
+            }
+        except Exception as e:
+            logger.error(f"Error getting last DOM comparison: {e}")
+            return None
+
+    def save_dom_comparison(self, page_id, has_changes, changes, html_content, gstin=None, pnr=None):
+        """Save DOM comparison results and history"""
+        try:
+            timestamp = datetime.now(pytz.UTC)
+            
+            # Save current snapshot and comparison result
+            self.dom_changes_ref.document(page_id).set({
+                'has_changes': has_changes,
+                'timestamp': timestamp,
+                'content': html_content
+            })
+
+            # Always add to history, even if no changes
+            history_entry = {
+                'timestamp': timestamp,
+                'page_id': page_id,
+                'has_changes': has_changes,
+                'changes': changes if changes else [],
+                'gstin': gstin,
+                'pnr': pnr
+            }
+            
+            # Add to history collection
+            self.dom_changes_ref.document(page_id).collection('history').add(history_entry)
+            
+            return True
+        except Exception as e:
+            logger.error(f"Error saving DOM comparison: {e}")
+            return False

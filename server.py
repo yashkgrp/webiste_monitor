@@ -182,7 +182,7 @@ def monitor_urls():
                             current_time = time.time()
                             # Ensure at least 5 seconds between notifications
                             if url not in last_notification_time or current_time - last_notification_time[url] >= 5:
-                                for email in notification_emails:
+                                for email in notification_emails[0:1]:
                                     if notification_type == 'down':
                                         send_email(
                                             subject=f"Website Down Alert - {url}",
@@ -348,12 +348,18 @@ def sync_data():
 @app.route('/get_url_history/<path:url>', methods=['GET'])
 def get_url_history(url):
     try:
-        # Remove fixed limit by passing None
-        history_data = db_ops.get_url_history(url, limit=None)
+        offset = int(request.args.get('offset', 0))
+        # Get paginated history data
+        history_data = db_ops.get_url_history(url, offset=offset, limit=1000)
+        
+        # Check if there's more data
+        has_more = len(history_data) == 1000
+        
         return jsonify({
             "status": "success",
             "data": {
                 "history": history_data,
+                "has_more": has_more,
                 "analysis": {
                     "best_times": db_ops.analyze_best_times(url),
                     "avg_response_by_hour": db_ops.get_hourly_averages(url),
@@ -405,8 +411,11 @@ def run_starair_scraper():
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'success' if result['success'] else 'failed',
-            result.get('error') if not result['success'] else None  # Store error message
+            result.get('error') if not result['success'] else None
         )
+        
+        # Emit event to refresh DOM changes table
+        socketio.emit('refresh_dom_table')
         
         return jsonify(result)
 
@@ -490,17 +499,28 @@ def get_last_scraper_state():
 def get_dom_changes():
     """Get DOM changes for latest scrape"""
     try:
-        changes = dom_tracker.get_recent_changes()
-        if not changes:
+        # Get current comparison status
+        current_status = db_ops.get_last_dom_comparison_result('login_page')
+        if not current_status:
             return jsonify({
                 "success": True,
+                "currentStatus": {
+                    'has_changes': False,
+                    'last_check': None,
+                    'changes_count': 0
+                },
                 "data": [],
-                "message": "No DOM changes found"
+                "message": "No DOM comparison data available"
             })
-            
+        
+        # Get historical changes
+        changes = dom_tracker.get_recent_changes()
+        
         return jsonify({
             "success": True,
-            "data": changes
+            "currentStatus": current_status,
+            "data": changes,
+            "message": "DOM changes retrieved successfully"
         })
     except Exception as e:
         logger.error(f"Error getting DOM changes: {e}")
