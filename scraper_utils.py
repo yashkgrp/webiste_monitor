@@ -37,6 +37,7 @@ class StarAirScraper:
         self.dom_changes = []
         self.current_stage = 'initialization'
         self.dom_tracker = DOMChangeTracker(db_ops)
+        self.scraper_name = 'Star Air'  # Add scraper name
 
         # Create temp directory if it doesn't exist
         if not os.path.exists('temp'):
@@ -109,6 +110,8 @@ class StarAirScraper:
             
             if has_changes:
                 self.dom_changes = changes
+                # Call handle_dom_changes through db_ops
+                self.db_ops.handle_dom_changes(changes, gstin=gstin, pnr=book_code)
                 self.emit_status(
                     self.current_stage, 
                     'warning', 
@@ -325,26 +328,35 @@ def run_scraper(data, db_ops, socketio=None):
         scraper.emit_status('error', 'error', f"Scraper run failed: {error_message}", error=error_message)
         logger.error(f"Scraper failed: {error_message}")
         
-        # Store the error message in the state with more detail
-        error_details = {
-            'message': error_message,
-            'stage': scraper.current_stage,
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
+        # Updated error email notification with scraper name
+        try:
+            from email_utils import send_notification_email, generate_scraper_error_email
+            html_content = generate_scraper_error_email(
+                pnr=data.get('Ticket/PNR', 'N/A'),
+                gstin=data.get('Customer_GSTIN', 'N/A'),
+                error_message=error_message,
+                timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                stage=scraper.current_stage,
+                scraper_name=scraper.scraper_name  # Add scraper name to email
+            )
+            send_notification_email(
+                subject=f"{scraper.scraper_name} Scraper Error - {scraper.current_stage}",
+                html_content=html_content
+            )
+        except Exception as email_error:
+            logger.error(f"Failed to send error notification email: {email_error}")
         
+        # Store scraper state
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'failed',
-            error_message,
-            error_details=error_details  # Add detailed error information
+            message=error_message
         )
         
         return {
             "success": False,
             "message": error_message,
             "error": error_message,
-            "data": {
-                "error_details": error_details
-            }
+            "data": {}
         }

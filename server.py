@@ -19,6 +19,11 @@ from scraper_utils import run_scraper
 from dom_utils import DOMChangeTracker  # New import
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from email_utils import (
+    generate_scraper_error_email, 
+    generate_dom_change_email, 
+    send_notification_email
+)
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -475,28 +480,48 @@ def run_starair_scraper():
         result = run_scraper(data, db_ops, socketio)
         
         # Update final state while preserving auto_run and next_run
-        db_ops.store_scraper_state(
-            data['Customer_GSTIN'],
-            data['Ticket/PNR'],
-            'success' if result['success'] else 'failed',
-            result.get('error') if not result['success'] else None,
-            next_run=current_state.get('next_run') if current_state else None,
-            auto_run=current_state.get('auto_run') if current_state else False
-        )
-        
+        if result['success']:
+            db_ops.store_scraper_state(
+                data['Customer_GSTIN'],
+                data['Ticket/PNR'],
+                'success',
+                next_run=current_state.get('next_run') if current_state else None,
+                auto_run=current_state.get('auto_run') if current_state else False
+            )
+        else:
+            # Store failure state with error message
+            db_ops.store_scraper_state(
+                data['Customer_GSTIN'],
+                data['Ticket/PNR'],
+                'failed',
+                message=result.get('message') or 'Unknown error occurred',
+                next_run=current_state.get('next_run') if current_state else None,
+                auto_run=current_state.get('auto_run') if current_state else False
+            )
         
         return jsonify(result)
         
     except Exception as e:
         error_msg = str(e)
+        # Store error state with exception message
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'failed',
-            error_msg,
+            message=error_msg,
             next_run=current_state.get('next_run') if current_state else None,
             auto_run=current_state.get('auto_run') if current_state else False
         )
+        
+        # Emit comprehensive status update
+        socketio.emit('update_last_run_status', {
+            'state': 'failed',
+            'last_run': datetime.now(pytz.UTC).isoformat(),
+            'error': error_msg,
+            'gstin': data['Customer_GSTIN'],
+            'pnr': data['Ticket/PNR']
+        })
+        
         return jsonify({
             "success": False,
             "message": error_msg,
@@ -747,16 +772,47 @@ def run_automated_scrape():
         error_msg = str(e)
         logger.error(f"Automated scrape failed: {e}")
         if 'data' in locals():
+            # Store error state
             db_ops.store_scraper_state(
                 data['Customer_GSTIN'],
                 data['Ticket/PNR'],
                 'failed',
-                error_msg
+                message=error_msg
             )
-        socketio.emit('scraper_error', {
-            'message': error_msg,
-            'stage': 'automated_run'
-        })
+            
+            # Emit comprehensive status update
+            socketio.emit('update_last_run_status', {
+                'state': 'failed',
+                'last_run': datetime.now(pytz.UTC).isoformat(),
+                'error': error_msg,  # Include error message
+                'gstin': data['Customer_GSTIN'],
+                'pnr': data['Ticket/PNR']
+            })
+            
+            # Emit specific error event
+            socketio.emit('scraper_error', {
+                'message': error_msg,
+                'stage': 'automated_run',
+                'gstin': data['Customer_GSTIN'],
+                'pnr': data['Ticket/PNR'],
+                'timestamp': datetime.now(pytz.UTC).isoformat()
+            })
+
+            # Send error notification email
+            notification_emails = db_ops.get_notification_emails()
+            if notification_emails:
+                html_content = generate_scraper_error_email(
+                    pnr=data['Ticket/PNR'],
+                    gstin=data['Customer_GSTIN'],
+                    error_message=error_msg,
+                    timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    stage='automated_run'
+                )
+                send_notification_email(
+                    subject=f"Scraper Error - PNR: {data['Ticket/PNR']}",
+                    html_content=html_content,
+                    notification_emails=notification_emails
+                )
 
 @socketio.on('scraper_status')
 def handle_scraper_status(data):
@@ -930,6 +986,23 @@ def startair_scraper(data, db_ops, socketio=None):
     except Exception as e:
         logging.error(f"Error in startair_scraper: {str(e)}")
         return {"success": False, "message": str(e), "data": {}}
+
+def handle_dom_changes(changes, gstin, pnr):
+    """Handle DOM changes and send notifications"""
+    if changes and len(changes) > 0:
+        notification_emails = db_ops.get_notification_emails()
+        if notification_emails:
+            html_content = generate_dom_change_email(
+                pnr=pnr,
+                gstin=gstin,
+                changes=changes,
+                timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            )
+            send_notification_email(
+                subject=f"DOM Changes Detected - PNR: {pnr}",
+                html_content=html_content,
+                notification_emails=notification_emails
+            )
 
 if __name__ == '__main__': 
     # Initialize scheduler before starting threads

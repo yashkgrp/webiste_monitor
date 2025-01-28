@@ -942,6 +942,89 @@
       document.addEventListener('DOMContentLoaded', () => {
         loadSchedulerSettings();
       });
+
+      socket.on('update_last_run_status', function(data) {
+        const statusDiv = document.getElementById("lastRunStatus");
+        const timestamp = new Date(data.last_run).toLocaleString();
+        
+        let statusHtml = `
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Last Run:</strong> ${timestamp}</p>
+                    <p><strong>Status:</strong> 
+                        <span class="${data.state === 'failed' ? 'text-danger' : 'text-success'}">
+                            ${data.state}
+                        </span>
+                    </p>
+                    <p><strong>PNR:</strong> ${data.pnr || 'N/A'}</p>
+                    <p><strong>GSTIN:</strong> ${data.gstin || 'N/A'}</p>
+                </div>
+                <div class="col-md-6">
+                    ${data.next_run ? `<p><strong>Next Run:</strong> ${new Date(data.next_run).toLocaleString()}</p>` : ''}
+                    ${data.auto_run ? `<p><strong>Auto Run:</strong> Enabled</p>` : ''}
+                    ${data.error ? `
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${data.error}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        statusDiv.innerHTML = statusHtml;
+
+        // Also update the scrapper status
+        const scrapperStatus = document.getElementById("scrapperStatus");
+        if (data.error) {
+            scrapperStatus.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${data.error}
+                    <br>
+                    <small class="text-muted">${timestamp}</small>
+                </div>
+            `;
+        }
+    });
+
+    socket.on('scraper_error', function(data) {
+        // Show error in event log
+        addEventLog({
+            type: 'error',
+            message: data.message
+        });
+        
+        // Update both status displays
+        const scrapperStatus = document.getElementById("scrapperStatus");
+        scrapperStatus.innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error:</strong> ${data.message}
+                <br>
+                <small class="text-muted">${new Date(data.timestamp).toLocaleString()}</small>
+            </div>
+        `;
+
+        // Update last run status if GSTIN and PNR are provided
+        if (data.gstin && data.pnr) {
+            const statusDiv = document.getElementById("lastRunStatus");
+            const timestamp = new Date(data.timestamp).toLocaleString();
+            
+            statusDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Last Run:</strong> ${timestamp}</p>
+                        <p><strong>Status:</strong> <span class="text-danger">failed</span></p>
+                        <p><strong>PNR:</strong> ${data.pnr}</p>
+                        <p><strong>GSTIN:</strong> ${data.gstin}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> ${data.message}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>

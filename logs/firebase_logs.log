@@ -1,889 +1,362 @@
-2025-01-28 15:59:42,104 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 15:59:42,107 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:42,323 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:42,353 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:42,413 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:42,414 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:42,442 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:42,443 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:42,585 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:42,603 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:42,686 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:42,687 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:42,708 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:42,710 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:42,859 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:42,955 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:42,956 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:43,025 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:43,115 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 15:59:43,116 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:43,318 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:43,404 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:43,405 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:43,570 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:43,664 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:43,665 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:43,833 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:43,936 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:43,937 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:45,249 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:45,373 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 15:59:45,374 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:46,608 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:46,695 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:46,695 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:46,867 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:46,963 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:46,963 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:47,226 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:47,284 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:47,334 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 15:59:47,335 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:47,384 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 15:59:47,385 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:47,545 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:47,636 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:47,647 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:47,648 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:47,729 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:47,731 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:47,791 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:47,884 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:47,885 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:47,915 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:48,031 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:48,031 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:48,214 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:48,300 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:48,300 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:49,213 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:49,302 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 15:59:49,303 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:49,589 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:49,679 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:49,680 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:49,849 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:49,929 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:49,930 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:50,096 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:50,175 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:50,176 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:50,612 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:50,719 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 15:59:50,720 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:51,948 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:52,052 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:52,052 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:52,204 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:52,309 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:52,309 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:52,502 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:52,598 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 15:59:52,598 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:52,624 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:52,711 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 15:59:52,712 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:52,875 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:52,956 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:53,013 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:53,014 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:53,058 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:53,058 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:53,161 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:53,232 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:53,247 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:53,248 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:53,326 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:53,327 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:53,518 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:53,600 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:53,600 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:54,644 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:54,747 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 15:59:54,748 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:54,997 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:55,105 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:55,106 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:55,357 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:55,491 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:55,492 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:55,734 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:55,839 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:55,840 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:55,928 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:56,053 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 15:59:56,054 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:57,358 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:57,453 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:57,454 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:57,616 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:57,735 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:57,736 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:58,174 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:58,274 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 15:59:58,275 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:58,479 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:58,491 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:58,584 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 15:59:58,586 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:58,586 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:58,737 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:58,801 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:58,837 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 15:59:58,838 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:58,884 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 15:59:58,885 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:59,056 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:59,146 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 15:59:59,147 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 15:59:59,348 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 15:59:59,429 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 15:59:59,430 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:00,150 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:00,247 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:00,247 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:00,434 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:00,526 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:00,527 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:00,702 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:00,799 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:00,801 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:00,993 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:01,088 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:01,089 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:01,745 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:01,839 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:01,839 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:03,083 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:03,173 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:03,173 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:03,332 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:03,420 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:03,429 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:03,430 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:03,524 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:03,524 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:03,728 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:03,750 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:03,831 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:03,831 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:03,832 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:03,832 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:03,987 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:04,018 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:04,079 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:04,080 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:04,120 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:04,121 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:04,286 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:04,371 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:04,372 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:04,556 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:04,661 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:04,662 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:05,378 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:05,477 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:05,478 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:05,691 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:05,785 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:05,786 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:05,956 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:06,059 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:06,059 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:06,234 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:06,318 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:06,318 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:06,934 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:07,023 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:07,024 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:08,251 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:08,323 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:08,324 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:08,496 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:08,582 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:08,583 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:08,607 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:08,707 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:08,708 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:08,958 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:09,053 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:09,053 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:09,215 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:09,301 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:09,302 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:09,913 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:10,008 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:10,009 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:10,227 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:10,304 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:10,304 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:10,599 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:10,635 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:10,700 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:10,701 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:10,736 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:10,736 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:10,880 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:10,956 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:10,989 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:10,990 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:11,079 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:11,080 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:11,270 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:11,360 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:11,361 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:11,543 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:11,658 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:11,658 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:12,265 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:12,350 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:12,350 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:13,599 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:13,684 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:13,685 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:13,855 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:13,943 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:13,957 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:13,958 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:14,048 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:14,049 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:14,318 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:14,471 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:14,471 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:14,637 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:14,776 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:14,777 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:15,310 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:15,398 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:15,399 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:15,598 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:15,688 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:15,688 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:15,878 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:15,966 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:15,966 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:16,096 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:16,132 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:16,187 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:16,187 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:16,210 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:16,211 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:16,568 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:16,652 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:16,652 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:16,815 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:16,911 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:16,911 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:17,078 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:17,168 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:17,168 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:17,500 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:17,594 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:17,595 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:18,810 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:18,916 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:18,917 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:19,068 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:19,160 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:19,161 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:19,447 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:19,540 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:19,540 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:19,746 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:19,853 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:19,854 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:20,002 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:20,103 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:20,104 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:21,396 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:21,477 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:21,483 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:21,484 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:21,558 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:21,559 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:21,747 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:21,838 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:21,839 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:21,875 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:21,979 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:21,980 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:22,031 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:22,144 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:22,144 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:22,179 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:22,255 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:22,256 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:22,314 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:22,394 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:22,395 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:22,452 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:22,550 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:22,551 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:23,854 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:23,942 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:23,943 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:24,166 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:24,291 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:24,291 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:24,422 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:24,530 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:24,531 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:24,659 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:24,739 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:24,740 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:24,977 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:25,067 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:25,067 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:25,215 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:25,308 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:25,309 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:26,847 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:26,962 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:26,963 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:27,158 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:27,246 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:27,247 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:27,445 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:27,528 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:27,529 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:27,617 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:27,726 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:27,726 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:27,729 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:27,830 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:27,830 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:27,925 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:28,027 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:28,028 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:28,207 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:28,318 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:28,319 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:28,536 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:28,641 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:28,641 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:29,152 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:29,247 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:29,248 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:29,516 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:29,614 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:29,615 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:29,852 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:29,961 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:29,961 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:29,967 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:30,090 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:30,091 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:30,375 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:30,473 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:30,474 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:30,649 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:30,762 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:30,763 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:32,331 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:32,481 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:32,482 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:32,761 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:32,857 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:32,858 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:33,048 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:33,131 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:33,194 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:33,195 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:33,241 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:33,242 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:33,394 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:33,448 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:33,509 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:33,511 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:33,565 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:33,566 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:33,746 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:33,865 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:33,866 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:34,031 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:34,125 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:34,126 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:34,848 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:34,933 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:34,934 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:35,245 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:35,369 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:35,370 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:35,444 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:35,555 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:35,556 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:35,558 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:35,650 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:35,651 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:35,877 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:35,984 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:35,985 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:36,184 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:36,277 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:36,278 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:37,986 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:38,080 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:38,081 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:38,305 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:38,390 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:38,391 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:38,568 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:38,622 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:38,667 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:38,668 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:38,703 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:38,704 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:38,830 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:38,898 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:38,923 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:38,924 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:38,993 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:38,993 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:39,201 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:39,306 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:39,308 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:39,497 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:39,611 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:39,611 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:40,428 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:40,538 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:40,539 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:40,740 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:40,828 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:40,828 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:40,894 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:40,987 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:40,988 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:41,015 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:41,105 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:41,106 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:41,267 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:41,379 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:41,381 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:41,567 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:41,656 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:41,656 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:43,441 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:43,542 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:43,543 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:43,812 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:43,897 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:43,898 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:44,012 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:44,097 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:44,098 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:44,099 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:44,195 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:44,196 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:44,304 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:44,363 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:44,392 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:44,392 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:44,455 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:44,456 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:44,592 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:44,673 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:44,674 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:44,844 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:44,940 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:44,941 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:45,755 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:45,864 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:45,865 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:46,157 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:46,252 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:46,252 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:46,253 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:46,359 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:46,359 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:46,440 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:46,544 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:46,545 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:46,582 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:46,679 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:46,679 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:46,828 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:46,924 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:46,925 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:48,882 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:48,975 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:48,976 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:49,211 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:49,241 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:49,293 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:49,294 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:49,337 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:49,338 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:49,460 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:49,548 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:49,552 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:49,553 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:49,636 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:49,637 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:49,730 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:49,798 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:49,827 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:49,827 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:49,883 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:49,883 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:50,067 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:50,157 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:50,158 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:51,111 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:51,215 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:51,216 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:51,533 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:51,625 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:51,626 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:51,796 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:51,897 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:51,899 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:52,470 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:52,564 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:52,565 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:52,863 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:52,961 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:52,962 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:53,132 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:53,265 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:53,266 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:54,258 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:54,365 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:54,365 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:54,619 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:54,673 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:54,711 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:54,711 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:54,762 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:54,762 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:54,917 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:54,966 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:55,020 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:00:55,021 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:55,042 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:55,043 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:55,190 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:55,226 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:55,293 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:00:55,294 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:55,327 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:55,328 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:55,472 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:55,559 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:00:55,560 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:56,674 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:56,755 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:56,756 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:57,066 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:57,166 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:57,167 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:57,350 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:57,426 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:57,427 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:57,901 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:57,999 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:00:58,001 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:58,218 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:58,320 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:00:58,322 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:58,494 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:58,597 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:00:58,597 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:59,797 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:00:59,895 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:00:59,896 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:00:59,951 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,049 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:00,050 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:00,137 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,240 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:00,240 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:00,286 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,385 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:00,386 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:00,432 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,532 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:00,533 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:00,587 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,692 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:00,693 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:00,719 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,808 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:00,809 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:00,886 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:00,994 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:00,994 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:02,110 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:02,207 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:02,208 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:02,467 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:02,552 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:02,553 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:02,793 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:02,893 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:02,894 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:03,312 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:03,404 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:03,405 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:05,230 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:05,341 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:05,341 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:05,562 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:05,655 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:05,656 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:05,843 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:05,925 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:05,926 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:06,095 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:06,195 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:06,196 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:07,480 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:07,567 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:07,568 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:11,594 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:11,717 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:11,717 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:11,780 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:11,871 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:11,872 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:11,949 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:12,030 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:12,049 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:12,050 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:12,131 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:12,132 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:12,363 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:12,467 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:12,467 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:12,601 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:12,726 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:12,727 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:12,846 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:12,959 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:12,959 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:12,963 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:13,108 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:13,109 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:13,187 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:13,301 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:13,304 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:13,304 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:13,391 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:13,392 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:13,474 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:13,564 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:13,564 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:13,566 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:13,660 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:13,661 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:14,896 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:15,001 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:15,002 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:15,007 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:15,105 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:15,106 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:17,299 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:17,386 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:17,386 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:17,409 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:17,496 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:17,497 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:17,556 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:17,638 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:17,639 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:17,653 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:17,754 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:17,754 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:17,955 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,055 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:18,056 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:18,058 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,155 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:18,155 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:18,359 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,400 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,458 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:18,459 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:18,484 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:18,485 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:18,657 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,686 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,769 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:18,769 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:18,784 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:18,785 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:18,936 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:18,961 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:19,025 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:19,025 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:19,079 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:19,080 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:20,318 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:20,362 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:20,404 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:20,405 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:20,469 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:20,469 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:22,678 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:22,789 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:22,789 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:22,792 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:22,897 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:22,897 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:22,953 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:23,040 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:23,041 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:23,078 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:23,172 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:23,173 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:23,373 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:23,457 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:23,458 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:23,517 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:23,606 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:23,607 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:23,660 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:23,754 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:23,754 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:23,844 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:23,932 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:23,933 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:23,935 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:24,028 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:24,029 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:24,106 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:24,201 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:24,237 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:24,238 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:24,300 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:24,300 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:24,404 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:24,496 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:24,497 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:25,589 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:25,686 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:25,687 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:25,795 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:25,900 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:25,901 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:27,998 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:28,097 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:28,098 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:28,241 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:28,302 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:28,336 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:28,336 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:28,399 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:28,399 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:28,507 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:28,626 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:28,627 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:28,705 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:28,801 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:28,802 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:28,925 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,012 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,018 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:29,019 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:29,110 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:29,110 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:29,250 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,297 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,350 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:29,351 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:29,398 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:29,399 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:29,522 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,575 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,616 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:29,617 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:29,667 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:29,667 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:29,840 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:29,919 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:29,920 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:30,981 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:31,071 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:31,072 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:31,205 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:31,311 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:31,312 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:33,377 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:33,467 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:33,468 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:33,638 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:33,723 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:33,724 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:33,725 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:33,822 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:33,823 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:33,894 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:34,030 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:34,030 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:34,171 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:34,283 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:34,284 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:34,386 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:34,499 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:34,500 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:34,503 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:34,607 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:34,608 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:34,750 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:34,834 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:34,898 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:34,899 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:34,930 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:34,930 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:35,096 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:35,165 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:35,189 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:35,190 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:35,257 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:35,257 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:35,398 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:35,477 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:35,478 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:36,562 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:36,657 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:36,658 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:36,747 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:36,860 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
-2025-01-28 16:01:36,861 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:39,063 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:39,109 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:39,168 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:39,169 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:39,459 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
-2025-01-28 16:01:39,460 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:40,031 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:40,389 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:40,390 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:40,392 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:40,933 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
-2025-01-28 16:01:40,934 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:41,251 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:41,517 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:41,730 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:41,730 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:42,018 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
-2025-01-28 16:01:42,019 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:42,858 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:43,152 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:43,457 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:43,457 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:43,712 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
-2025-01-28 16:01:43,713 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:44,431 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:44,710 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:45,066 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:45,067 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:45,338 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
-2025-01-28 16:01:45,339 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:46,162 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:46,651 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:46,651 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
-2025-01-28 16:01:46,654 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
-2025-01-28 16:01:47,213 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
-2025-01-28 16:01:47,214 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:13,225 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:13,315 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:13,316 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:13,453 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:13,498 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:13,541 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:13,542 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:13,580 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:13,581 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:13,725 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:13,823 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:13,824 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:14,442 - INFO - FIREBASE: Query | Collection: notification_email_list_file_upload | Operation: get_emails | Params: None
+2025-01-28 18:42:15,860 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:15,933 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:15,934 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:16,175 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:16,215 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:16,256 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:16,256 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:16,293 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:16,294 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:16,450 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:16,488 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:16,544 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:16,546 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:16,578 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:16,579 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:16,609 - INFO - FIREBASE: Query | Collection: notification_email_list_file_upload | Operation: get_emails | Params: None
+2025-01-28 18:42:16,730 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:16,808 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:16,809 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:16,972 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:17,063 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:17,064 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:18,345 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:18,440 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:18,441 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:18,750 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:18,842 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:18,844 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:18,899 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:19,020 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:19,021 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:19,027 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:19,118 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:19,118 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:19,196 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:19,297 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:19,298 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:19,501 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:19,608 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:19,609 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:19,772 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:19,866 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:19,867 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:21,164 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:21,241 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:21,242 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:21,470 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:21,558 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:21,559 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:21,561 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:21,647 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:21,648 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:21,822 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:21,823 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:21,907 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:21,908 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:21,908 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:21,909 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:22,095 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:22,175 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:22,176 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:22,342 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:22,445 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:22,446 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:23,733 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:23,829 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:23,830 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:24,092 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:24,178 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:24,180 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:24,253 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:24,333 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:24,334 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:24,339 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:24,431 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:24,432 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:24,584 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:24,676 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:24,677 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:24,842 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:24,935 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:24,936 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:25,089 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:25,179 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:25,180 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:26,530 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:26,632 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:26,634 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:26,786 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:26,872 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:26,872 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:26,897 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:26,987 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:26,988 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:27,079 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:27,138 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:27,172 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:27,173 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:27,238 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:27,239 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:27,345 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:27,433 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:27,435 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:27,603 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:27,714 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:27,715 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:29,020 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:29,114 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:29,115 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:29,354 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:29,474 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:29,474 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:29,607 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:29,668 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:29,695 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:29,696 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:29,757 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:29,757 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:29,943 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:30,030 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:30,031 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:30,191 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:30,272 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:30,273 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:30,451 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:30,547 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:30,548 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:31,841 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:31,931 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:31,932 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:32,111 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:32,203 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:32,209 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:32,210 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:32,293 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:32,293 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:32,459 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:32,492 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:32,563 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:32,564 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:32,595 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:32,596 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:32,779 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:32,870 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:32,872 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:33,053 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:33,172 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:33,173 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:34,475 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:34,562 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:34,563 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:34,818 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:34,903 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:34,921 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:34,923 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:35,017 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:35,018 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:35,101 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:35,208 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:35,209 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:35,257 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:35,354 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:35,360 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:35,534 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:35,619 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:35,620 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:35,825 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:35,916 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:35,916 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:37,201 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:37,282 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:37,283 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:37,558 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:37,592 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:37,645 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:37,646 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:37,693 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:37,693 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:37,797 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:37,881 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:37,882 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:38,069 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:38,156 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:38,157 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:38,334 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:38,431 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:38,432 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:38,588 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:38,677 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:38,678 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:40,001 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:40,078 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:40,078 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:40,211 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:40,297 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:40,298 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:40,371 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:40,470 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:40,471 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:40,577 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:40,671 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:40,685 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:40,686 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:40,800 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:40,801 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:40,908 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:41,000 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:41,001 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:41,175 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:41,318 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:41,319 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:42,638 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:42,723 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:42,724 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:43,010 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:43,101 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:43,102 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:43,158 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:43,268 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:43,269 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:43,282 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:43,381 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:43,382 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:43,538 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:43,637 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:43,638 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:43,826 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:43,923 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:43,924 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:44,088 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:44,171 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:44,172 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:45,481 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:45,588 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:45,589 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:45,729 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:45,812 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:45,813 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:45,878 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:45,980 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:45,981 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:46,136 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:46,143 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:46,228 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:46,229 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:46,230 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:46,231 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:46,392 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:46,487 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:46,488 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:46,642 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:46,732 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:46,733 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:48,023 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:48,136 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:48,137 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:48,373 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:48,455 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:48,456 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:48,577 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:48,633 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:48,677 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:48,678 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:48,706 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:48,707 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:48,936 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:49,019 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:49,019 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:49,167 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:49,266 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:49,267 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:49,433 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:49,521 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:49,521 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:50,822 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:50,911 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:50,912 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:51,034 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:51,113 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:51,114 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:51,212 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:51,307 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:51,316 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:51,317 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:51,380 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:51,381 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:51,516 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:51,560 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:51,618 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:51,618 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:51,657 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:51,658 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:51,844 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:51,932 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:51,933 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:53,268 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:53,360 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:53,361 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:53,606 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:53,703 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:53,704 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:53,859 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:53,954 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:53,955 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:54,004 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:54,096 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:54,097 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:54,398 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:54,484 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:54,485 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:54,697 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:54,794 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:54,795 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:54,985 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:55,063 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:55,063 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:56,354 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:56,462 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cuZ29pbmRpZ28uaW4vdmlldy1nc3QtaW52b2ljZQ | Operation: update_status
+2025-01-28 18:42:56,463 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:56,722 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:56,806 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly93d3cudW5pdGVkaW5kaWFnc3QuY29tL2ludm9pY2UtbGlzdC5waHA | Operation: update_status
+2025-01-28 18:42:56,807 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:56,958 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:56,977 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:57,049 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9hbGxpYW5jZWFpci5jby5pbi9nc3Qv | Operation: update_status
+2025-01-28 18:42:57,050 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:57,074 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:57,075 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:57,277 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:57,350 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:42:57,351 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:57,527 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:57,612 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:42:57,613 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:57,787 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:57,860 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:42:57,861 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:42:59,605 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:42:59,690 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9ldGloYWQuc3VwZXJ0YXhnc3QuaW4vZ3Vlc3RpbnZvaWNlcw | Operation: update_status
+2025-01-28 18:42:59,691 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:43:00,006 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:43:00,100 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3QuYWlyaW5kaWEuY29tL3BvcnRhbC9pbmRleC5odG1s | Operation: update_status
+2025-01-28 18:43:00,101 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:43:00,255 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:43:00,341 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9nc3Quc3BpY2VqZXQuY29tL2dzdGRvd25sb2FkL0dTVEhhbmRsZXIuYXNoeA | Operation: update_status
+2025-01-28 18:43:00,342 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed
+2025-01-28 18:43:00,527 - INFO - FIREBASE: Transaction | Operation: update_status | Status: started
+2025-01-28 18:43:00,615 - INFO - FIREBASE: Write | Collection: monitored_urls | Document: aHR0cHM6Ly9zdGFyYWlyLmluL2N1c3RvbWVyL2dzdGludm9pY2U | Operation: update_status
+2025-01-28 18:43:00,615 - INFO - FIREBASE: Transaction | Operation: update_status | Status: completed

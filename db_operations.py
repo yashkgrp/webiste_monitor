@@ -433,6 +433,24 @@ class FirestoreDB:
             except Exception:
                 return []
 
+    def handle_dom_changes(self, changes, gstin=None, pnr=None):
+        """Handle DOM changes and send notifications"""
+        if changes and len(changes) > 0:
+            notification_emails = self.get_notification_emails()
+            if notification_emails:
+                from email_utils import generate_dom_change_email, send_notification_email
+                html_content = generate_dom_change_email(
+                    pnr=pnr,
+                    gstin=gstin,
+                    changes=changes,
+                    timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                )
+                send_notification_email(
+                    subject=f"DOM Changes Detected - PNR: {pnr}",
+                    html_content=html_content,
+                    notification_emails=notification_emails
+                )
+
     def store_dom_snapshot(self, page_id, content):
         """Store DOM snapshot with structural comparison"""
         try:
@@ -476,11 +494,14 @@ class FirestoreDB:
                         'page_id': page_id,
                         'changes': diff,
                         'type': 'structural',
-                        'page_url': f"https://yourwebsite.com/{page_id}",  # New field
-                        'detected_by': 'ScraperModule',  # New field
-                        'change_summary': 'Structural changes detected in the DOM.'  # New field
+                        'page_url': f"https://yourwebsite.com/{page_id}",
+                        'detected_by': 'ScraperModule',
+                        'change_summary': 'Structural changes detected in the DOM.'
                     }
                     self.dom_changes_ref.add(change_doc)
+                    
+                    # Call handle_dom_changes as an instance method
+                    self.handle_dom_changes(diff, gstin=None, pnr=None)
             else:
                 has_changes = True
                 diff = ["Initial structure snapshot"]
@@ -516,22 +537,47 @@ class FirestoreDB:
             doc_id = f"{gstin}_{pnr}"
             current_time = datetime.now(pytz.UTC)
             
+            # Get existing state to preserve next_run if it's a manual run
+            existing_state = self.scraper_state_ref.document(doc_id).get()
+            
             state_data = {
                 'gstin': gstin,
                 'pnr': pnr,
                 'state': state,
                 'message': message,
+                'error': message if state == 'failed' else None,
                 'last_run': current_time,
                 'updated_at': current_time
             }
             
-            # Store exact datetime objects
+            # Handle next_run timing
             if next_run is not None:
+                # New scheduled run
                 state_data['next_run'] = next_run
+            elif existing_state.exists and state == 'failed':
+                # On failure, preserve existing next_run if it exists
+                existing_data = existing_state.to_dict()
+                if 'next_run' in existing_data:
+                    state_data['next_run'] = existing_data['next_run']
+            elif auto_run is None:
+                # Manual run - don't modify next_run
+                if existing_state.exists:
+                    existing_data = existing_state.to_dict()
+                    if 'next_run' in existing_data:
+                        state_data['next_run'] = existing_data['next_run']
+            
+            # Update auto_run only if explicitly provided
             if auto_run is not None:
                 state_data['auto_run'] = auto_run
+            elif existing_state.exists:
+                existing_data = existing_state.to_dict()
+                if 'auto_run' in existing_data:
+                    state_data['auto_run'] = existing_data['auto_run']
             
+            # Store with merge to preserve any other existing fields
             self.scraper_state_ref.document(doc_id).set(state_data, merge=True)
+            
+            logging.debug(f"Stored scraper state: {state_data}")
             
         except Exception as e:
             logger.error(f"Error storing scraper state: {e}")
