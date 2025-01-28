@@ -367,6 +367,38 @@
         updateDisplay(data);
       });
 
+      // Add this to your existing socket event listeners
+      socket.on('settings_updated', function(data) {
+          // Update next run time in scraper status table
+          const nextRunCell = document.getElementById('nextRunTime');
+          if (data.next_run) {
+              nextRunCell.textContent = new Date(data.next_run).toLocaleString();
+          } else {
+              nextRunCell.textContent = 'Not scheduled';
+          }
+          
+          // Update auto run status
+          document.getElementById('autoRunStatus').innerHTML = `
+              <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+                  ${data.auto_run ? "Enabled" : "Disabled"}
+              </span>
+          `;
+      });
+
+      socket.on('scraper_auto_run_complete', function(data) {
+          // Update next run time if provided
+          if (data.next_run) {
+              document.getElementById('nextRunTime').textContent = new Date(data.next_run).toLocaleString();
+          }
+          
+          // Update scraper status
+          document.getElementById('scraperStatus').innerHTML = `
+              <span class="badge ${data.success ? "bg-success" : "bg-danger"}">
+                  ${data.success ? "Success" : "Failed"}
+              </span>
+          `;
+      });
+
       function updateDisplay(data) {
         if (!Array.isArray(data)) {
           console.error("Invalid data format:", data);

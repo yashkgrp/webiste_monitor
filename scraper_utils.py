@@ -307,6 +307,7 @@ def run_scraper(data, db_ops, socketio=None):
         scraper.timing_data['total_run'] = round(end_time - start_time, 3)
         scraper.emit_status('completion', 'success', 'Scraping completed successfully')
         scraper.emit_status('completion', 'debug', 'Scraper run completed successfully')
+        socketio.emit("refresh_dom_table")
 
         return {
             "success": True,

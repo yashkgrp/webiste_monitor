@@ -510,50 +510,31 @@ class FirestoreDB:
         except Exception as e:
             logging.error(f"Error updating scraper status: {e}")
 
-    def store_scraper_state(self, gstin, pnr, state='pending', message=None, frontend_state=None):
+    def store_scraper_state(self, gstin, pnr, state='pending', message=None, next_run=None, auto_run=None):
         """Store scraper state in Firebase"""
         try:
             doc_id = f"{gstin}_{pnr}"
             current_time = datetime.now(pytz.UTC)
             
-            # Get existing state
-            existing_doc = self.scraper_state_ref.document(doc_id).get()
-            auto_run = True  # Default value
-            
-            if existing_doc.exists:
-                existing_data = existing_doc.to_dict()
-                auto_run = existing_data.get('auto_run', True)
-            
-            # Prepare state data (removed PDF handling)
             state_data = {
                 'gstin': gstin,
                 'pnr': pnr,
                 'state': state,
                 'message': message,
                 'last_run': current_time,
-                'next_run': current_time + timedelta(hours=1),
-                'auto_run': auto_run,
-                'updated_at': current_time,
-                'frontend_state': frontend_state or {}
+                'updated_at': current_time
             }
             
-            # Store state in scraper_states subcollection
+            # Store exact datetime objects
+            if next_run is not None:
+                state_data['next_run'] = next_run
+            if auto_run is not None:
+                state_data['auto_run'] = auto_run
+            
             self.scraper_state_ref.document(doc_id).set(state_data, merge=True)
             
-            # Add to history subcollection
-            history_data = {
-                'gstin': gstin,
-                'pnr': pnr,
-                'state': state,
-                'message': message,
-                'timestamp': current_time,
-                'frontend_state': frontend_state or {}
-            }
-                
-            self.scraper_history_ref.add(history_data)
-            
         except Exception as e:
-            logging.error(f"Error storing scraper state: {e}")
+            logger.error(f"Error storing scraper state: {e}")
             raise
 
     def get_last_scraper_state(self):
@@ -567,10 +548,10 @@ class FirestoreDB:
             
             for state in states:
                 data = state.to_dict()
-                # Convert timestamps to ISO format
+                # Convert timestamps to milliseconds for frontend
                 for field in ['last_run', 'next_run', 'updated_at']:
                     if field in data and data[field]:
-                        data[field] = data[field].isoformat()
+                        data[field] = int(data[field].timestamp() * 1000)
                 return data
                 
             return None
@@ -647,7 +628,7 @@ class FirestoreDB:
             dom_changes = self.dom_changes_ref.order_by(
                 'timestamp', 
                 direction=Query.DESCENDING
-            ).limit(10).stream()
+            ).limit(1000).stream()
             
             analytics['dom_changes'] = [{
                 'timestamp': doc.get('timestamp'),
@@ -715,7 +696,7 @@ class FirestoreDB:
             logger.error(f"Error storing DOM data: {e}")
             return False
             
-    def get_dom_changes(self, limit=10):
+    def get_dom_changes(self, limit=1000):
         """Get recent DOM changes"""
         try:
             changes = self.db.collection('dom_changes')\
@@ -775,4 +756,55 @@ class FirestoreDB:
             return True
         except Exception as e:
             logger.error(f"Error saving DOM comparison: {e}")
+            return False
+
+    def get_scheduler_settings(self):
+        """Get scheduler settings from Firestore"""
+        try:
+            doc = self.star_air_ref.collection('settings').document('scheduler').get()
+            if doc.exists:
+                data = doc.to_dict()
+                # Convert next_run to timestamp in milliseconds
+                if 'next_run' in data and data['next_run']:
+                    data['next_run'] = int(data['next_run'].timestamp() * 1000)
+                return data
+            return {
+                'auto_run': False,
+                'interval': 60,
+                'next_run': None
+            }
+        except Exception as e:
+            logger.error(f"Error getting scheduler settings: {e}")
+            return None
+
+    def update_scheduler_settings(self, auto_run, interval, next_run=None):
+        """Update scheduler settings in Firestore"""
+        try:
+            settings = {
+                'auto_run': auto_run,
+                'interval': interval,
+                'updated_at': datetime.now(pytz.UTC)
+            }
+            if next_run:
+                # Store exact datetime object
+                settings['next_run'] = next_run
+                
+            self.star_air_ref.collection('settings').document('scheduler').set(
+                settings,
+                merge=True
+            )
+            return True
+        except Exception as e:
+            logger.error(f"Error updating scheduler settings: {e}")
+            return False
+
+    def update_next_run_time(self, next_run):
+        """Update next run time in scheduler settings"""
+        try:
+            self.star_air_ref.collection('settings').document('scheduler').update({
+                'next_run': next_run  # Store exact datetime object
+            })
+            return True
+        except Exception as e:
+            logger.error(f"Error updating next run time: {e}")
             return False

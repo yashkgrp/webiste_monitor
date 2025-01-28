@@ -214,7 +214,7 @@ class DOMChangeTracker:
             logger.error(f"Error storing DOM changes: {e}")
             return [], False
     
-    def get_recent_changes(self, limit=10):
+    def get_recent_changes(self, limit=1000):
         """Get recent DOM changes"""
         try:
             changes = self.db_ops.get_dom_changes(limit)

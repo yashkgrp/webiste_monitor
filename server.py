@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit
+import pytz
 from flask_cors import CORS
 import requests, time, threading, logging
 import urllib3
@@ -16,6 +17,8 @@ import re
 from urllib.parse import urljoin
 from scraper_utils import run_scraper
 from dom_utils import DOMChangeTracker  # New import
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -76,6 +79,74 @@ EMAIL_CONFIG = {
     'SMTP_PASSWORD': os.getenv('SMTP_PASSWORD'),
     'NOTIFICATION_EMAIL': os.getenv('SMTP_NOTIFICATIONEMAIL')
 }
+
+# Initialize scheduler
+scheduler = BackgroundScheduler()
+
+def initialize_scheduler():
+    try:
+        settings = db_ops.get_scheduler_settings()
+        if not settings or not settings.get('auto_run'):
+            return
+
+        current_time = datetime.now(pytz.UTC)
+        stored_next_run = settings.get('next_run')
+        
+        if stored_next_run:
+            # Convert to datetime if it's a timestamp
+            if isinstance(stored_next_run, (int, float)):
+                stored_next_run = datetime.fromtimestamp(stored_next_run/1000, pytz.UTC)
+
+            # If next_run was missed or is in the past
+            if stored_next_run <= current_time:
+                # Schedule for 5 minutes from now
+                next_run = current_time + timedelta(minutes=5)
+                
+                # Update next run time everywhere
+                db_ops.update_scheduler_settings(
+                    settings.get('auto_run'),
+                    settings.get('interval', 60),
+                    next_run
+                )
+                
+                # Update scraper state with new next_run
+                last_state = db_ops.get_last_scraper_state()
+                if last_state:
+                    db_ops.store_scraper_state(
+                        last_state.get('gstin'),
+                        last_state.get('pnr'),
+                        last_state.get('state', 'idle'),
+                        last_state.get('message'),
+                        next_run=next_run,
+                        auto_run=settings.get('auto_run')
+                    )
+                
+                # Schedule the job
+                scheduler.add_job(
+                    run_automated_scrape,
+                    'date',
+                    run_date=next_run,
+                    id='auto_scraper',
+                    replace_existing=True
+                )
+                
+                logger.info(f"Rescheduled missed run to: {next_run}")
+            else:
+                # Clear any existing job first
+                if scheduler.get_job('auto_scraper'):
+                    scheduler.remove_job('auto_scraper')
+                
+                # If next_run is in the future, just schedule it without updates
+                scheduler.add_job(
+                    run_automated_scrape,
+                    'date',
+                    run_date=stored_next_run,
+                    id='auto_scraper'
+                )
+                logger.info(f"Scheduled future run for: {stored_next_run}")
+
+    except Exception as e:
+        logger.error(f"Error initializing scheduler: {e}")
 
 def monitor_urls():
     session = requests.Session()
@@ -253,6 +324,7 @@ def run_automated_scraper():
                             state['pnr'], 
                             'success' if result['success'] else 'failed'
                         )
+                        
                     except Exception as e:
                         logger.error(f"Automated scraper failed for {state_id}: {e}")
             
@@ -382,51 +454,48 @@ def scraper_page():
 @app.route('/run_starair_scraper', methods=['POST'])
 def run_starair_scraper():
     try:
+        # Get current state before running
+        current_state = db_ops.get_last_scraper_state()
+        
         data = {
             'Vendor': 'Star Air',
             'Ticket/PNR': request.form.get('pnr'),
             'Customer_GSTIN': request.form.get('gstin')
         }
         
-        if not data['Ticket/PNR'] or not data['Customer_GSTIN']:
-            return jsonify({
-                "success": False,
-                "message": "PNR and GSTIN are required"
-            }), 400
-
-        logger.info(f"Starting scraper with PNR: {data['Ticket/PNR']}")
-        
-        # Store initial state
+        # Store initial state while preserving auto_run and next_run
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
-            'running'
+            'running',
+            next_run=current_state.get('next_run') if current_state else None,
+            auto_run=current_state.get('auto_run') if current_state else False
         )
         
-        # Run scraper
         result = run_scraper(data, db_ops, socketio)
         
-        # Update final state with error message if failed
+        # Update final state while preserving auto_run and next_run
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'success' if result['success'] else 'failed',
-            result.get('error') if not result['success'] else None
+            result.get('error') if not result['success'] else None,
+            next_run=current_state.get('next_run') if current_state else None,
+            auto_run=current_state.get('auto_run') if current_state else False
         )
         
-        # Emit event to refresh DOM changes table
-        socketio.emit('refresh_dom_table')
         
         return jsonify(result)
-
+        
     except Exception as e:
         error_msg = str(e)
-        # Store error state with message
         db_ops.store_scraper_state(
             data['Customer_GSTIN'],
             data['Ticket/PNR'],
             'failed',
-            error_msg
+            error_msg,
+            next_run=current_state.get('next_run') if current_state else None,
+            auto_run=current_state.get('auto_run') if current_state else False
         )
         return jsonify({
             "success": False,
@@ -528,6 +597,166 @@ def get_dom_changes():
             "success": False,
             "message": str(e)
         }), 500
+
+@app.route('/scraper/settings', methods=['GET', 'POST'])
+def scheduler_settings():
+    """Handle scraper scheduler settings"""
+    if request.method == 'GET':
+        settings = db_ops.get_scheduler_settings()
+        return jsonify({
+            "success": True,
+            "settings": settings  # Already in milliseconds timestamp
+        })
+    
+    try:
+        settings = request.json
+        auto_run = settings.get('auto_run', False)
+        interval = settings.get('interval', 60)
+        
+        # Calculate next run time based on current local time
+        current_time = datetime.now(pytz.UTC)
+        next_run = current_time + timedelta(minutes=interval) if auto_run else None
+        
+        # Update both scheduler settings and scraper state
+        db_ops.update_scheduler_settings(auto_run, interval, next_run)
+        
+        # Get last scraper state to update with new settings
+        last_state = db_ops.get_last_scraper_state()
+        if last_state:
+            db_ops.store_scraper_state(
+                last_state.get('gstin'),
+                last_state.get('pnr'),
+                last_state.get('state', 'idle'),
+                last_state.get('message'),
+                next_run=next_run,
+                auto_run=auto_run
+            )
+        
+        # Update scheduler job
+        job_id = 'auto_scraper'
+        if scheduler.get_job(job_id):
+            scheduler.remove_job(job_id)
+            
+        if auto_run and next_run:
+            scheduler.add_job(
+                run_automated_scrape,
+                'date',
+                run_date=next_run,
+                id=job_id,
+                replace_existing=True
+            )
+            
+        # Send milliseconds timestamp to frontend
+        next_run_ts = int(next_run.timestamp() * 1000) if next_run else None
+        
+        # Emit update to refresh frontend
+        socketio.emit('settings_updated', {
+            "next_run": next_run_ts,
+            "auto_run": auto_run,
+            "interval": interval
+        })
+            
+        return jsonify({
+            "success": True,
+            "message": "Settings updated",
+            "next_run": next_run_ts
+        })
+        
+    except Exception as e:
+        logger.error(f"Error updating scheduler settings: {e}")
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+def run_automated_scrape():
+    """Run automated scrape with identical behavior to manual runs"""
+    try:
+        # Get last state and settings
+        last_state = db_ops.get_last_scraper_state()
+        settings = db_ops.get_scheduler_settings()
+        
+        if not last_state or not settings.get('auto_run'):
+            return
+            
+        data = {
+            'Vendor': 'Star Air',
+            'Ticket/PNR': last_state.get('pnr'),
+            'Customer_GSTIN': last_state.get('gstin')
+        }
+        
+        # Run scraper
+        result = run_scraper(data, db_ops, socketio)
+        
+        # Calculate next run time based on current time (after scraping completes)
+        current_time = datetime.now(pytz.UTC)
+        interval_minutes = settings.get('interval', 60)
+        next_run = current_time + timedelta(minutes=interval_minutes)
+        
+        # Update both settings and scraper state with new next_run time
+        if settings.get('auto_run'):
+            # Update settings
+            db_ops.update_scheduler_settings(True, interval_minutes, next_run)
+            
+            # Update scraper state
+            db_ops.store_scraper_state(
+                data['Customer_GSTIN'],
+                data['Ticket/PNR'],
+                'success' if result['success'] else 'failed',
+                result.get('message'),
+                next_run=next_run,
+                auto_run=True
+            )
+            
+            # Schedule next run
+            job_id = 'auto_scraper'
+            if scheduler.get_job(job_id):
+                scheduler.remove_job(job_id)
+                
+            scheduler.add_job(
+                run_automated_scrape,
+                'date',  # Use 'date' trigger for exact time
+                run_date=next_run,  # Schedule for next run time
+                id=job_id,
+                replace_existing=True
+            )
+            
+            # Emit updates to frontend
+            socketio.emit('settings_updated', {
+                "next_run": next_run.isoformat(),
+                "auto_run": True,
+                "interval": interval_minutes
+            })
+            
+            socketio.emit('scraper_auto_run_complete', {
+                'success': result['success'],
+                'message': result.get('message'),
+                'next_run': next_run.isoformat()
+            })
+            
+            socketio.emit('update_last_run_status', {
+                'state': 'success' if result['success'] else 'failed',
+                'last_run': current_time.isoformat(),
+                'next_run': next_run.isoformat(),
+                'gstin': data['Customer_GSTIN'],
+                'pnr': data['Ticket/PNR'],
+                'auto_run': True
+            })
+        
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Automated scrape failed: {e}")
+        if 'data' in locals():
+            db_ops.store_scraper_state(
+                data['Customer_GSTIN'],
+                data['Ticket/PNR'],
+                'failed',
+                error_msg
+            )
+        socketio.emit('scraper_error', {
+            'message': error_msg,
+            'stage': 'automated_run'
+        })
 
 @socketio.on('scraper_status')
 def handle_scraper_status(data):
@@ -703,6 +932,10 @@ def startair_scraper(data, db_ops, socketio=None):
         return {"success": False, "message": str(e), "data": {}}
 
 if __name__ == '__main__': 
+    # Initialize scheduler before starting threads
+    initialize_scheduler()
+    scheduler.start()
+    
     t = threading.Thread(target=monitor_urls)
     t.daemon = True  # Make thread daemon so it stops when main program stops
     t.start()
@@ -715,6 +948,7 @@ if __name__ == '__main__':
     try:
         socketio.run(app, debug=True, host='0.0.0.0', port=5000)
     finally:
+        scheduler.shutdown()
         stop_thread = True
         t.join(timeout=5)
         s.join(timeout=5)

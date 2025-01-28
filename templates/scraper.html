@@ -224,6 +224,32 @@
         </div>
       </div>
 
+      <!-- Add Scheduler Settings section after status display -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">Scheduler Settings</h5>
+        </div>
+        <div class="card-body">
+          <form id="schedulerForm" onsubmit="saveSchedulerSettings(event)">
+            <div class="mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="autoRunEnabled">
+                <label class="form-check-label" for="autoRunEnabled">Enable Auto Run</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="runInterval" class="form-label">Run Interval (minutes)</label>
+              <input type="number" class="form-control" id="runInterval" value="60">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Next Run:</label>
+              <p id="nextRunTime" class="mb-0 text-muted">Not scheduled</p>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+      </div>
+
       <!-- After other cards, add this section -->
       <div class="card mt-4" id="domChangesSection">
         <div class="card-header">
@@ -419,6 +445,68 @@
         loadDOMChangesTable();
       });
 
+      // Add new socket event handlers
+      socket.on('scraper_auto_run_complete', function(data) {
+          // Update status display
+          const scrapperStatus = document.getElementById("scrapperStatus");
+          const statusClass = data.success ? "text-success" : "text-danger";
+          scrapperStatus.innerHTML = `
+              <p class="${statusClass}">
+                  ${data.message}
+                  <small class="text-muted d-block">Auto Run Completed</small>
+              </p>
+          `;
+
+          // Add to event log
+          addEventLog({
+              type: data.success ? "info" : "error",
+              message: `Auto Run: ${data.message}`
+          });
+
+          // Update next run display if provided
+          if (data.next_run) {
+              updateNextRunDisplay(data.next_run);
+          }
+      });
+
+      socket.on('update_last_run_status', function(data) {
+          updateLastRunStatus(data);
+      });
+
+      socket.on('scraper_reset', function() {
+          // Reset status display
+          const scrapperStatus = document.getElementById("scrapperStatus");
+          scrapperStatus.innerHTML = '<p class="text-info">Starting automated scrape...</p>';
+
+          // Reset stages
+          document.querySelectorAll(".stage").forEach((stage) => {
+              stage.classList.remove("active", "completed", "error");
+              const statusElement = stage.querySelector("p");
+              if (statusElement) statusElement.textContent = "not yet started";
+              const timingElement = stage.querySelector("small");
+              if (timingElement) timingElement.textContent = "";
+          });
+
+          // Clear event log
+          document.getElementById("eventLog").innerHTML = "";
+      });
+
+      // Add new socket event handler for settings update
+      socket.on('settings_updated', function(data) {
+        // Update next run display
+        if (data.next_run) {
+            // Convert timestamp to local time
+            const nextRunDate = new Date(data.next_run);  // data.next_run is already in milliseconds
+            document.getElementById('nextRunTime').textContent = nextRunDate.toLocaleString();
+        } else {
+            document.getElementById('nextRunTime').textContent = 'Not scheduled';
+        }
+        
+        // Update form values
+        document.getElementById('autoRunEnabled').checked = data.auto_run;
+        document.getElementById('runInterval').value = data.interval;
+      });
+
       // Load last state on page load
       document.addEventListener("DOMContentLoaded", () => {
         loadInitialState(); // Load initial state
@@ -485,6 +573,9 @@
                             <p><strong>Auto Run:</strong> ${
                               state.auto_run ? "Enabled" : "Disabled"
                             }</p>
+                            ${state.state === "failed" && state.error ? `
+                                <p class="text-danger"><strong>Error:</strong> ${state.error}</p>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -788,6 +879,69 @@
         
         modal.show();
       }
+
+      function loadSchedulerSettings() {
+        fetch('/scraper/settings')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('autoRunEnabled').checked = data.settings.auto_run || false;
+              document.getElementById('runInterval').value = data.settings.interval || 60;
+              updateNextRunDisplay(data.settings.next_run);
+            }
+          })
+          .catch(err => console.error('Error loading scheduler settings:', err));
+      }
+
+      function saveSchedulerSettings(event) {
+        event.preventDefault();
+        const button = event.submitter;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        const settings = {
+          auto_run: document.getElementById('autoRunEnabled').checked,
+          interval: parseInt(document.getElementById('runInterval').value)
+        };
+
+        fetch('/scraper/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings)
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Next run time will be updated via socket event
+              showToast('Settings saved successfully', 'success');
+            } else {
+              showToast('Failed to save settings', 'error');
+            }
+          })
+          .catch(err => {
+            console.error('Error saving settings:', err);
+            showToast('Error saving settings', 'error');
+          })
+          .finally(() => {
+            button.disabled = false;
+            button.innerHTML = 'Save Settings';
+          });
+      }
+
+      function updateNextRunDisplay(nextRun) {
+        const display = document.getElementById('nextRunTime');
+        if (nextRun) {
+          const nextRunDate = new Date(nextRun);
+          display.textContent = nextRunDate.toLocaleString();
+        } else {
+          display.textContent = 'Not scheduled';
+        }
+      }
+
+      // Load scheduler settings on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        loadSchedulerSettings();
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
