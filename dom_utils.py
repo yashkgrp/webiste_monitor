@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 import logging
 import re
 
+import pytz
+
 logger = logging.getLogger(__name__)
 
 class DOMChangeTracker:
@@ -117,42 +119,6 @@ class DOMChangeTracker:
             logger.error(f"Error comparing DOM: {e}")
             return [], False
 
-    def _get_element_path(self, element_str):
-        """Extract path from element string"""
-        try:
-            # Parse element string into a soup object
-            soup = BeautifulSoup(element_str, 'html.parser')
-            element = soup.find()
-            if not element:
-                return "unknown"
-
-            # Build detailed path information
-            path_info = []
-            
-            # Add tag name
-            path_info.append(element.name)
-            
-            # Add ID if present
-            if element.get('id'):
-                path_info.append(f"#{element['id']}")
-                
-            # Add classes if present
-            if element.get('class'):
-                path_info.extend([f".{cls}" for cls in element['class']])
-                
-            # Add other important attributes
-            important_attrs = ['name', 'type', 'method', 'action']
-            for attr in important_attrs:
-                if element.get(attr):
-                    path_info.append(f"[{attr}='{element[attr]}']")
-            
-            # Combine path components
-            return ''.join(path_info)
-            
-        except Exception as e:
-            logger.error(f"Error getting element path: {str(e)}")
-            return element_str  # Return original element string if parsing fails
-
     def _extract_attributes(self, element_str):
         """Extract all attributes from an element string"""
         try:
@@ -214,6 +180,57 @@ class DOMChangeTracker:
             logger.error(f"Error storing DOM changes: {e}")
             return [], False
     
+
+    def store_dom_changes_akasa(self, page_id, content, pnr=None, lastName=None, traveller_name=None):
+        """Store DOM changes specifically for Akasa Air"""
+        try:
+            doc_ref = self.db_ops.db.collection('akasa_dom_changes').document(page_id)
+            old_snapshot = doc_ref.get()
+            
+            def get_structure(html_content):
+                soup = BeautifulSoup(html_content, 'html.parser')
+                for tag in soup.find_all():
+                    attrs = tag.attrs
+                    keep_attrs = {'id', 'class', 'type', 'name', 'method', 'action'}
+                    tag.attrs = {k: v for k, v in attrs.items() if k in keep_attrs}
+                    if tag.string:
+                        tag.string = ''
+                return str(soup)
+
+            new_structure = get_structure(content)
+            changes = []
+            has_changes = False
+
+            if old_snapshot.exists:
+                old_structure = get_structure(old_snapshot.to_dict().get('content', ''))
+                diff = list(difflib.unified_diff(
+                    old_structure.splitlines(),
+                    new_structure.splitlines(),
+                    fromfile='previous',
+                    tofile='current',
+                    lineterm=''
+                ))
+                has_changes = bool(diff)
+                changes = diff if has_changes else []
+
+            # Store current state with Akasa-specific fields
+            doc_ref.set({
+                'content': content,
+                'structure': new_structure,
+                'timestamp': datetime.now(pytz.UTC),
+                'has_changes': has_changes,
+                'pnr': pnr,
+                'lastName': lastName,
+                'traveller_name': traveller_name,
+                'airline': 'akasa'
+            })
+
+            return changes, has_changes
+
+        except Exception as e:
+            logger.error(f"Error storing Akasa DOM changes: {str(e)}")
+            return [], False
+
     def get_recent_changes(self, limit=1000):
         """Get recent DOM changes"""
         try:

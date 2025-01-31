@@ -531,13 +531,13 @@ class FirestoreDB:
         except Exception as e:
             logging.error(f"Error updating scraper status: {e}")
 
-    def store_scraper_state(self, gstin, pnr, state='pending', message=None, next_run=None, auto_run=None):
+    def store_scraper_state(self, gstin, pnr, state='pending', message=None, next_run=None, auto_run=None, preserve_last_run=False, preserve_next_run=False):
         """Store scraper state in Firebase"""
         try:
             doc_id = f"{gstin}_{pnr}"
             current_time = datetime.now(pytz.UTC)
             
-            # Get existing state to preserve next_run if it's a manual run
+            # Get existing state to preserve values if needed
             existing_state = self.scraper_state_ref.document(doc_id).get()
             
             state_data = {
@@ -546,25 +546,26 @@ class FirestoreDB:
                 'state': state,
                 'message': message,
                 'error': message if state == 'failed' else None,
-                'last_run': current_time,
                 'updated_at': current_time
             }
             
+            # Handle last_run preservation
+            if not preserve_last_run:
+                state_data['last_run'] = current_time
+            elif existing_state.exists:
+                existing_data = existing_state.to_dict()
+                if 'last_run' in existing_data:
+                    state_data['last_run'] = existing_data['last_run']
+            
             # Handle next_run timing
-            if next_run is not None:
-                # New scheduled run
-                state_data['next_run'] = next_run
-            elif existing_state.exists and state == 'failed':
-                # On failure, preserve existing next_run if it exists
+            if preserve_next_run and existing_state.exists:
+                # If preserving next_run, keep existing value if present
                 existing_data = existing_state.to_dict()
                 if 'next_run' in existing_data:
                     state_data['next_run'] = existing_data['next_run']
-            elif auto_run is None:
-                # Manual run - don't modify next_run
-                if existing_state.exists:
-                    existing_data = existing_state.to_dict()
-                    if 'next_run' in existing_data:
-                        state_data['next_run'] = existing_data['next_run']
+            elif next_run is not None:
+                # New scheduled run
+                state_data['next_run'] = next_run
             
             # Update auto_run only if explicitly provided
             if auto_run is not None:

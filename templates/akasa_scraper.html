@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Akasa Air Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Use same styles as Star Air -->
+    <style>
+      .stage {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: all 0.3s;
+      }
+      .stage.active {
+        background: #fff3cd;
+        border-color: #ffeeba;
+      }
+      .stage.completed {
+        background: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .stage.error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .event-log {
+        height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-top: 15px;
+      }
+      .event-item {
+        padding: 5px;
+        margin: 5px 0;
+        border-left: 3px solid #007bff;
+      }
+      .event-item.error {
+        border-left-color: #dc3545;
+      }
+      // ... existing styles ...
+    </style>
+  </head>
+  <body>
+    <div class="container my-4">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Website Monitor</a>
+          <a class="btn btn-outline-primary" href="/">Back to Dashboard</a>
+        </div>
+      </nav>
+
+      <!-- Last Run Status section -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Last Run Status</h5>
+          <div id="lastRunStatus">
+            <p class="text-muted">Loading last run status...</p>
+          </div>
+        </div>
+      </div>
+
+      <h1>Akasa Air Scraper</h1>
+      <div class="row mt-4">
+        <!-- Scraper Form -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Start New Scrape</h5>
+              <form id="scraperForm" onsubmit="startScraper(event)">
+                <div class="mb-3">
+                  <label for="pnr" class="form-label">PNR/Booking Code</label>
+                  <input type="text" class="form-control" id="pnr" required />
+                </div>
+                <div class="mb-3">
+                  <label for="traveller_name" class="form-label"
+                    >Traveller Name</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="traveller_name"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Start Scraping
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Display -->
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Scraper Status</h5>
+              <div id="scrapperStatus">
+                <p class="text-muted">Waiting to start...</p>
+              </div>
+
+              <!-- Progress Stages -->
+              <div class="progress-stages mt-4">
+                <div class="stage" id="initialization-stage">
+                  <h6>Initialization</h6>
+                  <p id="initialization-status">not yet started</p>
+                  <small id="initialization-timing"></small>
+                </div>
+                <div class="stage" id="request-stage">
+                  <h6>Request</h6>
+                  <p id="request-status">not yet started</p>
+                  <small id="request-timing"></small>
+                </div>
+                <div class="stage" id="processing-stage">
+                  <h6>Processing</h6>
+                  <p id="processing-status">not yet started</p>
+                  <small id="processing-timing"></small>
+                </div>
+              </div>
+
+              <!-- Event Log -->
+              <div class="event-log mt-4">
+                <h6>Event Log</h6>
+                <div id="eventLog"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scheduler Settings section -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">Scheduler Settings</h5>
+        </div>
+        <div class="card-body">
+          <form id="schedulerForm" onsubmit="saveSchedulerSettings(event)">
+            <div class="mb-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="autoRunEnabled"
+                />
+                <label class="form-check-label" for="autoRunEnabled"
+                  >Enable Auto Run</label
+                >
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="runInterval" class="form-label"
+                >Run Interval (minutes)</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="runInterval"
+                value="60"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Next Run:</label>
+              <p id="nextRunTime" class="mb-0 text-muted">Not scheduled</p>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- DOM Changes History section -->
+      <div class="card mt-4" id="domChangesSection">
+        <div class="card-header">
+          <h5 class="mb-0">DOM Changes History</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="domChangesTable">
+              <thead>
+                <tr>
+                  <th style="width: 5%"></th>
+                  <th style="width: 20%">Timestamp</th>
+                  <th style="width: 15%">Page ID</th>
+                  <th style="width: 15%">Type</th>
+                  <th style="width: 15%">Changes Count</th>
+                  <th style="width: 15%">PNR</th>
+                  <th style="width: 15%">Traveller Name</th>
+                  <th style="width: 5%">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Will be filled dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Details Modal -->
+      <div class="modal fade" id="changeDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">DOM Change Details</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="change-metadata mb-3">
+                <div class="row">
+                  <div class="col-md-6">
+                    <p>
+                      <strong>Timestamp:</strong>
+                      <span id="detailTimestamp"></span>
+                    </p>
+                    <p>
+                      <strong>Page ID:</strong> <span id="detailPageId"></span>
+                    </p>
+                    <p><strong>Type:</strong> <span id="detailType"></span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>PNR:</strong> <span id="detailPnr"></span></p>
+                    <p>
+                      <strong>Traveller Name:</strong>
+                      <span id="detailTravellerName"></span>
+                    </p>
+                    <p>
+                      <strong>Changes:</strong>
+                      <span id="detailChangeCount"></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="change-content">
+                <h6>Changes:</h6>
+                <div
+                  id="detailChanges"
+                  class="bg-light p-3"
+                  style="max-height: 400px; overflow-y: auto"
+                >
+                  <!-- Changes will be displayed here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const socket = io();
+      let currentStage = "";
+      let tooltipList = [];
+      let currentStatus;
+
+      // Update stage colors and transitions
+      function updateStageStatus(stage, status, message, timing = null) {
+        const stageElements = document.querySelectorAll(".stage");
+        const currentStageElement = document.getElementById(`${stage}-stage`);
+        const statusElement = document.getElementById(`${stage}-status`);
+        const timingElement = document.getElementById(`${stage}-timing`);
+
+        if (currentStageElement && statusElement) {
+          const stages = Array.from(stageElements);
+          const currentIndex = stages.indexOf(currentStageElement);
+
+          // First update the current stage
+          currentStageElement.classList.remove("active", "completed", "error");
+          switch (status) {
+            case "error":
+              currentStageElement.classList.add("error");
+              currentStageElement.style.backgroundColor = "#f8d7da";
+              currentStageElement.style.borderColor = "#f5c6cb";
+              break;
+            case "completed":
+              currentStageElement.classList.add("completed");
+              currentStageElement.style.backgroundColor = "#d4edda";
+              currentStageElement.style.borderColor = "#c3e6cb";
+              break;
+            case "starting":
+            case "progress":
+              currentStageElement.classList.add("active");
+              currentStageElement.style.backgroundColor = "#fff3cd";
+              currentStageElement.style.borderColor = "#ffeeba";
+              break;
+          }
+
+          // Update previous stages as completed
+          stages.forEach((element, index) => {
+            if (index < currentIndex) {
+              element.classList.remove("active", "error");
+              element.classList.add("completed");
+              element.style.backgroundColor = "#d4edda";
+              element.style.borderColor = "#c3e6cb";
+
+              // Update their status text
+              const prevStatusEl = element.querySelector("p");
+              if (prevStatusEl) {
+                prevStatusEl.classList.remove("text-danger");
+              }
+            }
+          });
+
+          // Update message and timing
+          statusElement.textContent = message || "In progress...";
+          if (timing) {
+            timingElement.textContent = `Time: ${timing}s`;
+          }
+        }
+      }
+
+      // Add event log entry with timestamp
+      function addEventLog(data) {
+        const eventLogDiv = document.getElementById("eventLog");
+        const eventItem = document.createElement("div");
+        eventItem.className = `event-item ${
+          data.type === "error" ? "error" : ""
+        }`;
+
+        const timestamp = new Date().toLocaleTimeString();
+        const timingStr = data.elapsed ? ` (${data.elapsed}s)` : "";
+
+        eventItem.innerHTML = `
+                <small class="text-muted">${timestamp}</small>
+                <span class="ms-2">${data.message}${timingStr}</span>
+            `;
+
+        eventLogDiv.appendChild(eventItem);
+        eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
+      }
+
+      // Update socket event listeners to be Akasa-specific
+      socket.on("akasa_scraper_status", function (data) {
+        console.log("Akasa status update:", data);
+
+        // Add slight delay for visual feedback
+        setTimeout(() => {
+          // Force completion status for previous stages when a new stage starts
+          const stages = ["initialization", "request", "processing"];
+          const currentIndex = stages.indexOf(data.stage);
+
+          if (currentIndex > 0) {
+            stages.slice(0, currentIndex).forEach((prevStage) => {
+              updateStageStatus(
+                prevStage,
+                "completed",
+                document.getElementById(`${prevStage}-status`).textContent,
+                document
+                  .getElementById(`${prevStage}-timing`)
+                  .textContent?.replace("Time: ", "")
+                  ?.replace("s", "")
+              );
+            });
+          }
+
+          // Update current stage
+          updateStageStatus(data.stage, data.status, data.message, data.timing);
+
+          // Add to event log
+          addEventLog({
+            type: data.status === "error" ? "error" : "info",
+            message: `${data.stage.toUpperCase()}: ${data.message}`,
+            elapsed: data.timing,
+          });
+        }, 300);
+      });
+
+      socket.on("akasa_scraper_event", function (data) {
+        console.log("Akasa event:", data);
+        updateStatus(data.message, data.type);
+      });
+
+      socket.on("akasa_scraper_stage", function (data) {
+        console.log("Akasa stage change:", data);
+        setTimeout(() => {
+          document.querySelectorAll(".stage").forEach((stage) => {
+            stage.classList.remove("active");
+            stage.style.backgroundColor = "#ffffff";
+
+            if (stage.id === `${data.stage}-stage`) {
+              stage.classList.add("active");
+              stage.style.backgroundColor = "#fff3cd";
+            }
+          });
+        }, 200);
+      });
+
+      socket.on("akasa_scraper_general_status", function (data) {
+        console.log("Akasa general status:", data);
+        updateGeneralStatus(data);
+      });
+
+      socket.on("akasa_scraper_debug", function (data) {
+        console.log("Akasa debug:", data);
+      });
+
+      socket.on("akasa_scraper_started", function (data) {
+        console.log("Akasa scraper started:", data);
+        showProgressTracker();
+      });
+
+      socket.on("akasa_scraper_completed", function (data) {
+        console.log("Akasa scraper completed:", data);
+        handleCompletion(data);
+      });
+
+      socket.on("akasa_refresh_dom_table", function () {
+        console.log("Refreshing Akasa DOM table");
+        updateDOMChangesTable();
+      });
+
+      // Add missing event handler
+      socket.on("settings_updated", function (data) {
+        console.log("Settings updated:", data);
+        if (data.next_run) {
+          document.getElementById("nextRunTime").textContent = new Date(
+            data.next_run
+          ).toLocaleString();
+        } else {
+          document.getElementById("nextRunTime").textContent = "Not scheduled";
+        }
+
+        // Update form values if present
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("autoRunEnabled").checked = data.auto_run;
+        }
+        if (data.hasOwnProperty("interval")) {
+          document.getElementById("runInterval").value = data.interval;
+        }
+      });
+
+      // Form submission handler
+      document
+        .getElementById("scraperForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          // Reset UI first
+          resetUI();
+          // Then start scraper after a short delay
+          setTimeout(() => {
+            startScraper(e);
+          }, 100);
+        });
+
+      // Update loadInitialState to handle empty data
+      async function loadInitialState() {
+        try {
+          const response = await fetch("/akasa/last_state"); // Updated endpoint
+          const data = await response.json();
+
+          if (data.success) {
+            if (!data.data || Object.keys(data.data).length === 0) {
+              updateLastRunStatus({
+                state: "new",
+                last_run: null,
+                message: "No previous runs",
+              });
+              return;
+            }
+            updateLastRunStatus(data.data);
+            // Fill in form with last used values if available
+            if (data.data.pnr) {
+              document.getElementById("pnr").value = data.data.pnr;
+            }
+            if (data.data.traveller_name) {
+              document.getElementById("traveller_name").value =
+                data.data.traveller_name;
+            }
+          }
+        } catch (error) {
+          console.error("Error loading initial state:", error);
+          updateStatus("Failed to load initial state", "error");
+        }
+      }
+
+      // Add missing scheduler settings form handler
+      async function saveSchedulerSettings(event) {
+        event.preventDefault();
+        const button = event.submitter;
+        button.disabled = true;
+
+        try {
+          const settings = {
+            auto_run: document.getElementById("autoRunEnabled").checked,
+            interval: parseInt(document.getElementById("runInterval").value),
+          };
+
+          const response = await fetch("/akasa/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(settings),
+          });
+
+          const data = await response.json();
+          if (!data.success) {
+            throw new Error(data.message);
+          }
+        } catch (error) {
+          console.error("Error saving settings:", error);
+          updateStatus(error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      function updateStageStatus(stage, status, message, timing = null) {
+        const stageElement = document.getElementById(`${stage}-stage`);
+        const statusElement = document.getElementById(`${stage}-status`);
+        const timingElement = document.getElementById(`${stage}-timing`);
+
+        if (stageElement && statusElement) {
+          stageElement.classList.remove("active", "completed", "error");
+          stageElement.classList.add(
+            status === "error"
+              ? "error"
+              : status === "completed"
+              ? "completed"
+              : "active"
+          );
+
+          statusElement.textContent = message;
+
+          if (timing) {
+            timingElement.textContent = `Time: ${timing}s`;
+          }
+        }
+      }
+
+      function updateStatus(message, type = "info") {
+        const statusDiv = document.getElementById("currentStatus");
+        statusDiv.innerHTML = `<div class="alert alert-${
+          type === "error" ? "danger" : "info"
+        }">${message}</div>`;
+      }
+
+      function updateStage(stage) {
+        currentStage = stage;
+        document.querySelectorAll(".stage").forEach((element) => {
+          element.classList.remove("active");
+          if (element.dataset.stage === stage) {
+            element.classList.add("active");
+          }
+        });
+      }
+
+      function handleCompletion(data) {
+        if (data.success) {
+          loadInitialState();
+        } else {
+          loadInitialState();
+        }
+        updateDOMChangesTable();
+      }
+
+      // Add these utility functions
+      function resetUI() {
+        // Reset only stages and event log, not the form
+        document.querySelectorAll(".stage").forEach((stage) => {
+          // Remove all status classes
+          stage.classList.remove("active", "completed", "error");
+          // Reset background and border to default white
+          stage.style.backgroundColor = "#ffffff";
+          stage.style.borderColor = "#ddd";
+
+          // Reset status text
+          const statusEl = stage.querySelector("p");
+          if (statusEl) {
+            statusEl.textContent = "not yet started";
+            statusEl.classList.remove("text-danger");
+            statusEl.style.color = "#6c757d"; // Default text color
+          }
+
+          // Clear timing
+          const timingEl = stage.querySelector("small");
+          if (timingEl) {
+            timingEl.textContent = "";
+          }
+        });
+
+        // Clear event log
+        const eventLog = document.getElementById("eventLog");
+        eventLog.innerHTML = "";
+
+        // Reset scraper status
+        const scrapperStatus = document.getElementById("scrapperStatus");
+        scrapperStatus.innerHTML =
+          '<p class="text-muted">Waiting to start...</p>';
+      }
+
+      async function startScraper(event) {
+        event.preventDefault();
+
+        // Reset everything to initial state
+        resetUI();
+
+        // Slight delay to ensure UI reset is visible
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const data = {
+          pnr: document.getElementById("pnr").value,
+          traveller_name: document.getElementById("traveller_name").value,
+        };
+
+        try {
+          // Show progress tracker after reset
+          showProgressTracker();
+
+          // Start scraping
+          const response = await fetch("/akasa/start_scraping", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            updateStatus(
+              "Failed to start scraping: " + result.message,
+              "error"
+            );
+            updateStageStatus("initialization", "error", result.message);
+          }
+        } catch (error) {
+          console.error("Error starting scraper:", error);
+          updateStatus("Error: " + error, "error");
+          updateStageStatus(
+            "initialization",
+            "error",
+            "Failed to start scraper"
+          );
+        }
+      }
+
+      function showProgressTracker() {
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.classList.remove("d-none");
+        });
+      }
+
+      function showResults(data) {
+        const resultsSection = document.getElementById("resultsSection");
+        resultsSection.classList.remove("d-none");
+        resultsSection.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">Scraping Results</h5>
+                    <div class="alert alert-success">
+                        <h6>Success!</h6>
+                        <p>${data.message}</p>
+                    </div>
+                    ${
+                      data.downloadUrl
+                        ? `
+                        <a href="${data.downloadUrl}" class="btn btn-primary" target="_blank">
+                            <i class="bi bi-download"></i> Download Invoice
+                        </a>
+                    `
+                        : ""
+                    }
+                </div>
+            `;
+      }
+
+      // Update DOM changes table handling
+      function updateDOMChangesTable() {
+        const tableBody = document.querySelector("#domChangesTable tbody");
+        tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center">
+                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                        Loading changes...
+                    </td>
+                </tr>
+            `;
+
+        fetch("/akasa/dom_changes")
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.changes || data.changes.length === 0) {
+              tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">
+                                    No DOM changes detected yet
+                                </td>
+                            </tr>
+                        `;
+              return;
+            }
+
+            window.domChangesData = data.changes;
+            tableBody.innerHTML = data.changes
+              .map(
+                (change, index) => `
+                        <tr>
+                            <td>
+                                <button class="btn btn-icon btn-link p-0" onclick="toggleChanges(${index})">
+                                    <i class="bi bi-chevron-right rotate-icon" id="toggle-icon-${index}"></i>
+                                </button>
+                            </td>
+                            <td>${new Date(
+                              change.timestamp
+                            ).toLocaleString()}</td>
+                            <td>${change.page_id || "akasa_search_page"}</td>
+                            <td>${change.type || "structural"}</td>
+                            <td>${
+                              change.changes ? change.changes.length : 0
+                            }</td>
+                            <td>${change.pnr || "N/A"}</td>
+                            <td>${change.traveller_name || "N/A"}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="showChangeDetails(${index})">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                        <tr id="details-${index}" class="change-details-row">
+                            <td colspan="8">
+                                <div class="change-details-content">
+                                    ${formatChanges(change.changes)}
+                                </div>
+                            </td>
+                        </tr>
+                    `
+              )
+              .join("");
+          })
+          .catch((error) => {
+            console.error("Error loading DOM changes:", error);
+            tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center text-danger">
+                                Failed to load DOM changes: ${error.message}
+                            </td>
+                        </tr>
+                    `;
+          });
+      }
+
+      // Add change formatting function
+      function formatChanges(changes) {
+        if (!Array.isArray(changes) || changes.length === 0) {
+          return '<p class="text-muted">No changes available</p>';
+        }
+
+        return changes
+          .map(
+            (change) => `
+                <div class="change-item ${
+                  change.startsWith("+") ? "change-addition" : "change-removal"
+                }">
+                    <code>${escapeHtml(change)}</code>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Enhance scheduler settings handling
+      function loadSchedulerSettings() {
+        fetch("/akasa/settings")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success && data.settings) {
+              document.getElementById("autoRunEnabled").checked =
+                data.settings.auto_run;
+              document.getElementById("runInterval").value =
+                data.settings.interval;
+              updateNextRunDisplay(data.settings.next_run);
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading scheduler settings:", error);
+            showToast("Failed to load scheduler settings", "error");
+          });
+      }
+
+      async function saveSchedulerSettings(event) {
+        event.preventDefault();
+        const button = event.submitter;
+        button.disabled = true;
+        button.innerHTML =
+          '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        try {
+          const settings = {
+            auto_run: document.getElementById("autoRunEnabled").checked,
+            interval: parseInt(document.getElementById("runInterval").value),
+          };
+
+          const response = await fetch("/akasa/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(settings),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            // Update scheduler display immediately
+            updateNextRunDisplay(data.next_run);
+            // Update last run status to show new auto-run setting
+            loadInitialState();
+            showToast("Settings saved successfully", "success");
+          } else {
+            throw new Error(data.message || "Failed to save settings");
+          }
+        } catch (error) {
+          console.error("Error saving settings:", error);
+          showToast(error.message, "error");
+        } finally {
+          button.disabled = false;
+          button.innerHTML = "Save Settings";
+        }
+      }
+
+      // Add toast functionality
+      function showToast(message, type = "info") {
+        const toastContainer =
+          document.getElementById("toastContainer") || createToastContainer();
+        const toast = document.createElement("div");
+        toast.className = `toast show bg-${
+          type === "error" ? "danger" : "success"
+        } text-white`;
+        toast.innerHTML = `
+                <div class="toast-body">
+                    ${message}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      function createToastContainer() {
+        const container = document.createElement("div");
+        container.id = "toastContainer";
+        container.className = "toast-container position-fixed top-0 end-0 p-3";
+        document.body.appendChild(container);
+        return container;
+      }
+
+      // Add socket handlers for settings updates
+      socket.on("akasa_settings_updated", function (data) {
+        updateNextRunDisplay(data.next_run);
+        document.getElementById("autoRunEnabled").checked = data.auto_run;
+        document.getElementById("runInterval").value = data.interval;
+        showToast("Settings updated successfully", "success");
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        loadInitialState();
+        loadSchedulerSettings();
+        updateDOMChangesTable();
+
+        // Refresh DOM changes table periodically if visible
+        setInterval(() => {
+          const table = document.getElementById("domChangesTable");
+          if (table && table.offsetParent !== null) {
+            updateDOMChangesTable();
+          }
+        }, 30000);
+      });
+
+      // Add missing function
+      function updateGeneralStatus(data) {
+        const statusDiv = document.getElementById("scrapperStatus");
+        const statusClass =
+          data.status === "error"
+            ? "danger"
+            : data.status === "success"
+            ? "success"
+            : "info";
+
+        statusDiv.innerHTML = `
+                <div class="alert alert-${statusClass}">
+                    ${data.message}
+                    <small class="d-block text-muted">${data.timestamp}</small>
+                </div>
+            `;
+      }
+
+      // Add missing function
+      function updateLastRunStatus(data) {
+        const statusDiv = document.getElementById("lastRunStatus");
+        if (!data || !data.last_run) {
+          statusDiv.innerHTML = '<p class="text-muted">No previous runs</p>';
+          return;
+        }
+
+        const statusClass =
+          data.state === "completed"
+            ? "success"
+            : data.state === "failed"
+            ? "danger"
+            : "info";
+
+        statusDiv.innerHTML = `
+                <div class="alert alert-${statusClass}">
+                    <p><strong>Last Run:</strong> ${new Date(
+                      data.last_run
+                    ).toLocaleString()}</p>
+                    <p><strong>Status:</strong> ${data.state}</p>
+                    <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
+                    <p><strong>Last Name:</strong> ${data.lastName || "N/A"}</p>
+                    <p><strong>Auto Run:</strong> ${
+                      data.auto_run ? "Enabled" : "Disabled"
+                    }</p>
+                    ${
+                      data.next_run
+                        ? `<p><strong>Next Run:</strong> ${new Date(
+                            data.next_run
+                          ).toLocaleString()}</p>`
+                        : ""
+                    }
+                    ${
+                      data.message
+                        ? `<p><strong>Message:</strong> ${data.message}</p>`
+                        : ""
+                    }
+                    ${
+                      data.error
+                        ? `<p class="text-danger"><strong>Error:</strong> ${data.error}</p>`
+                        : ""
+                    }
+                </div>
+            `;
+      }
+
+      // Add missing function
+      function showChangeDetails(change) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("changeDetailsModal")
+        );
+        document.getElementById("detailTimestamp").textContent = new Date(
+          change.timestamp
+        ).toLocaleString();
+        document.getElementById("detailPnr").textContent = change.pnr || "N/A";
+        document.getElementById("detailChangeCount").textContent =
+          Array.isArray(change.changes) ? change.changes.length : 0;
+
+        const changesContainer = document.getElementById("detailChanges");
+        if (Array.isArray(change.changes) && change.changes.length > 0) {
+          changesContainer.innerHTML = change.changes
+            .map((c) => `<pre class="change-item">${escapeHtml(c)}</pre>`)
+            .join("");
+        } else {
+          changesContainer.innerHTML =
+            '<p class="text-muted">No changes available</p>';
+        }
+
+        modal.show();
+      }
+
+      // Add helper function
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Add missing event listener for DOM content loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        loadInitialState();
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+        tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Initialize DOM changes table
+        const domChangesTable = document.querySelector("#domChangesTable");
+        if (domChangesTable) {
+          updateDOMChangesTable();
+          // Refresh every 30 seconds if visible
+          setInterval(() => {
+            if (!domChangesTable.closest(".d-none")) {
+              updateDOMChangesTable();
+            }
+          }, 30000);
+        }
+
+        // Add modal cleanup
+        const changeDetailsModal =
+          document.getElementById("changeDetailsModal");
+        if (changeDetailsModal) {
+          changeDetailsModal.addEventListener("hidden.bs.modal", function () {
+            document.getElementById("detailChanges").innerHTML = "";
+          });
+        }
+
+        // Load scheduler settings
+        loadSchedulerSettings();
+      });
+
+      // Add event listener for scheduler settings form
+      document
+        .getElementById("schedulerSettingsForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          saveSchedulerSettings(e);
+        });
+
+      // Add missing function for loading scheduler settings
+      async function loadSchedulerSettings() {
+        try {
+          const response = await fetch("/akasa/settings");
+          const data = await response.json();
+
+          if (data.success && data.settings) {
+            document.getElementById("autoRunEnabled").checked =
+              data.settings.auto_run;
+            document.getElementById("runInterval").value =
+              data.settings.interval;
+
+            if (data.settings.next_run) {
+              document.getElementById("nextRunTime").textContent = new Date(
+                data.settings.next_run
+              ).toLocaleString();
+            }
+          }
+        } catch (error) {
+          console.error("Error loading scheduler settings:", error);
+        }
+      }
+
+      // Add startScraper function
+      async function startScraper(event) {
+        event.preventDefault();
+
+        // Reset everything to initial state
+        resetUI();
+
+        // Slight delay to ensure UI reset is visible
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const data = {
+          pnr: document.getElementById("pnr").value,
+          traveller_name: document.getElementById("traveller_name").value,
+        };
+
+        try {
+          // Show progress tracker after reset
+          showProgressTracker();
+
+          // Start scraping
+          const response = await fetch("/akasa/start_scraping", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            updateStatus(
+              "Failed to start scraping: " + result.message,
+              "error"
+            );
+            updateStageStatus("initialization", "error", result.message);
+          }
+        } catch (error) {
+          console.error("Error starting scraper:", error);
+          updateStatus("Error: " + error, "error");
+          updateStageStatus(
+            "initialization",
+            "error",
+            "Failed to start scraper"
+          );
+        }
+      }
+
+      // ...existing code...
+
+      // Update socket event listeners to match backend events precisely
+      socket.on("akasa_scraper_started", function (data) {
+        console.log("Akasa scraper started:", data);
+        resetUI();
+        showProgressTracker();
+        updateStatus(`Starting scraper for PNR: ${data.pnr}`, "info");
+      });
+
+      socket.on("akasa_scraper_status", function (data) {
+        console.log("Akasa status update:", data);
+        updateStageStatus(data.stage, data.status, data.message, data.timing);
+
+        // Show specific error messages if present
+        if (data.error) {
+          let errorMessage = "";
+          switch (data.stage) {
+            case "initialization":
+              errorMessage = `Initialization failed: ${data.error}`;
+              break;
+            case "request":
+              errorMessage = `API request failed: ${data.error}`;
+              break;
+            case "processing":
+              errorMessage = `Processing failed: ${data.error}`;
+              break;
+            default:
+              errorMessage = `Error in ${data.stage}: ${data.error}`;
+          }
+          updateStatus(errorMessage, "error");
+        }
+      });
+
+      socket.on("akasa_scraper_event", function (data) {
+        console.log("Akasa event:", data);
+        const eventLogDiv = document.getElementById("eventLog");
+        const eventItem = document.createElement("div");
+        eventItem.className = `event-item ${
+          data.type === "error" ? "error" : ""
+        }`;
+        eventItem.innerHTML = `
+                <small class="text-muted">${new Date().toLocaleTimeString()}</small>
+                <span class="ms-2">${data.message}</span>
+            `;
+        eventLogDiv.appendChild(eventItem);
+        eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
+      });
+
+      socket.on("akasa_scraper_stage", function (data) {
+        console.log("Akasa stage change:", data);
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.classList.remove("active");
+          if (stage.id === `${data.stage}-stage`) {
+            stage.classList.add("active");
+          }
+        });
+      });
+
+      socket.on("akasa_scraper_completed", function (data) {
+        console.log("Akasa scraper completed:", data);
+
+        // Update all stages
+        const stages = ["initialization", "request", "processing"];
+        stages.forEach((stage, index) => {
+          if (data.success) {
+            updateStageStatus(stage, "completed", "Completed successfully");
+          } else {
+            updateStageStatus(
+              stage,
+              index === stages.length - 1 ? "error" : "completed",
+              index === stages.length - 1 ? data.error : "Completed"
+            );
+          }
+        });
+
+        // Update status message
+        if (data.success) {
+          updateStatus("Scraping completed successfully", "success");
+        } else {
+          updateStatus(data.error || "Scraping failed", "error");
+        }
+
+        // Refresh last run status
+        loadInitialState();
+
+        // Update DOM changes table
+        updateDOMChangesTable();
+      });
+
+      socket.on("akasa_scraper_debug", function (data) {
+        console.log("Akasa debug:", data);
+        // Add debug information to event log if it contains important details
+        if (data.error || data.timing) {
+          const eventLogDiv = document.getElementById("eventLog");
+          const debugItem = document.createElement("div");
+          debugItem.className = "event-item debug";
+          debugItem.innerHTML = `
+                    <small class="text-muted">${new Date().toLocaleTimeString()}</small>
+                    <span class="ms-2">Debug: ${data.stage} - ${
+            data.message
+          }</span>
+                    ${
+                      data.timing
+                        ? `<small class="ms-2">(${data.timing}s)</small>`
+                        : ""
+                    }
+                    ${
+                      data.error
+                        ? `<div class="text-danger">${data.error}</div>`
+                        : ""
+                    }
+                `;
+          eventLogDiv.appendChild(debugItem);
+          eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
+        }
+      });
+
+      // Add specific error handling in updateStageStatus
+      function updateStageStatus(stage, status, message, timing = null) {
+        const stageElement = document.getElementById(`${stage}-stage`);
+        const statusElement = document.getElementById(`${stage}-status`);
+        const timingElement = document.getElementById(`${stage}-timing`);
+
+        if (stageElement && statusElement) {
+          // Remove all status classes
+          stageElement.classList.remove("active", "completed", "error");
+
+          // Add appropriate class based on status
+          if (status === "error") {
+            stageElement.classList.add("error");
+            // Add specific error styling
+            statusElement.classList.add("text-danger");
+          } else if (status === "completed") {
+            stageElement.classList.add("completed");
+            statusElement.classList.remove("text-danger");
+          } else {
+            stageElement.classList.add("active");
+            statusElement.classList.remove("text-danger");
+          }
+
+          // Update status message
+          statusElement.textContent = message || "In progress...";
+
+          // Update timing if provided
+          if (timing) {
+            timingElement.textContent = `Time: ${timing}s`;
+          }
+        }
+      }
+
+      // Add specific error messages to updateStatus
+      function updateStatus(message, type = "info") {
+        const statusDiv = document.getElementById("scrapperStatus");
+        const statusClass =
+          type === "error" ? "danger" : type === "success" ? "success" : "info";
+
+        // Create more detailed error messages
+        let displayMessage = message;
+        if (type === "error" && message.includes("ERROR_IN_SAVING_FILE")) {
+          displayMessage = "Failed to save the invoice file. Please try again.";
+        } else if (type === "error" && message.includes("INVALID_DATA")) {
+          displayMessage =
+            "Invalid PNR or traveller name provided. Please check and try again.";
+        }
+
+        statusDiv.innerHTML = `
+                <div class="alert alert-${statusClass}">
+                    ${displayMessage}
+                    <small class="d-block text-muted">${new Date().toLocaleString()}</small>
+                </div>
+            `;
+      }
+
+      // Add missing function
+      function updateNextRunDisplay(nextRun) {
+        const display = document.getElementById("nextRunTime");
+        if (nextRun) {
+          // Convert to milliseconds timestamp if necessary
+          const nextRunMs =
+            typeof nextRun === "string" ? new Date(nextRun).getTime() : nextRun;
+          display.textContent = new Date(nextRunMs).toLocaleString();
+          display.classList.remove("text-muted");
+          display.classList.add("text-success");
+        } else {
+          display.textContent = "Not scheduled";
+          display.classList.add("text-muted");
+          display.classList.remove("text-success");
+        }
+      }
+
+      // ...rest of existing code...
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
