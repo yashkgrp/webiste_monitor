@@ -531,7 +531,7 @@ class FirestoreDB:
         except Exception as e:
             logging.error(f"Error updating scraper status: {e}")
 
-    def store_scraper_state(self, gstin, pnr, state='pending', message=None, next_run=None, auto_run=None, preserve_last_run=False, preserve_next_run=False):
+    def store_scraper_state(self, gstin, pnr, state='pending', message=None, next_run=None, auto_run=None, preserve_last_run=False, preserve_next_run=False,last_run="0"):
         """Store scraper state in Firebase"""
         try:
             doc_id = f"{gstin}_{pnr}"

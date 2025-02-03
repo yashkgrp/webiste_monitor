@@ -153,8 +153,19 @@ class AkasaScraper:
                 if error:
                     data['error'] = str(error)
 
-                self.socketio.emit('akasa_scraper_status', data)
-                
+                # Force completion coloring for final success
+                if stage == 'processing' and status == 'success':
+                    # Update all stages to completed state
+                    for prev_stage in ['initialization', 'request', 'processing']:
+                        self.socketio.emit('akasa_scraper_status', {
+                            **data,
+                            'stage': prev_stage,
+                            'status': 'completed',
+                            'message': 'Completed successfully'
+                        })
+                else:
+                    self.socketio.emit('akasa_scraper_status', data)
+
                 # Enhanced event logging
                 self.socketio.emit('akasa_scraper_event', {
                     'type': 'status' if status != 'error' else 'error',
@@ -297,7 +308,7 @@ class AkasaScraper:
 
             processing_time = round(time.time() - self.timing_data['processing_start'], 2)
             self.timing_data['processing_time'] = processing_time
-            self.emit_status(self.current_stage, 'success', 'Response processed and saved', processing_time)
+            self.emit_status(self.current_stage, 'completed', 'Response processed and saved', processing_time)  # Change status to 'completed' instead of 'success'
             
             return {
                 "success": True,
@@ -409,6 +420,40 @@ def run_scraper(data, db_ops, socketio=None):
                 response = scraper.process_request(pnr, last_successful, traveller_name)
                 result = scraper.process_response(response, pnr, last_successful, traveller_name)
                 if result['success']:
+                    end_time = time.time()
+                    scraper.timing_data['total_run'] = round(end_time - start_time, 3)
+                    scraper.emit_status('completion', 'success', 'Scraping completed successfully')
+                    
+                    # Get scheduler settings but don't calculate next run
+                    settings = akasa_db.get_scheduler_settings()
+                    next_run = settings.get('next_run') if settings else None
+                    
+                    # Update state with existing next_run from scheduler
+                    akasa_db.store_scraper_state(
+                        pnr=pnr,
+                        state='completed',
+                        lastName=lastName,
+                        traveller_name=traveller_name,
+                        message="Scraping completed successfully",
+                        next_run=next_run,  # Use scheduler's next_run
+                        auto_run=settings.get('auto_run', False) if settings else False
+                    )
+                    
+                    # Emit completion with scheduler's next run time
+                    socketio.emit("akasa_scraper_completed", {
+                        "airline": "akasa",
+                        "pnr": pnr,
+                        "success": True,
+                        "next_run": next_run.isoformat() if next_run else None,
+                        "auto_run": settings.get('auto_run', False) if settings else False
+                    })
+                    
+                    # Emit next run update using scheduler time
+                    socketio.emit("akasa_next_run_updated", {
+                        "next_run": next_run.isoformat() if next_run else None,
+                        "auto_run": settings.get('auto_run', False) if settings else False
+                    })
+                    
                     return result
             except Exception as e:
                 logger.warning(f"Failed with last successful lastName: {str(e)}")

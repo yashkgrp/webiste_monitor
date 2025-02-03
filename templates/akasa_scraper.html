@@ -58,12 +58,19 @@
         </div>
       </nav>
 
-      <!-- Last Run Status section -->
+      <!-- Last Run Status section - update to include next run -->
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title">Last Run Status</h5>
           <div id="lastRunStatus">
-            <p class="text-muted">Loading last run status...</p>
+            <div class="alert alert-info">
+              <p><strong>Last Run:</strong> <span id="lastRunTime">Loading...</span></p>
+              <p><strong>Status:</strong> <span id="lastRunStatus">Loading...</span></p>
+              <p><strong>PNR:</strong> <span id="lastRunPNR">Loading...</span></p>
+              <p><strong>Last Name:</strong> <span id="lastRunName">Loading...</span></p>
+              <p><strong>Auto Run:</strong> <span id="autoRunStatus">Loading...</span></p>
+              <p><strong>Next Run:</strong> <span id="nextRunDisplay" class="text-primary">Not scheduled</span></p>
+            </div>
           </div>
         </div>
       </div>
@@ -565,40 +572,40 @@
 
       // Add these utility functions
       function resetUI() {
-        // Reset only stages and event log, not the form
-        document.querySelectorAll(".stage").forEach((stage) => {
-          // Remove all status classes
-          stage.classList.remove("active", "completed", "error");
-          // Reset background and border to default white
-          stage.style.backgroundColor = "#ffffff";
-          stage.style.borderColor = "#ddd";
-
-          // Reset status text
-          const statusEl = stage.querySelector("p");
-          if (statusEl) {
-            statusEl.textContent = "not yet started";
-            statusEl.classList.remove("text-danger");
-            statusEl.style.color = "#6c757d"; // Default text color
-          }
-
-          // Clear timing
-          const timingEl = stage.querySelector("small");
-          if (timingEl) {
-            timingEl.textContent = "";
-          }
+        // Enhanced stage reset logic
+        document.querySelectorAll('.stage').forEach((stage) => {
+            // Complete reset of all styles and classes
+            stage.className = 'stage'; // Reset to base class only
+            stage.style.removeProperty('background-color');
+            stage.style.removeProperty('border-color');
+            
+            // Reset text content and styling
+            const statusEl = stage.querySelector('p');
+            if (statusEl) {
+                statusEl.textContent = 'not yet started';
+                statusEl.className = ''; // Clear any status classes
+                statusEl.style.color = '#6c757d';
+            }
+            
+            // Clear timing
+            const timingEl = stage.querySelector('small');
+            if (timingEl) {
+                timingEl.textContent = '';
+            }
         });
 
         // Clear event log
-        const eventLog = document.getElementById("eventLog");
-        eventLog.innerHTML = "";
-
+        document.getElementById('eventLog').innerHTML = '';
+        
         // Reset scraper status
-        const scrapperStatus = document.getElementById("scrapperStatus");
-        scrapperStatus.innerHTML =
-          '<p class="text-muted">Waiting to start...</p>';
-      }
+        document.getElementById('scrapperStatus').innerHTML = 
+            '<p class="text-muted">Waiting to start...</p>';
 
-      async function startScraper(event) {
+        // Reset current stage tracking
+        currentStage = '';
+    }
+
+    async function startScraper(event) {
         event.preventDefault();
 
         // Reset everything to initial state
@@ -907,34 +914,20 @@
             ? "danger"
             : "info";
 
+        // Format next run time if available
+        const nextRunTime = data.next_run ? 
+            new Date(data.next_run).toLocaleString() : 
+            'Not scheduled';
+
         statusDiv.innerHTML = `
                 <div class="alert alert-${statusClass}">
-                    <p><strong>Last Run:</strong> ${new Date(
-                      data.last_run
-                    ).toLocaleString()}</p>
+                    <p><strong>Last Run:</strong> ${new Date(data.last_run).toLocaleString()}</p>
                     <p><strong>Status:</strong> ${data.state}</p>
                     <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
                     <p><strong>Last Name:</strong> ${data.lastName || "N/A"}</p>
-                    <p><strong>Auto Run:</strong> ${
-                      data.auto_run ? "Enabled" : "Disabled"
-                    }</p>
-                    ${
-                      data.next_run
-                        ? `<p><strong>Next Run:</strong> ${new Date(
-                            data.next_run
-                          ).toLocaleString()}</p>`
-                        : ""
-                    }
-                    ${
-                      data.message
-                        ? `<p><strong>Message:</strong> ${data.message}</p>`
-                        : ""
-                    }
-                    ${
-                      data.error
-                        ? `<p class="text-danger"><strong>Error:</strong> ${data.error}</p>`
-                        : ""
-                    }
+                    <p><strong>Auto Run:</strong> ${data.auto_run ? "Enabled" : "Disabled"}</p>
+                    <p><strong>Next Run:</strong> <span class="next-run ${data.auto_run ? 'text-success' : 'text-muted'}">${nextRunTime}</span></p>
+                    ${data.error ? `<p class="text-danger"><strong>Error:</strong> ${data.error}</p>` : ''}
                 </div>
             `;
       }
@@ -1151,14 +1144,14 @@
 
         // Update all stages
         const stages = ["initialization", "request", "processing"];
-        stages.forEach((stage, index) => {
+        stages.forEach((stage) => {
           if (data.success) {
             updateStageStatus(stage, "completed", "Completed successfully");
           } else {
             updateStageStatus(
               stage,
-              index === stages.length - 1 ? "error" : "completed",
-              index === stages.length - 1 ? data.error : "Completed"
+              stage === "processing" ? "error" : "completed",
+              stage === "processing" ? (data.error || "Failed") : "Completed"
             );
           }
         });
@@ -1278,7 +1271,88 @@
         }
       }
 
+      // Add socket listener for next run updates
+      socket.on('akasa_next_run_updated', function(data) {
+          const nextRunDisplay = document.getElementById("nextRunDisplay");
+          if (nextRunDisplay) {
+              nextRunDisplay.textContent = data.next_run ? 
+                  new Date(data.next_run).toLocaleString() : 
+                  'Not scheduled';
+          }
+      });
+
       // ...rest of existing code...
+
+      // Update all displays when next run time changes
+      function updateAllNextRunDisplays(nextRun, autoRun) {
+        const displays = [
+            document.getElementById("nextRunDisplay"),
+            document.getElementById("nextRunTime"),
+            document.getElementById("lastRunStatus").querySelector(".next-run")
+        ];
+        
+        const formattedTime = nextRun ? new Date(nextRun).toLocaleString() : 'Not scheduled';
+        const displayClass = autoRun ? 'text-success' : 'text-muted';
+        
+        displays.forEach(display => {
+            if (display) {
+                display.textContent = formattedTime;
+                display.className = displayClass;
+            }
+        });
+    }
+
+    // Update socket listeners
+    socket.on('akasa_settings_updated', function(data) {
+        console.log("Settings updated:", data);
+        document.getElementById("autoRunEnabled").checked = data.auto_run;
+        document.getElementById("runInterval").value = data.interval;
+        updateAllNextRunDisplays(data.next_run, data.auto_run);
+    });
+
+    socket.on('akasa_scraper_state_updated', function(data) {
+        console.log("State updated:", data);
+        updateAllNextRunDisplays(data.next_run, data.auto_run);
+        updateLastRunStatus({
+            ...currentState,
+            next_run: data.next_run,
+            auto_run: data.auto_run,
+            state: data.state
+        });
+    });
+
+    socket.on('akasa_next_run_updated', function(data) {
+        console.log("Next run updated:", data);
+        updateAllNextRunDisplays(data.next_run, data.auto_run);
+    });
+
+    // Update the last run status display to include next run
+    function updateLastRunStatus(data) {
+        const statusDiv = document.getElementById("lastRunStatus");
+        if (!data || !data.last_run) {
+            statusDiv.innerHTML = '<p class="text-muted">No previous runs</p>';
+            return;
+        }
+
+        const statusClass = data.state === "completed" ? "success" : 
+                          data.state === "failed" ? "danger" : "info";
+                          
+        const nextRunTime = data.next_run ? 
+            new Date(data.next_run).toLocaleString() : 
+            'Not scheduled';
+
+        statusDiv.innerHTML = `
+            <div class="alert alert-${statusClass}">
+                <p><strong>Last Run:</strong> ${new Date(data.last_run).toLocaleString()}</p>
+                <p><strong>Status:</strong> ${data.state}</p>
+                <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
+                <p><strong>Last Name:</strong> ${data.lastName || "N/A"}</p>
+                <p><strong>Auto Run:</strong> ${data.auto_run ? "Enabled" : "Disabled"}</p>
+                <p><strong>Next Run:</strong> <span class="next-run ${data.auto_run ? 'text-success' : 'text-muted'}">${nextRunTime}</span></p>
+                ${data.error ? `<p class="text-danger"><strong>Error:</strong> ${data.error}</p>` : ''}
+            </div>
+        `;
+    }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
