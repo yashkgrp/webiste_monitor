@@ -24,6 +24,7 @@ from email_utils import (
     generate_dom_change_email, 
     send_notification_email
 )
+from notification_handler import NotificationHandler
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,6 +52,9 @@ socket_logger = SocketLogger()
 
 # Initialize DOM tracker
 dom_tracker = DOMChangeTracker(db_ops)
+
+# Initialize notification handler after db_ops initialization
+notification_handler = NotificationHandler(db_ops)
 
 # Load initial state from Firebase
 try:
@@ -86,7 +90,12 @@ EMAIL_CONFIG = {
 }
 
 # Initialize scheduler
-scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler(
+    job_defaults={
+        'coalesce': False,  # Allow multiple instances of the same job
+        'max_instances': 3   # Allow multiple instances to run simultaneously
+    }
+)
 
 def initialize_scheduler():
     """Initialize Star Air scheduler"""
@@ -133,22 +142,25 @@ def initialize_scheduler():
                     run_automated_scrape,
                     'date',
                     run_date=next_run,
-                    id='auto_scraper',
-                    replace_existing=True
+                    id='star_air_auto_scraper',
+                    replace_existing=True,
+                    misfire_grace_time=None  # Allow misfired jobs to run immediately
                 )
                 
                 logger.info(f"Rescheduled missed run to: {next_run}")
             else:
                 # Clear any existing job first
-                if scheduler.get_job('auto_scraper'):
-                    scheduler.remove_job('auto_scraper')
+                if scheduler.get_job('star_air_auto_scraper'):
+                    scheduler.remove_job('star_air_auto_scraper')
                 
                 # If next_run is in the future, just schedule it without updates
                 scheduler.add_job(
                     run_automated_scrape,
                     'date',
                     run_date=stored_next_run,
-                    id='auto_scraper'
+                    id='star_air_auto_scraper',
+                    replace_existing=True,
+                    misfire_grace_time=None  # Allow misfired jobs to run immediately
                 )
                 logger.info(f"Scheduled future run for: {stored_next_run}")
 
@@ -256,7 +268,14 @@ def monitor_urls():
                             should_notify = True
                             notification_type = 'up'
 
-                        if should_notify and notification_emails:
+                        if should_notify:
+                            notification_handler.send_website_status_notification(
+                                url=url,
+                                status_type=notification_type,
+                                error_message=current_status.replace('Down: ', '') if notification_type == 'down' else None,
+                                response_time=response_time,
+                                downtime_duration=db_ops._format_duration(current_time - last_notification_time.get(url, current_time))
+                            )
                             current_time = time.time()
                             # Ensure at least 5 seconds between notifications
                             if url not in last_notification_time or current_time - last_notification_time[url] >= 5:
@@ -381,39 +400,12 @@ def run_automated_scraper():
                 message=error_msg
             )
             
-            # Emit comprehensive status update
-            socketio.emit('update_last_run_status', {
-                'state': 'failed',
-                'last_run': datetime.now(pytz.UTC).isoformat(),
-                'error': error_msg,  # Include error message
-                'gstin': data['Customer_GSTIN'],
-                'pnr': data['Ticket/PNR']
-            })
-            
-            # Emit specific error event
-            socketio.emit('scraper_error', {
-                'message': error_msg,
-                'stage': 'automated_run',
-                'gstin': data['Customer_GSTIN'],
-                'pnr': data['Ticket/PNR'],
-                'timestamp': datetime.now(pytz.UTC).isoformat()
-            })
-
-            # Send error notification email
-            notification_emails = db_ops.get_notification_emails()
-            if notification_emails:
-                html_content = generate_scraper_error_email(
-                    pnr=data['Ticket/PNR'],
-                    gstin=data['Customer_GSTIN'],
-                    error_message=error_msg,
-                    timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    stage='automated_run'
-                )
-                send_notification_email(
-                    subject=f"Scraper Error - PNR: {data['Ticket/PNR']}",
-                    html_content=html_content,
-                    notification_emails=notification_emails
-                )
+            notification_handler.send_scraper_notification(
+                error=e,
+                data=data,
+                stage='automated_run',
+                airline='Star Air'
+            )
 
 @app.route('/add_url', methods=['POST'])
 def add_url():
@@ -816,6 +808,8 @@ def scheduler_settings():
 def run_automated_scrape():
     """Run automated scrape with identical behavior to manual runs"""
     try:
+        thread_name = threading.current_thread().name
+        logger.info(f"Starting Star Air automated scrape in thread: {thread_name}")
         # Get last state and settings
         last_state = db_ops.get_last_scraper_state()
         settings = db_ops.get_scheduler_settings()
@@ -888,39 +882,12 @@ def run_automated_scrape():
                 message=error_msg
             )
             
-            # Emit comprehensive status update
-            socketio.emit('update_last_run_status', {
-                'state': 'failed',
-                'last_run': datetime.now(pytz.UTC).isoformat(),
-                'error': error_msg,  # Include error message
-                'gstin': data['Customer_GSTIN'],
-                'pnr': data['Ticket/PNR']
-            })
-            
-            # Emit specific error event
-            socketio.emit('scraper_error', {
-                'message': error_msg,
-                'stage': 'automated_run',
-                'gstin': data['Customer_GSTIN'],
-                'pnr': data['Ticket/PNR'],
-                'timestamp': datetime.now(pytz.UTC).isoformat()
-            })
-
-            # Send error notification email
-            notification_emails = db_ops.get_notification_emails()
-            if notification_emails:
-                html_content = generate_scraper_error_email(
-                    pnr=data['Ticket/PNR'],
-                    gstin=data['Customer_GSTIN'],
-                    error_message=error_msg,
-                    timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    stage='automated_run'
-                )
-                send_notification_email(
-                    subject=f"Scraper Error - PNR: {data['Ticket/PNR']}",
-                    html_content=html_content,
-                    notification_emails=notification_emails
-                )
+            notification_handler.send_scraper_notification(
+                error=e,
+                data=data,
+                stage='automated_run',
+                airline='Star Air'
+            )
 
 
 @socketio.on('scraper_status')
@@ -1108,22 +1075,15 @@ def startair_scraper(data, db_ops, socketio=None):
         logging.error(f"Error in startair_scraper: {str(e)}")
         return {"success": False, "message": str(e), "data": {}}
 
-def handle_dom_changes(changes, gstin, pnr):
+def handle_dom_changes(changes, gstin, pnr, airline="Star Air"):
     """Handle DOM changes and send notifications"""
     if changes and len(changes) > 0:
-        notification_emails = db_ops.get_notification_emails()
-        if notification_emails:
-            html_content = generate_dom_change_email(
-                pnr=pnr,
-                gstin=gstin,
-                changes=changes,
-                timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            )
-            send_notification_email(
-                subject=f"DOM Changes Detected - PNR: {pnr}",
-                html_content=html_content,
-                notification_emails=notification_emails
-            )
+        notification_handler.send_dom_change_notification(
+            changes=changes,
+            gstin=gstin,
+            pnr=pnr,
+            airline=airline
+        )
 
 # Add new routes for Akasa Air
 @app.route('/akasa/start_scraping', methods=['POST'])
@@ -1132,6 +1092,7 @@ def start_akasa_scraping():
         data = request.json
         pnr = data.get('pnr')
         traveller_name = data.get('traveller_name')
+        print("started")
 
         if not pnr or not traveller_name:
             return jsonify({
@@ -1162,6 +1123,23 @@ def start_akasa_scraping():
         
         # Run scraper with Akasa DB ops
         result = run_akasa_scraper(scraping_data, akasa_db, socketio)
+        print("scrapper returned"+str(result))
+        
+        error_message = result.get('message') if not result.get('success') else None
+            
+            # Send notification if there was an error
+        if error_message:
+                print("error message"+error_message)
+                notification_handler.send_scraper_notification(
+                    error=Exception(error_message+"error added from line 1334"),
+                    data={
+                        'Ticket/PNR': pnr,
+                        'Traveller Name': traveller_name
+                    },
+                    stage='automated_run',
+                    airline="Akasa Air"
+                )
+                print("REACHED HERE")
         
         return jsonify(result)
 
@@ -1217,7 +1195,8 @@ def get_akasa_last_state():
                 state['next_run'] = next_run.isoformat()
         
         state['auto_run'] = settings.get('auto_run', False) if settings else False
-        
+        print("data is here"+str(state))
+        state['lastName']=state['traveller_name']
         return jsonify({
             "success": True,
             "data": state
@@ -1293,7 +1272,8 @@ def akasa_scheduler_settings():
                 'date',
                 run_date=next_run,
                 id=job_id,
-                replace_existing=True
+                replace_existing=True,
+                misfire_grace_time=None  # Allow misfired jobs to run immediately
             )
             
         # Convert to millisecond timestamp only if next_run exists
@@ -1335,6 +1315,8 @@ def akasa_scheduler_settings():
 def run_akasa_automated_scrape():
     """Run automated scrape specifically for Akasa Air"""
     try:
+        thread_name = threading.current_thread().name
+        logger.info(f"Starting Akasa automated scrape in thread: {thread_name}")
         from akasa_scrappper.akasa_db_ops import AkasaFirestoreDB
         from akasa_scrappper.akasascrapper_util import run_scraper as run_akasa_scraper
         
@@ -1366,8 +1348,7 @@ def run_akasa_automated_scrape():
             
             # Update scheduler job
             job_id = 'akasa_auto_scraper'
-            if scheduler.get_job(job_id):
-                scheduler.remove_job(job_id)
+            
                 
             scheduler.add_job(
                 run_akasa_automated_scrape,
@@ -1377,18 +1358,33 @@ def run_akasa_automated_scrape():
                 replace_existing=True
             )
             
-            # Update settings and state
-            akasa_db.update_scheduler_settings(True, interval_minutes, next_run)
+            # Update settings and state based on scraper result
+            state = 'completed' if result.get('success') else 'failed'
+            error_message = result.get('message') if not result.get('success') else None
+            
+            # Send notification if there was an error
+            if error_message:
+                notification_handler.send_scraper_notification(
+                    error=Exception(error_message+"error added from line 1334"),
+                    data={
+                        'Ticket/PNR': data['Ticket/PNR'],
+                        'Traveller Name': data['Traveller Name']
+                    },
+                    stage='automated_run',
+                    airline="Akasa Air"
+                )
+            
             akasa_db.store_scraper_state(
                 pnr=data['Ticket/PNR'],
-                state='completed',
+                state=state,
                 lastName=result.get('lastName'),
                 traveller_name=data['Traveller Name'],
                 next_run=next_run,
-                auto_run=True
+                auto_run=True,
+                message=error_message
             )
             
-            # Emit comprehensive updates
+            # Emit comprehensive updates with error information if present
             socketio.emit('akasa_settings_updated', {
                 "next_run": next_run_ts,
                 "auto_run": True,
@@ -1398,7 +1394,8 @@ def run_akasa_automated_scrape():
             socketio.emit('akasa_scraper_state_updated', {
                 "next_run": next_run_ts,
                 "auto_run": True,
-                "state": 'completed'
+                "state": state,
+                "error": error_message
             })
             
             socketio.emit('akasa_next_run_updated', {
@@ -1406,8 +1403,28 @@ def run_akasa_automated_scrape():
                 "auto_run": True
             })
             
+            # Log the outcome
+            if error_message:
+                logger.error(f"Automated Akasa scrape failed: {error_message}")
+            else:
+                logger.info("Automated Akasa scrape completed successfully")
+            
     except Exception as e:
         logger.error(f"Akasa automated scrape failed: {e}")
+        
+        try:
+            # Send notification for automated run failure
+            notification_handler.send_scraper_notification(
+                error=e,
+                data={
+                    'Ticket/PNR': data['Ticket/PNR'] if 'data' in locals() else 'N/A',
+                    'Traveller Name': data['Traveller Name'] if 'data' in locals() else 'N/A'
+                },
+                stage='automated_run',
+                airline="Akasa Air"
+            )
+        except Exception as notify_error:
+            logger.error(f"Failed to send automated run failure notification: {notify_error}")
 
 def initialize_akasa_scheduler():
     """Initialize Akasa Air specific scheduler"""
@@ -1417,23 +1434,6 @@ def initialize_akasa_scheduler():
         settings = akasa_db.get_scheduler_settings()
         
         if not settings or not settings.get('auto_run'):
-            # Update state to show auto-run is disabled
-            last_state = akasa_db.get_last_scraper_state()
-            if last_state:
-                akasa_db.store_scraper_state(
-                    pnr=last_state.get('pnr'),
-                    state=last_state.get('state', 'idle'),
-                    lastName=last_state.get('lastName'),
-                    traveller_name=last_state.get('traveller_name'),
-                    next_run=None,  # Clear next run time
-                    auto_run=False
-                )
-            # Emit update to frontend
-            socketio.emit('akasa_settings_updated', {
-                "next_run": None,
-                "auto_run": False,
-                "interval": settings.get('interval', 60) if settings else 60
-            })
             return
 
         current_time = datetime.now(pytz.UTC)
@@ -1456,11 +1456,21 @@ def initialize_akasa_scheduler():
                 next_run = current_time + timedelta(minutes=5)
                 next_run_ts = int(next_run.timestamp() * 1000)
                 
-                # Update scheduler settings
+                # Schedule the immediate job first
+                scheduler.add_job(
+                    run_akasa_automated_scrape,
+                    'date',
+                    run_date=next_run,
+                    id='akasa_auto_scraper',
+                    replace_existing=True,
+                    misfire_grace_time=None  # Allow misfired jobs to run immediately
+                )
+                
+                # Update scheduler settings after scheduling
                 akasa_db.update_scheduler_settings(
-                    True,  # Keep auto-run enabled
+                    True,
                     settings.get('interval', 60),
-                    next_run  # Store the 5-minute delay
+                    next_run
                 )
                 
                 # Get and update last state
@@ -1468,56 +1478,43 @@ def initialize_akasa_scheduler():
                 if last_state:
                     akasa_db.store_scraper_state(
                         pnr=last_state.get('pnr'),
-                        state='idle',  # Reset state for next run
+                        state='scheduled',  # Changed to show it's actively scheduled
                         lastName=last_state.get('lastName'),
                         traveller_name=last_state.get('traveller_name'),
-                        message="Rescheduled missed run to 5 minutes from now",
-                        next_run=next_run,  # Use the 5-minute delay
-                        auto_run=True,
-                        preserve_last_run=True
+                        message="Scheduled to run in 5 minutes",
+                        next_run=next_run,
+                        auto_run=True
                     )
                 
-                # Schedule the job with 5-minute delay
-                if scheduler.get_job('akasa_auto_scraper'):
-                    scheduler.remove_job('akasa_auto_scraper')
-                    
-                scheduler.add_job(
-                    run_akasa_automated_scrape,
-                    'date',
-                    run_date=next_run,  # Use the 5-minute delay
-                    id='akasa_auto_scraper'
-                )
-                
-                # Emit updates with 5-minute delay
+                # Emit updates
                 socketio.emit('akasa_settings_updated', {
                     "next_run": next_run_ts,
                     "auto_run": True,
                     "interval": settings.get('interval', 60)
                 })
                 
-                socketio.emit('akasa_scraper_state_updated', {
-                    "next_run": next_run_ts,
-                    "auto_run": True,
-                    "state": 'idle',
-                    "message": "Scheduled for next run",
-                    "last_run": last_state.get('last_run') if last_state else None
-                })
+                logger.info(f"Scheduled Akasa scraper to run at: {next_run}")
+            else:
+                # For future runs, schedule as is
+                if scheduler.get_job('akasa_auto_scraper'):
+                    scheduler.remove_job('akasa_auto_scraper')
                 
-                logger.info(f"Rescheduled missed Akasa run to: {next_run}")
-                return  # Return here to prevent immediate run
-            
-            # ... rest of existing code for future runs ...
+                scheduler.add_job(
+                    run_akasa_automated_scrape,
+                    'date',
+                    run_date=stored_next_run,
+                    id='akasa_auto_scraper',
+                    replace_existing=True,
+                    misfire_grace_time=None  # Allow misfired jobs to run immediately
+                )
+                logger.info(f"Scheduled future Akasa run for: {stored_next_run}")
 
     except Exception as e:
         logger.error(f"Error initializing Akasa scheduler: {e}", exc_info=True)
-        # Try to notify frontend of error
-        try:
-            socketio.emit('akasa_scraper_error', {
-                "message": f"Scheduler initialization failed: {str(e)}",
-                "error": str(e)
-            })
-        except:
-            pass
+        socketio.emit('akasa_scraper_error', {
+            "message": f"Scheduler initialization failed: {str(e)}",
+            "error": str(e)
+        })
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -1525,6 +1522,9 @@ def handle_disconnect():
     # Clean up any Akasa-specific resources if needed
 
 if __name__ == '__main__':
+    # Initialize scheduler with thread pool
+    scheduler.configure(thread_pool_size=4)  # Allow more concurrent jobs
+    
     initialize_scheduler()
     initialize_akasa_scheduler()
     scheduler.start()

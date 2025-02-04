@@ -7,6 +7,7 @@ from datetime import datetime
 from socket_logger import SocketLogger
 from dom_utils import DOMChangeTracker
 import html5lib  # Add this import
+from notification_handler import NotificationHandler  # Add this import
 
 # Initialize logger directly instead of using utils.log
 logger = logging.getLogger(__name__)
@@ -30,7 +31,8 @@ class AkasaScraper:
         self.dom_tracker = DOMChangeTracker(db_ops)
         self.scraper_name = 'Akasa Air'
         self.success_threshold = 5  # Add retry threshold
-        self.retry_delay = 2  # Add retry delay in seconds
+        self.retry_delay = 2 
+        self.error_mess="" # Add retry delay in seconds
 
         # Add missing error states
         self.error_states = {
@@ -63,6 +65,8 @@ class AkasaScraper:
                 'current_step': 0
             }
         }
+
+        self.notification_handler = NotificationHandler(db_ops)  # Add this line
 
     def emit_detailed_update(self, category, data):
         """Emit detailed updates for specific categories"""
@@ -269,6 +273,7 @@ class AkasaScraper:
             elapsed = round(time.time() - self.timing_data['request_start'], 2)
             error_msg = f"Request failed: {str(e)}"
             self.emit_status(self.current_stage, 'error', error_msg, elapsed, error=e)
+            self.error_mess=f"{self.error_mess} \n{self.current_stage}  {str(e)}"
             raise Exception(error_msg)
 
     def process_response(self, response, pnr, lastName, traveller_name):
@@ -297,6 +302,24 @@ class AkasaScraper:
                 self.emit_status(self.current_stage, 'warning', 'Response may not contain invoice content')
             else:
                 self.emit_status(self.current_stage, 'info', f'Found invoice markers: {", ".join(found_markers)}')
+
+            # Check for DOM changes with centralized notification
+            changes, has_changes = self.dom_tracker.store_dom_changes(
+                'akasa_page',
+                response.text,
+                gstin=lastName,
+                pnr=pnr
+            )
+            
+            if has_changes:
+                self.dom_changes = changes
+                # Use centralized notification handler
+                self.notification_handler.send_dom_change_notification(
+                    changes=changes,
+                    gstin=lastName,
+                    pnr=pnr,
+                    airline="Akasa Air"
+                )
 
             epoch_time = int(time.time())
             file_name = f"{pnr}_{epoch_time}.html"
@@ -327,8 +350,20 @@ class AkasaScraper:
             }
 
         except Exception as e:
+            # Use centralized notification for errors
+            # self.notification_handler.send_scraper_notification(
+            #     error=e,
+            #     data={
+            #         'Ticket/PNR': pnr,
+            #         'Customer_GSTIN': lastName,
+            #         'Traveller Name': traveller_name
+            #     },
+            #     stage=self.current_stage,
+            #     airline="Akasa Air"
+            # )
             elapsed = round(time.time() - self.timing_data['processing_start'], 2)
             self.emit_status(self.current_stage, 'error', str(e), elapsed, error=e)
+            self.error_mess=f"{self.error_mess} \n{self.current_stage}  {str(e)}"
             return {
                 "success": False,
                 "message": str(e),
@@ -343,14 +378,14 @@ class AkasaScraper:
         finally:
             # Clean up temp file
             if 'temp_path' in locals() and os.path.exists(temp_path):
-                print("hello")
-                # try:
-                #     os.remove(temp_path)
-                # except Exception as e:
-                #     logger.error(f"Error removing temp file: {e}")
+                try:
+                    os.remove(temp_path)
+                except Exception as e:
+                    logger.error(f"Error removing temp file: {e}")
 
 def handle_scraper_error(error, pnr, traveller_name, stage, db_ops, socketio):
     """Centralized error handling for Akasa scraper"""
+    notification_handler = NotificationHandler(db_ops)
     error_msg = str(error)
     logger.error(f"Akasa scraper error in {stage}: {error_msg}")
     
@@ -361,6 +396,17 @@ def handle_scraper_error(error, pnr, traveller_name, stage, db_ops, socketio):
         message=error_msg,
         lastName=traveller_name
     )
+    
+    # Send error notification
+    # notification_handler.send_scraper_notification(
+    #     error=error,
+    #     data={
+    #         'Ticket/PNR': pnr,
+    #         'Traveller Name': traveller_name
+    #     },
+    #     stage=stage,
+    #     airline="Akasa Air"
+    # )
     
     # Log error for monitoring
     db_ops.log_scraper_error(
@@ -504,6 +550,7 @@ def run_scraper(data, db_ops, socketio=None):
     except Exception as e:
         error_message = str(e)
         scraper.emit_status('error', 'error', f"Scraper run failed: {error_message}", error=error_message)
+        scraper.error_mess= f"{scraper.error_mess} \nScraper run failed: {error_message}"
         logger.error(f"Scraper failed: {error_message}")
         
         # Final error state with all details
@@ -512,7 +559,7 @@ def run_scraper(data, db_ops, socketio=None):
             state='failed',
             lastName=None,
             traveller_name=data['Traveller Name'],
-            message=error_message
+            message=error_message+scraper.error_mess
         )
         
         # Add failure event
@@ -524,30 +571,40 @@ def run_scraper(data, db_ops, socketio=None):
         })
 
         # Error notification with all context
-        try:
-            from email_utils import send_notification_email, generate_scraper_error_email
-            html_content = generate_scraper_error_email(
-                pnr=data.get('Ticket/PNR', 'N/A'),
-                error_message=error_message,
-                timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                stage=scraper.current_stage,
-                scraper_name=scraper.scraper_name,
-                lastName=data.get('lastName'),
-                traveller_name=data.get('Traveller Name')
-            )
-            send_notification_email(
-                subject=f"{scraper.scraper_name} Scraper Error - {scraper.current_stage}",
-                html_content=html_content
-            )
-        except Exception as email_error:
-            logger.error(f"Failed to send error notification email: {email_error}")
+        # scraper.notification_handler.send_scraper_notification(
+        #     error=e,
+        #     data={
+        #         'Ticket/PNR': data.get('Ticket/PNR', 'N/A'),
+        #         'Traveller Name': data.get('Traveller Name', 'N/A')
+        #     },
+        #     stage='scraper_run',
+        #     airline="Akasa Air"
+        # )
+        
+        # try:
+        #     from email_utils import send_notification_email, generate_scraper_error_email
+        #     html_content = generate_scraper_error_email(
+        #         pnr=data.get('Ticket/PNR', 'N/A'),
+        #         error_message=error_message,
+        #         timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        #         stage=scraper.current_stage,
+        #         scraper_name=scraper.scraper_name,
+        #         lastName=data.get('lastName'),
+        #         traveller_name=data.get('Traveller Name')
+        #     )
+        #     send_notification_email(
+        #         subject=f"{scraper.scraper_name} Scraper Error - {scraper.current_stage}",
+        #         html_content=html_content
+        #     )
+        # except Exception as email_error:
+        #     logger.error(f"Failed to send error notification email: {email_error}")
         
         return {
             "success": False,
-            "message": error_message,
+            "message": error_message + scraper.error_mess,
             "error": error_message,
             "data": {
-                "lastName": data.get('lastName'),
+                "Ticket/PNR": data.get('Ticket/PNR'),
                 "traveller_name": data.get('Traveller Name')
             }
         }

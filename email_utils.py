@@ -178,6 +178,7 @@ def send_notification_email(subject, html_content, notification_emails=None):
     
     for email in notification_emails:
         try:
+            print("yash3")
             send_email(subject=subject, body=html_content, to_email=email.strip())
         except Exception as e:
             logger.error(f"Failed to send notification email to {email}: {e}")
@@ -210,6 +211,7 @@ def send_email(subject='', body='', to_email=os.getenv('SMTP_NOTIFICATIONEMAIL')
         
         server.send_message(msg)
         server.quit()
+        print("yash4")
         
         # Log successful email send
         status_type = 'DOWN' if 'Down Alert' in subject else 'UP' if 'Recovered' in subject else 'OTHER'

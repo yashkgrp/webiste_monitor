@@ -107,7 +107,6 @@
       <h1 class="mb-4">Website Monitor</h1>
 
       <!-- Add this button in your navigation or wherever appropriate -->
-     
 
       <div
         class="alert alert-danger"
@@ -391,31 +390,35 @@
       });
 
       // Add this to your existing socket event listeners
-      socket.on('settings_updated', function(data) {
-          // Update next run time in scraper status table
-          const nextRunCell = document.getElementById('nextRunTime');
-          if (data.next_run) {
-              nextRunCell.textContent = new Date(data.next_run).toLocaleString();
-          } else {
-              nextRunCell.textContent = 'Not scheduled';
-          }
-          
-          // Update auto run status
-          document.getElementById('autoRunStatus').innerHTML = `
-              <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+      socket.on("settings_updated", function (data) {
+        // Update next run time in scraper status table
+        const nextRunCell = document.getElementById("nextRunTime");
+        if (data.next_run) {
+          nextRunCell.textContent = new Date(data.next_run).toLocaleString();
+        } else {
+          nextRunCell.textContent = "Not scheduled";
+        }
+
+        // Update auto run status
+        document.getElementById("autoRunStatus").innerHTML = `
+              <span class="badge ${
+                data.auto_run ? "bg-success" : "bg-secondary"
+              }">
                   ${data.auto_run ? "Enabled" : "Disabled"}
               </span>
           `;
       });
 
-      socket.on('scraper_auto_run_complete', function(data) {
-          // Update next run time if provided
-          if (data.next_run) {
-              document.getElementById('nextRunTime').textContent = new Date(data.next_run).toLocaleString();
-          }
-          
-          // Update scraper status
-          document.getElementById('scraperStatus').innerHTML = `
+      socket.on("scraper_auto_run_complete", function (data) {
+        // Update next run time if provided
+        if (data.next_run) {
+          document.getElementById("nextRunTime").textContent = new Date(
+            data.next_run
+          ).toLocaleString();
+        }
+
+        // Update scraper status
+        document.getElementById("scraperStatus").innerHTML = `
               <span class="badge ${data.success ? "bg-success" : "bg-danger"}">
                   ${data.success ? "Success" : "Failed"}
               </span>
@@ -928,28 +931,27 @@
           const starResponse = await fetch("/scraper/last_state");
           const starData = await starResponse.json();
           if (starData.success && starData.data) {
-              updateScraperTableRow(starData.data); // Using existing function for Star Air
+            updateScraperTableRow(starData.data); // Using existing function for Star Air
           }
 
           // Load Akasa state
           const akasaResponse = await fetch("/akasa/last_state");
           const akasaData = await akasaResponse.json();
           if (akasaData.success && akasaData.data) {
-              updateAkasaTableRow(akasaData.data);
+            updateAkasaTableRow(akasaData.data);
           }
-
-      } catch (error) {
+        } catch (error) {
           console.error("Error loading scraper status:", error);
           // Show error state for both rows
           updateScraperTableRow({
-              state: "error",
-              error: "Failed to load status"
+            state: "error",
+            error: "Failed to load status",
           });
           updateAkasaTableRow({
-              state: "error",
-              error: "Failed to load status"
+            state: "error",
+            error: "Failed to load status",
           });
-      }
+        }
       }
 
       function updateScraperTableRow(data) {
@@ -958,7 +960,7 @@
           failed: "bg-danger",
           running: "bg-warning",
           idle: "bg-secondary",
-          error: "bg-danger"
+          error: "bg-danger",
         };
 
         // Destroy existing tooltips before updating
@@ -983,10 +985,12 @@
         document.getElementById("scraperStatus").innerHTML = `
         <span class="badge ${statusColors[data.state] || "bg-secondary"} 
             ${data.state === "failed" ? "status-failed" : ""}"
-            ${data.state === "failed" 
+            ${
+              data.state === "failed"
                 ? `data-bs-toggle="tooltip" data-bs-placement="top" 
-                   title="${data.error || "Unknown error"}"` 
-                : ""}>
+                   title="${data.error || "Unknown error"}"`
+                : ""
+            }>
             ${data.state || "Not Started"}
         </span>
     `;
@@ -1003,8 +1007,14 @@
 
                 domChangesCell.innerHTML = `
                         <div>
-                            <span class="badge ${status.has_changes ? "bg-danger" : "bg-success"}">
-                                ${status.has_changes ? "Changes Detected" : "No Changes"}
+                            <span class="badge ${
+                              status.has_changes ? "bg-danger" : "bg-success"
+                            }">
+                                ${
+                                  status.has_changes
+                                    ? "Changes Detected"
+                                    : "No Changes"
+                                }
                             </span>
                             <button onclick="window.location.href='/scraper#domChangesSection'" 
                                     class="badge bg-info border-0 ms-2" 
@@ -1035,57 +1045,72 @@
       // Add new function specifically for Akasa
       function updateAkasaTableRow(data) {
         const statusColors = {
-            success: "bg-success",
-            failed: "bg-danger",
-            running: "bg-warning",
-            idle: "bg-secondary",
-            error: "bg-danger",
-            completed: "bg-success"
+          success: "bg-success",
+          failed: "bg-danger",
+          running: "bg-warning",
+          idle: "bg-secondary",
+          error: "bg-danger",
+          completed: "bg-success",
         };
 
-        document.getElementById("akasaLastRunTime").textContent = 
-            data.last_run ? new Date(data.last_run).toLocaleString() : "-";
-        document.getElementById("akasaCurrentPNR").textContent = data.pnr || "-";
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
         document.getElementById("akasaScraperStatus").innerHTML = `
             <span class="badge ${statusColors[data.state] || "bg-secondary"}">
                 ${data.state || "Not Started"}
             </span>
         `;
-        document.getElementById("akasaNextRunTime").textContent = 
-            data.auto_run && data.next_run ? new Date(data.next_run).toLocaleString() : "Not scheduled";
+        document.getElementById("akasaNextRunTime").textContent =
+          data.auto_run && data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
         document.getElementById("akasaAutoRunStatus").innerHTML = `
-            <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
                 ${data.auto_run ? "Enabled" : "Disabled"}
             </span>
         `;
 
         // Update DOM changes status if available
         updateAkasaDomChanges();
-    }
+      }
 
-    // Add function to update DOM changes
-    function updateAkasaDomChanges() {
+      // Add function to update DOM changes
+      function updateAkasaDomChanges() {
         fetch("/akasa/dom_changes")
-            .then(response => response.json())
-            .then(data => {
-                const domChangesCell = document.getElementById("akasaDomChangesCell");
-                if (data.success) {
-                    const changes = data.changes || [];
-                    domChangesCell.innerHTML = `
-                        <span class="badge ${changes.length > 0 ? "bg-warning" : "bg-success"}">
-                            ${changes.length > 0 ? `${changes.length} Changes` : "No Changes"}
+          .then((response) => response.json())
+          .then((data) => {
+            const domChangesCell = document.getElementById(
+              "akasaDomChangesCell"
+            );
+            if (data.success) {
+              const changes = data.changes || [];
+              domChangesCell.innerHTML = `
+                        <span class="badge ${
+                          changes.length > 0 ? "bg-warning" : "bg-success"
+                        }">
+                            ${
+                              changes.length > 0
+                                ? `${changes.length} Changes`
+                                : "No Changes"
+                            }
                         </span>
                     `;
-                } else {
-                    domChangesCell.innerHTML = '<span class="badge bg-secondary">No Data</span>';
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching Akasa DOM changes:", error);
-                document.getElementById("akasaDomChangesCell").innerHTML = 
-                    '<span class="badge bg-warning">Error</span>';
-            });
-    }
+            } else {
+              domChangesCell.innerHTML =
+                '<span class="badge bg-secondary">No Data</span>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching Akasa DOM changes:", error);
+            document.getElementById("akasaDomChangesCell").innerHTML =
+              '<span class="badge bg-warning">Error</span>';
+          });
+      }
 
       // Add new function to handle the click event
       function handleDOMChangesClick(event, encodedChanges) {
@@ -1127,37 +1152,50 @@
 
       // Add new function to update Akasa row
       function updateAkasaRow(data) {
-        document.getElementById("akasaLastRunTime").textContent = 
-            data.last_run ? new Date(data.last_run).toLocaleString() : "-";
-        document.getElementById("akasaCurrentPNR").textContent = data.pnr || "-";
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
         document.getElementById("akasaScraperStatus").innerHTML = `
             <span class="badge ${getStatusBadgeClass(data.state)}">
                 ${data.state || "Not Started"}
             </span>
         `;
-        document.getElementById("akasaNextRunTime").textContent = 
-            data.next_run ? new Date(data.next_run).toLocaleString() : "Not scheduled";
+        document.getElementById("akasaNextRunTime").textContent = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
         document.getElementById("akasaAutoRunStatus").innerHTML = `
-            <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
                 ${data.auto_run ? "Enabled" : "Disabled"}
             </span>
         `;
         // Update DOM changes cell
         updateAkasaDOMChanges();
-    }
+      }
 
-    // Add function to handle Akasa DOM changes
-    function updateAkasaDOMChanges() {
+      // Add function to handle Akasa DOM changes
+      function updateAkasaDOMChanges() {
         fetch("/akasa/dom_changes")
-            .then((response) => response.json())
-            .then((result) => {
-                const domChangesCell = document.getElementById("akasaDomChangesCell");
-                if (result.success) {
-                    const changes = result.changes || [];
-                    domChangesCell.innerHTML = `
+          .then((response) => response.json())
+          .then((result) => {
+            const domChangesCell = document.getElementById(
+              "akasaDomChangesCell"
+            );
+            if (result.success) {
+              const changes = result.changes || [];
+              domChangesCell.innerHTML = `
                         <div>
-                            <span class="badge ${changes.length > 0 ? "bg-warning" : "bg-success"}">
-                                ${changes.length > 0 ? `${changes.length} Changes` : "No Changes"}
+                            <span class="badge ${
+                              changes.length > 0 ? "bg-warning" : "bg-success"
+                            }">
+                                ${
+                                  changes.length > 0
+                                    ? `${changes.length} Changes`
+                                    : "No Changes"
+                                }
                             </span>
                             <button onclick="window.location.href='/akasa_scraper#domChangesSection'" 
                                     class="badge bg-info border-0 ms-2" 
@@ -1166,250 +1204,602 @@
                             </button>
                         </div>
                     `;
-                } else {
-                    domChangesCell.innerHTML = '<span class="badge bg-secondary">No Data</span>';
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching Akasa DOM changes:", error);
-                document.getElementById("akasaDomChangesCell").innerHTML = 
-                    '<span class="badge bg-warning">Error</span>';
-            });
-    }
+            } else {
+              domChangesCell.innerHTML =
+                '<span class="badge bg-secondary">No Data</span>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching Akasa DOM changes:", error);
+            document.getElementById("akasaDomChangesCell").innerHTML =
+              '<span class="badge bg-warning">Error</span>';
+          });
+      }
 
-    // Add helper function for status badge classes
-    function getStatusBadgeClass(state) {
+      // Add helper function for status badge classes
+      function getStatusBadgeClass(state) {
         switch (state) {
-            case 'completed':
-            case 'success':
-                return 'bg-success';
-            case 'failed':
-            case 'error':
-                return 'bg-danger';
-            case 'running':
-                return 'bg-warning';
-            default:
-                return 'bg-secondary';
+          case "completed":
+          case "success":
+            return "bg-success";
+          case "failed":
+          case "error":
+            return "bg-danger";
+          case "running":
+            return "bg-warning";
+          default:
+            return "bg-secondary";
         }
-    }
+      }
 
-    // Add Akasa-specific socket event listeners
-    socket.on('akasa_scraper_status', function(data) {
-        const statusBadge = document.getElementById('akasaScraperStatus');
+      // Add Akasa-specific socket event listeners
+      socket.on("akasa_scraper_status", function (data) {
+        const statusBadge = document.getElementById("akasaScraperStatus");
         if (statusBadge) {
-            statusBadge.innerHTML = `
+          statusBadge.innerHTML = `
                 <span class="badge ${getStatusBadgeClass(data.status)}">
-                    ${data.status === 'running' ? 'Running' : data.status}
+                    ${data.status === "running" ? "Running" : data.status}
                 </span>
             `;
         }
-    });
+      });
 
-    socket.on('akasa_scraper_completed', function(data) {
+      socket.on("akasa_scraper_completed", function (data) {
         if (data.success) {
-            document.getElementById('akasaScraperStatus').innerHTML = 
-                '<span class="badge bg-success">Completed</span>';
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-success">Completed</span>';
         } else {
-            document.getElementById('akasaScraperStatus').innerHTML = 
-                '<span class="badge bg-danger">Failed</span>';
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-danger">Failed</span>';
         }
-        document.getElementById('akasaLastRunTime').textContent = 
-            new Date().toLocaleString();
-    });
+        document.getElementById("akasaLastRunTime").textContent =
+          new Date().toLocaleString();
+        loadScraperStatus();
+      });
 
-    socket.on('akasa_settings_updated', function(data) {
-        document.getElementById('akasaNextRunTime').textContent = 
-            data.next_run ? new Date(data.next_run).toLocaleString() : 'Not scheduled';
-        document.getElementById('akasaAutoRunStatus').innerHTML = `
-            <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+      socket.on("akasa_settings_updated", function (data) {
+        document.getElementById("akasaNextRunTime").textContent = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaAutoRunStatus").innerHTML = `
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
                 ${data.auto_run ? "Enabled" : "Disabled"}
             </span>
         `;
-    });
+      });
 
-    // Update the periodic refresh to include Akasa
-    setInterval(() => {
+      // Update the periodic refresh to include Akasa
+      setInterval(() => {
         loadScraperStatus();
         // Only refresh DOM changes if table is visible
-        if (document.getElementById('akasaDomChangesCell').offsetParent !== null) {
-            updateAkasaDOMChanges();
+        if (
+          document.getElementById("akasaDomChangesCell").offsetParent !== null
+        ) {
+          updateAkasaDOMChanges();
         }
-    }, 30000);
+      }, 30000);
 
-    // Update the Akasa table row update function
-    function updateAkasaTableRow(data) {
-        document.getElementById("akasaLastRunTime").textContent = 
-            data.last_run ? new Date(data.last_run).toLocaleString() : "-";
-        document.getElementById("akasaCurrentPNR").textContent = data.pnr || "-";
+      // Update the Akasa table row update function
+      function updateAkasaTableRow(data) {
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
         // Update to show lastName in Other Details column
-        document.getElementById("akasaOtherDetails").textContent = data.traveller_name || "-";
-        document.getElementById("akasaNextRunTime").textContent = 
-            data.auto_run && data.next_run ? new Date(data.next_run).toLocaleString() : "Not scheduled";
+        document.getElementById("akasaOtherDetails").textContent =
+          data.traveller_name || "-";
+        document.getElementById("akasaNextRunTime").textContent =
+          data.auto_run && data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
         document.getElementById("akasaScraperStatus").innerHTML = `
             <span class="badge ${getStatusBadgeClass(data.state)}">
                 ${data.state || "Not Started"}
             </span>
         `;
         document.getElementById("akasaAutoRunStatus").innerHTML = `
-            <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
                 ${data.auto_run ? "Enabled" : "Disabled"}
             </span>
         `;
-    }
+      }
 
-    // Update the socket event listeners for Akasa
-    socket.on('akasa_scraper_completed', function(data) {
+      // Update the socket event listeners for Akasa
+      socket.on("akasa_scraper_completed", function (data) {
         if (data.success) {
-            document.getElementById('akasaScraperStatus').innerHTML = 
-                '<span class="badge bg-success">Completed</span>';
-            // Update last name when scraping completes
-            if (data.traveller_name) {
-                document.getElementById("akasaOtherDetails").textContent = data.traveller_name;
-            }
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-success">Completed</span>';
+          // Update last name when scraping completes
+          if (data.traveller_name) {
+            document.getElementById("akasaOtherDetails").textContent =
+              data.traveller_name;
+          }
         } else {
-            document.getElementById('akasaScraperStatus').innerHTML = 
-                '<span class="badge bg-danger">Failed</span>';
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-danger">Failed</span>';
         }
-        document.getElementById('akasaLastRunTime').textContent = 
-            new Date().toLocaleString();
-    });
+        document.getElementById("akasaLastRunTime").textContent =
+          new Date().toLocaleString();
+      });
 
-    socket.on('akasa_scraper_state_updated', function(data) {
-        document.getElementById("akasaLastRunTime").textContent = 
-            data.last_run ? new Date(data.last_run).toLocaleString() : "-";
-        document.getElementById("akasaCurrentPNR").textContent = data.pnr || "-";
+      socket.on("akasa_scraper_state_updated", function (data) {
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
         // Update Other Details with traveller name
-        document.getElementById("akasaOtherDetails").textContent = data.traveller_name || "-";
-        document.getElementById("akasaNextRunTime").textContent = 
-            data.auto_run && data.next_run ? new Date(data.next_run).toLocaleString() : "Not scheduled";
+        document.getElementById("akasaOtherDetails").textContent =
+          data.traveller_name || "-";
+        document.getElementById("akasaNextRunTime").textContent =
+          data.auto_run && data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
         document.getElementById("akasaScraperStatus").innerHTML = `
             <span class="badge ${getStatusBadgeClass(data.state)}">
                 ${data.state || "Not Started"}
             </span>
         `;
         document.getElementById("akasaAutoRunStatus").innerHTML = `
-            <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
                 ${data.auto_run ? "Enabled" : "Disabled"}
             </span>
         `;
-    });
+      });
 
-    // Replace the updateAkasaTableRow function and add akasa event listeners
-    function updateAkasaTableRow(data) {
+      // Replace the updateAkasaTableRow function and add akasa event listeners
+      function updateAkasaTableRow(data) {
         // Don't clear other fields if they exist
         if (data.last_run !== undefined) {
-            document.getElementById("akasaLastRunTime").textContent = 
-                data.last_run ? new Date(data.last_run).toLocaleString() : "-";
+          document.getElementById("akasaLastRunTime").textContent =
+            data.last_run ? new Date(data.last_run).toLocaleString() : "-";
         }
         if (data.pnr !== undefined) {
-            document.getElementById("akasaCurrentPNR").textContent = data.pnr || "-";
+          document.getElementById("akasaCurrentPNR").textContent =
+            data.pnr || "-";
         }
         if (data.traveller_name !== undefined) {
-            document.getElementById("akasaOtherDetails").textContent = data.traveller_name || "-";
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name || "-";
         }
         if (data.state !== undefined) {
-            document.getElementById("akasaScraperStatus").innerHTML = `
+          document.getElementById("akasaScraperStatus").innerHTML = `
                 <span class="badge ${getStatusBadgeClass(data.state)}">
                     ${data.state || "Not Started"}
                 </span>
             `;
         }
         if (data.next_run !== undefined || data.auto_run !== undefined) {
-            document.getElementById("akasaNextRunTime").textContent = 
-                data.auto_run && data.next_run ? new Date(data.next_run).toLocaleString() : "Not scheduled";
-            document.getElementById("akasaAutoRunStatus").innerHTML = `
-                <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+          document.getElementById("akasaNextRunTime").textContent =
+            data.auto_run && data.next_run
+              ? new Date(data.next_run).toLocaleString()
+              : "Not scheduled";
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
                     ${data.auto_run ? "Enabled" : "Disabled"}
                 </span>
             `;
         }
 
         // Only update DOM changes if we're not in the middle of a scraping operation
-        if (data.state !== 'running') {
-            updateAkasaDomChanges();
+        if (data.state !== "running") {
+          updateAkasaDomChanges();
         }
-    }
+      }
 
-    // Update socket event listeners for Akasa
-    socket.on('akasa_scraper_status', function(data) {
-        // Don't overwrite entire row, just update status
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        // Preserve existing data
+        const currentState = {
+          last_run: document.getElementById("akasaLastRunTime").textContent,
+          pnr: document.getElementById("akasaCurrentPNR").textContent,
+          traveller_name:
+            document.getElementById("akasaOtherDetails").textContent,
+          next_run: document.getElementById("akasaNextRunTime").textContent,
+          auto_run: document
+            .getElementById("akasaAutoRunStatus")
+            .querySelector(".badge")
+            .classList.contains("bg-success"),
+        };
+
+        // Only update status
         document.getElementById("akasaScraperStatus").innerHTML = `
             <span class="badge ${getStatusBadgeClass(data.status)}">
-                ${data.status === 'running' ? 'Running' : data.status}
+                ${data.status === "running" ? "Running" : data.status}
             </span>
         `;
-    });
+      });
 
-    socket.on('akasa_scraper_completed', function(data) {
+      socket.on("akasa_scraper_completed", function (data) {
         // Update only relevant fields
         if (data.success) {
-            document.getElementById('akasaScraperStatus').innerHTML = 
-                '<span class="badge bg-success">Completed</span>';
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-success">Completed</span>';
         } else {
-            document.getElementById('akasaScraperStatus').innerHTML = 
-                '<span class="badge bg-danger">Failed</span>';
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-danger">Failed</span>';
         }
         if (data.last_run) {
-            document.getElementById('akasaLastRunTime').textContent = 
-                new Date(data.last_run).toLocaleString();
+          document.getElementById("akasaLastRunTime").textContent = new Date(
+            data.last_run
+          ).toLocaleString();
         }
         if (data.traveller_name) {
-            document.getElementById("akasaOtherDetails").textContent = data.traveller_name;
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name;
         }
-    });
+        loadScraperStatus();
+      });
 
-    socket.on('akasa_scraper_state_updated', function(data) {
+      socket.on("akasa_scraper_state_updated", function (data) {
         // Keep existing data and only update what's provided
         const currentState = {
-            last_run: document.getElementById("akasaLastRunTime").textContent,
-            pnr: document.getElementById("akasaCurrentPNR").textContent,
-            traveller_name: document.getElementById("akasaOtherDetails").textContent,
-            next_run: document.getElementById("akasaNextRunTime").textContent,
-            auto_run: document.getElementById("akasaAutoRunStatus").querySelector(".badge").classList.contains("bg-success")
+          last_run: document.getElementById("akasaLastRunTime").textContent,
+          pnr: document.getElementById("akasaCurrentPNR").textContent,
+          traveller_name:
+            document.getElementById("akasaOtherDetails").textContent,
+          next_run: document.getElementById("akasaNextRunTime").textContent,
+          auto_run: document
+            .getElementById("akasaAutoRunStatus")
+            .querySelector(".badge")
+            .classList.contains("bg-success"),
         };
 
         updateAkasaTableRow({
-            ...currentState,
-            ...data
+          ...currentState,
+          ...data,
         });
-    });
+        loadScraperStatus();
+      });
 
-    socket.on('akasa_settings_updated', function(data) {
+      socket.on("akasa_settings_updated", function (data) {
         // Only update settings-related fields
         if (data.next_run !== undefined) {
-            document.getElementById('akasaNextRunTime').textContent = 
-                data.next_run ? new Date(data.next_run).toLocaleString() : 'Not scheduled';
+          document.getElementById("akasaNextRunTime").textContent =
+            data.next_run
+              ? new Date(data.next_run).toLocaleString()
+              : "Not scheduled";
         }
         if (data.auto_run !== undefined) {
-            document.getElementById('akasaAutoRunStatus').innerHTML = `
-                <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
                     ${data.auto_run ? "Enabled" : "Disabled"}
                 </span>
             `;
         }
-    });
+      });
 
-    // Modify loadScraperStatus to handle both scrapers independently
-    async function loadScraperStatus() {
+      // Modify loadScraperStatus to handle both scrapers independently
+      async function loadScraperStatus() {
         try {
-            // Load Star Air state
-            const starResponse = await fetch("/scraper/last_state");
-            const starData = await starResponse.json();
-            if (starData.success && starData.data) {
-                updateScraperTableRow(starData.data);
-            }
+          // Load Star Air state
+          const starResponse = await fetch("/scraper/last_state");
+          const starData = await starResponse.json();
+          if (starData.success && starData.data) {
+            updateScraperTableRow(starData.data);
+          }
 
-            // Load Akasa state independently
-            const akasaResponse = await fetch("/akasa/last_state");
-            const akasaData = await akasaResponse.json();
-            if (akasaData.success && akasaData.data) {
-                updateAkasaTableRow(akasaData.data);
-            }
+          // Load Akasa state independently
+          const akasaResponse = await fetch("/akasa/last_state");
+          const akasaData = await akasaResponse.json();
+          if (akasaData.success && akasaData.data) {
+            updateAkasaTableRow(akasaData.data);
+          }
         } catch (error) {
-            console.error("Error loading scraper status:", error);
+          console.error("Error loading scraper status:", error);
         }
-    }
+      }
 
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        // Preserve existing data
+        const currentState = {
+          last_run: document.getElementById("akasaLastRunTime").textContent,
+          pnr: document.getElementById("akasaCurrentPNR").textContent,
+          traveller_name:
+            document.getElementById("akasaOtherDetails").textContent,
+          next_run: document.getElementById("akasaNextRunTime").textContent,
+          auto_run: document
+            .getElementById("akasaAutoRunStatus")
+            .querySelector(".badge")
+            .classList.contains("bg-success"),
+        };
+
+        // Only update status
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.status)}">
+                ${data.status === "running" ? "Running" : data.status}
+            </span>
+        `;
+        loadScraperStatus();
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        // Format dates if they exist, otherwise keep existing values
+        const lastRun = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : document.getElementById("akasaLastRunTime").textContent;
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : document.getElementById("akasaNextRunTime").textContent;
+
+        // Update only if new data is provided, otherwise keep existing
+        if (data.last_run) {
+          document.getElementById("akasaLastRunTime").textContent = lastRun;
+        }
+        if (data.pnr) {
+          document.getElementById("akasaCurrentPNR").textContent = data.pnr;
+        }
+        if (data.traveller_name) {
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name;
+        }
+        if (data.next_run) {
+          document.getElementById("akasaNextRunTime").textContent = nextRun;
+        }
+        if (data.state) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+          loadScraperStatus();
+        }
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      socket.on("akasa_settings_updated", function (data) {
+        // Handle next_run time properly
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaNextRunTime").textContent = nextRun;
+
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      function updateAkasaTableRow(data) {
+        // Handle last run time
+        if (data.last_run) {
+          document.getElementById("akasaLastRunTime").textContent = new Date(
+            data.last_run
+          ).toLocaleString();
+        }
+
+        // Handle PNR
+        if (data.pnr !== undefined) {
+          document.getElementById("akasaCurrentPNR").textContent =
+            data.pnr || "-";
+        }
+
+        // Handle traveller name - check multiple possible fields and fallback gracefully
+        const currentDetails =
+          document.getElementById("akasaOtherDetails").textContent;
+        const newDetails =
+          data.traveller_name || data.lastName || data.last_name || "-";
+        // Only update if we have new data and it's different from current
+        if (newDetails !== "-" || currentDetails === "-") {
+          document.getElementById("akasaOtherDetails").textContent = newDetails;
+        }
+
+        // Handle status
+        if (data.state) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+        }
+
+        // Handle next run time and auto run status
+        if (data.next_run !== undefined || data.auto_run !== undefined) {
+          // Only update next run time if auto run is enabled and next run is provided
+          document.getElementById("akasaNextRunTime").textContent =
+            data.auto_run && data.next_run
+              ? new Date(data.next_run).toLocaleString()
+              : "Not scheduled";
+
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+
+        // Only update DOM changes if we're not in the middle of a scraping operation
+        if (data.state !== "running") {
+          updateAkasaDomChanges();
+        }
+      }
+
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        // Preserve existing data
+        const currentState = {
+          last_run: document.getElementById("akasaLastRunTime").textContent,
+          pnr: document.getElementById("akasaCurrentPNR").textContent,
+          traveller_name:
+            document.getElementById("akasaOtherDetails").textContent,
+          next_run: document.getElementById("akasaNextRunTime").textContent,
+          auto_run: document
+            .getElementById("akasaAutoRunStatus")
+            .querySelector(".badge")
+            .classList.contains("bg-success"),
+        };
+
+        // Only update status
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.status)}">
+                ${data.status === "running" ? "Running" : data.status}
+            </span>
+        `;
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        // Format dates if they exist, otherwise keep existing values
+        const lastRun = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : document.getElementById("akasaLastRunTime").textContent;
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : document.getElementById("akasaNextRunTime").textContent;
+
+        // Update only if new data is provided, otherwise keep existing
+        if (data.last_run) {
+          document.getElementById("akasaLastRunTime").textContent = lastRun;
+        }
+        if (data.pnr) {
+          document.getElementById("akasaCurrentPNR").textContent = data.pnr;
+        }
+        if (data.traveller_name) {
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name;
+        }
+        if (data.next_run) {
+          document.getElementById("akasaNextRunTime").textContent = nextRun;
+        }
+        if (data.state) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+        }
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      socket.on("akasa_settings_updated", function (data) {
+        // Handle next_run time properly
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaNextRunTime").textContent = nextRun;
+
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        try {
+          const statusBadge = document.getElementById("akasaScraperStatus");
+          if (statusBadge) {
+            statusBadge.innerHTML = `
+                    <span class="badge ${getStatusBadgeClass(data.status)}">
+                        ${data.status === "running" ? "Running" : data.status}
+                    </span>
+                `;
+          }
+          console.log("Akasa status update:", data); // Debug log
+        } catch (error) {
+          console.error("Error handling akasa_scraper_status:", error);
+        }
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        try {
+          console.log("Akasa state update received:", data); // Debug log
+
+          if (data.last_run) {
+            document.getElementById("akasaLastRunTime").textContent = new Date(
+              data.last_run
+            ).toLocaleString();
+          }
+          if (data.pnr) {
+            document.getElementById("akasaCurrentPNR").textContent = data.pnr;
+          }
+          if (data.traveller_name) {
+            document.getElementById("akasaOtherDetails").textContent =
+              data.traveller_name;
+          }
+          if (data.next_run) {
+            document.getElementById("akasaNextRunTime").textContent = new Date(
+              data.next_run
+            ).toLocaleString();
+          }
+          if (data.state) {
+            document.getElementById("akasaScraperStatus").innerHTML = `
+                    <span class="badge ${getStatusBadgeClass(data.state)}">
+                        ${data.state || "Not Started"}
+                    </span>
+                `;
+          }
+          if (data.hasOwnProperty("auto_run")) {
+            document.getElementById("akasaAutoRunStatus").innerHTML = `
+                    <span class="badge ${
+                      data.auto_run ? "bg-success" : "bg-secondary"
+                    }">
+                        ${data.auto_run ? "Enabled" : "Disabled"}
+                    </span>
+                `;
+          }
+        } catch (error) {
+          console.error("Error handling akasa_scraper_state_updated:", error);
+        }
+      });
+
+      // Add socket reconnection handling
+      socket.on("connect", function () {
+        console.log("Socket connected");
+        // Refresh scraper status on reconnect
+        loadScraperStatus();
+      });
+
+      socket.on("disconnect", function () {
+        console.log("Socket disconnected");
+      });
+
+      socket.on("connect_error", function (error) {
+        console.log("Socket connection error:", error);
+        // Try to reconnect
+        setTimeout(function () {
+          socket.connect();
+        }, 1000);
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>

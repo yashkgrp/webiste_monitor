@@ -57,7 +57,7 @@ class DOMChangeTracker:
                 test_div = old_soup.new_tag('input')
                 test_div['class'] = 'yash'
                 test_div.string = "this div fails the scrappers"  # Add some content to make it visible
-                body_tag.append(test_div)
+                # body_tag.append(test_div)
             
             old_clean = self.clean_html(str(old_soup))
             new_clean = self.clean_html(new_content)
