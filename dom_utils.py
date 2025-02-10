@@ -62,6 +62,7 @@ class DOMChangeTracker:
             old_clean = self.clean_html(str(old_soup))
             new_clean = self.clean_html(new_content)
             
+            
             # If content is identical after cleaning, no changes
             if old_clean == new_clean:
                 return [], False
@@ -77,7 +78,7 @@ class DOMChangeTracker:
             significant_changes = []
             for line in diff:
                 if line.startswith(('+ ', '- ')):
-                    stripped = line[2:].strip()
+                    stripped = line[2:].trip()
                     if any(tag in stripped for tag in ['<div', '<form', '<input', '<button', '<nav']):
                         change_type = 'added' if line.startswith('+ ') else 'removed'
                         
@@ -251,4 +252,27 @@ class DOMChangeTracker:
             return []
         except Exception as e:
             logger.error(f"Error getting DOM changes: {e}")
+            return []
+
+    def track_page_changes(self, page_id, html_content, pnr=None, origin=None):
+        """Track DOM changes for a page"""
+        try:
+            # Store changes using existing store_dom_changes method
+            changes, has_changes = self.store_dom_changes(
+                page_id=page_id,
+                html_content=html_content,
+                gstin=None,  # Not used for air india
+                pnr=pnr
+            )
+            
+            if has_changes:
+                # Add origin info to changes
+                for change in changes:
+                    change['origin'] = origin
+                    change['page_id'] = page_id
+            
+            return changes
+            
+        except Exception as e:
+            logger.error(f"Error tracking page changes: {e}")
             return []

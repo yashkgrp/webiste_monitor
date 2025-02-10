@@ -16,7 +16,6 @@ from bs4 import BeautifulSoup
 import re
 from urllib.parse import urljoin
 from scraper_utils import run_scraper
-from dom_utils import DOMChangeTracker  # New import
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from email_utils import (
@@ -25,7 +24,7 @@ from email_utils import (
     send_notification_email
 )
 from notification_handler import NotificationHandler
-
+from dom_utils import DOMChangeTracker
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -44,14 +43,17 @@ except Exception as e:
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
-
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "allow_headers": ["Content-Type"],
+        "methods": ["GET", "POST", "OPTIONS"]
+    }
+})
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', logger=True, engineio_logger=True)
+dom_tracker = DOMChangeTracker(db_ops)
 # Initialize socket logger
 socket_logger = SocketLogger()
-
-# Initialize DOM tracker
-dom_tracker = DOMChangeTracker(db_ops)
 
 # Initialize notification handler after db_ops initialization
 notification_handler = NotificationHandler(db_ops)
@@ -418,7 +420,7 @@ def add_url():
 
         # Check if URL exists in Firebase first
         existing_data = db_ops.get_url_data(new_url)
-        if existing_data:
+        if (existing_data):
             # If URL exists but not in local state, add it
             if new_url not in monitored_urls:
                 monitored_urls[new_url] = existing_data
@@ -528,6 +530,10 @@ def scraper_page():
 @app.route('/akasa_scraper')
 def akasa_scraper_page():
     return render_template('akasa_scraper.html')
+
+@app.route('/airindiaexpress_scraper')
+def airindiaexpress_scraper_page():
+    return render_template('air_india_scraper.html')
 
 @app.route('/run_starair_scraper', methods=['POST'])
 def run_starair_scraper():
@@ -1516,6 +1522,471 @@ def initialize_akasa_scheduler():
             "error": str(e)
         })
 
+@app.route('/air_india/start_scraping', methods=['POST'])
+def start_airindia_scraping():
+    """Handle Air India Express scraping requests"""
+    try:
+        print("Received scraping request")
+        data = request.get_json()
+        print("Request data:", data)
+        
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "No data provided"
+            }), 400
+
+        pnr = data.get('pnr')
+        origin = data.get('origin')
+        vendor = data.get('vendor')
+
+        # Validate required fields
+        if not all([pnr, origin, vendor]):
+            missing = []
+            if not pnr: missing.append('PNR')
+            if not origin: missing.append('origin')
+            if not vendor: missing.append('vendor')
+            return jsonify({
+                "success": False,
+                "message": f"Missing required fields: {', '.join(missing)}"
+            }), 400
+
+        # Initialize Air India DB operations
+        from air_scrapper.db_ops import AirIndiaFirestoreDB
+        from air_scrapper.air_scraper import run_scraper as run_airindia_scraper
+        
+        air_india_db = AirIndiaFirestoreDB(db)
+
+        # Store initial state
+        air_india_db.store_scraper_state(
+            pnr=pnr,
+            state='starting',
+            message='Starting scraper',
+            origin=origin,
+            vendor=vendor
+        )
+
+        # Run scraper
+        scraper_data = {
+            'Ticket/PNR': pnr,
+            'Origin': origin,
+            'Vendor': vendor
+        }
+        
+        result = run_airindia_scraper(scraper_data, air_india_db, socketio)
+
+        if not result.get('success'):
+            # Handle failure case
+            notification_handler.send_scraper_notification(
+                error=Exception(result.get('message', 'Scraping failed')),
+                data=scraper_data,
+                stage='manual_run',
+                airline="Air India Express"
+            )
+            
+            air_india_db.store_scraper_state(
+                pnr=pnr,
+                state='failed',
+                message=result.get('message', 'Scraping failed'),
+                origin=origin,
+                vendor=vendor
+            )
+        else:
+            # Handle success case
+            air_india_db.store_scraper_state(
+                pnr=pnr,
+                state='completed',
+                message='Scraping completed successfully',
+                origin=origin,
+                vendor=vendor,
+                data=result.get('data', {})  # Store any returned data
+            )
+
+        # Add this line to emit completion event
+        socketio.emit('air_scraper_completed', {
+            'success': result.get('success'),
+            'state': 'completed' if result.get('success') else 'failed',
+            'pnr': pnr,
+            'origin': origin,
+            'vendor': vendor
+        })
+        socketio.emit('air_india_run_completed')
+
+        return jsonify(result)
+
+    except Exception as e:
+        print("Error during scraping:", str(e))
+        error_response = {
+            "success": False,
+            "message": str(e)
+        }
+        
+        # Log error if DB is available
+        try:
+            if 'air_india_db' in locals() and 'scraper_data' in locals():
+                air_india_db.store_scraper_state(
+                    pnr=scraper_data['Ticket/PNR'],
+                    state='failed',
+                    message=str(e),
+                    origin=scraper_data['Origin'],
+                    vendor=scraper_data['Vendor']
+                )
+        except Exception as db_error:
+            print("Error logging to DB:", str(db_error))
+            
+        return jsonify(error_response), 500
+
+@app.route('/air_india/last_state')
+def get_airindia_last_state():
+    """Get last Air India scraper state"""
+    try:
+        print("Fetching Air India initial state") # Debug log
+        
+        # Initialize air india db
+        from air_scrapper.db_ops import AirIndiaFirestoreDB
+        air_india_db = AirIndiaFirestoreDB(db)
+        air_india_db._init_default_settings()
+        
+        # Get both state and settings
+        state = air_india_db.get_last_scraper_state()
+        settings = air_india_db.get_scheduler_settings()
+        
+        print(f"Retrieved state: {state}")  # Debug log
+        print(f"Retrieved settings: {settings}")  # Debug log
+        
+        empty_state = {
+            "state": "new",
+            "last_run": None,
+            "next_run": None,
+            "pnr": None,
+            "origin": None,
+            "vendor": None,
+            "auto_run": settings.get('auto_run', False) if settings else False
+        }
+        
+        if not state:
+            print("No state found, returning empty state") # Debug log
+            return jsonify({
+                "success": True,
+                "data": empty_state
+            })
+            
+        # Add scheduler info to state
+        state['auto_run'] = settings.get('auto_run', False)
+        if settings and settings.get('auto_run'):
+            if not state.get('next_run'):
+                next_run = datetime.now() + timedelta(minutes=settings.get('interval', 60))
+                state['next_run'] = next_run.isoformat()
+        
+        print(f"Returning state: {state}")  # Debug log
+        return jsonify({
+            "success": True,
+            "data": state
+        })
+        
+    except Exception as e:
+        print(f"Error getting last state: {str(e)}")  # Debug log
+        logger.error(f"Error getting last state: {e}", exc_info=True)
+        return jsonify({
+            "success": False,
+            "message": str(e),
+            "data": None
+        }), 500
+
+@app.route('/air_india/dom_changes')
+def get_airindia_dom_changes():
+    """Get DOM changes for Air India Express"""
+    try:
+        # Initialize DB even if it's the first time
+        from air_scrapper.db_ops import AirIndiaFirestoreDB
+        air_india_db = AirIndiaFirestoreDB(db)
+        air_india_db._init_dom_collections()  # Ensure collections exist
+
+        # Get changes - this returns a list directly
+        changes = air_india_db.get_recent_dom_changes(limit=50) or []
+        last_comparison = air_india_db.get_last_dom_comparison() or {
+            'has_changes': False,
+            'timestamp': None,
+            'changes_count': 0
+        }
+
+        return jsonify({
+            "success": True,
+            "data": {  # Wrap in data object
+                "changes": changes,  # Direct list of changes
+                "currentStatus": last_comparison
+            },
+            "message": "DOM changes retrieved successfully"
+        })
+    except Exception as e:
+        logger.error(f"Error getting Air India DOM changes: {e}")
+        return jsonify({
+            "success": False,
+            "data": {
+                "changes": [],
+                "currentStatus": None
+            },
+            "message": f"Error retrieving DOM changes: {str(e)}"
+        })
+
+@app.route('/air_india/settings', methods=['GET', 'POST'])
+def airindia_scheduler_settings():
+    """Handle Air India scheduler settings"""
+    from air_scrapper.db_ops import AirIndiaFirestoreDB
+    air_india_db = AirIndiaFirestoreDB(db)
+    
+    if request.method == 'GET':
+        settings = air_india_db.get_scheduler_settings()
+        return jsonify({
+            "success": True,
+            "settings": settings
+        })
+        
+    try:
+        settings = request.json
+        auto_run = settings.get('auto_run', False)
+        interval = settings.get('interval', 60)
+        
+        next_run = datetime.now(pytz.UTC) + timedelta(minutes=interval) if auto_run else None
+        
+        # Update scheduler settings
+        air_india_db.update_scheduler_settings(auto_run, interval, next_run)
+        
+        # Update last state with new settings
+        last_state = air_india_db.get_last_scraper_state()
+        if last_state:
+            air_india_db.store_scraper_state(
+                pnr=last_state.get('pnr'),
+                state=last_state.get('state', 'idle'),
+                origin=last_state.get('origin'),
+                vendor=last_state.get('vendor'),
+                message=last_state.get('message'),
+                next_run=next_run,
+                auto_run=auto_run
+            )
+
+        job_id = 'airindia_auto_scraper'
+        if scheduler.get_job(job_id):
+            scheduler.remove_job(job_id)
+            
+        if auto_run and next_run:
+            scheduler.add_job(
+                run_airindia_automated_scrape,
+                'date',
+                run_date=next_run,
+                id=job_id,
+                replace_existing=True,
+                misfire_grace_time=None
+            )
+            
+        next_run_ts = int(next_run.timestamp() * 1000) if next_run else None
+        
+        # Emit updates
+        socketio.emit('air_india_settings_updated', {
+            "next_run": next_run_ts,
+            "auto_run": auto_run,
+            "interval": interval
+        })
+        
+        return jsonify({
+            "success": True,
+            "message": "Settings updated",
+            "next_run": next_run_ts,
+            "auto_run": auto_run,
+            "interval": interval
+        })
+        
+    except Exception as e:
+        logger.error(f"Error updating Air India scheduler settings: {e}")
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+def run_airindia_automated_scrape():
+    """Run automated scrape specifically for Air India Express"""
+    try:
+        thread_name = threading.current_thread().name
+        logger.info(f"Starting Air India automated scrape in thread: {thread_name}")
+        
+        from air_scrapper.db_ops import AirIndiaFirestoreDB
+        from air_scrapper.air_scraper import run_scraper as run_airindia_scraper
+        
+        air_india_db = AirIndiaFirestoreDB(db)
+        last_state = air_india_db.get_last_scraper_state()
+        settings = air_india_db.get_scheduler_settings()
+        
+        if not last_state or not settings.get('auto_run'):
+            return
+            
+        data = {
+            'Ticket/PNR': last_state.get('pnr'),
+            'Origin': last_state.get('origin'),
+            'Vendor': last_state.get('vendor')
+        }
+        
+        logger.info(f"Running automated Air India scrape for PNR: {data['Ticket/PNR']}")
+        result = run_airindia_scraper(data, air_india_db, socketio)
+        
+        if settings.get('auto_run'):
+            # Calculate next run
+            current_time = datetime.now(pytz.UTC)
+            interval_minutes = settings.get('interval', 60)
+            next_run = current_time + timedelta(minutes=interval_minutes)
+            next_run_ts = int(next_run.timestamp() * 1000)
+            
+            # Schedule next run
+            job_id = 'airindia_auto_scraper'
+            scheduler.add_job(
+                run_airindia_automated_scrape,
+                'date',
+                run_date=next_run,
+                id=job_id,
+                replace_existing=True
+            )
+            
+            # Update settings and state based on scraper result
+            state = 'completed' if result.get('success') else 'failed'
+            error_message = result.get('message') if not result.get('success') else None
+            
+            # Send notification on error
+            if error_message:
+                notification_handler.send_scraper_notification(
+                    error=Exception(error_message),
+                    data=data,
+                    stage='automated_run',
+                    airline="Air India Express"
+                )
+            
+            air_india_db.store_scraper_state(
+                pnr=data['Ticket/PNR'],
+                state=state,
+                origin=data['Origin'],
+                vendor=data['Vendor'],
+                next_run=next_run,
+                auto_run=True,
+                message=error_message
+            )
+            
+            # Emit comprehensive updates with error information if present
+            socketio.emit('air_india_settings_updated', {
+                "next_run": next_run_ts,
+                "auto_run": True,
+                "interval": interval_minutes
+            })
+
+            socketio.emit('air_india_run_completed')
+            
+            socketio.emit('air_india_scraper_state_updated', {
+                "next_run": next_run_ts,
+                "auto_run": True,
+                "state": state,
+                "error": error_message
+            })
+            
+            if error_message:
+                logger.error(f"Automated Air India scrape failed: {error_message}")
+            else:
+                logger.info("Automated Air India scrape completed successfully")
+            
+    except Exception as e:
+        logger.error(f"Air India automated scrape failed: {e}")
+        
+        try:
+            notification_handler.send_scraper_notification(
+                error=e,
+                data={
+                    'Ticket/PNR': data['Ticket/PNR'] if 'data' in locals() else 'N/A',
+                    'Origin': data['Origin'] if 'data' in locals() else 'N/A',
+                    'Vendor': data['Vendor'] if 'data' in locals() else 'N/A'
+                },
+                stage='automated_run',
+                airline="Air India Express"
+            )
+        except Exception as notify_error:
+            logger.error(f"Failed to send automated run failure notification: {notify_error}")
+
+def initialize_airindia_scheduler():
+    """Initialize Air India Express scheduler"""
+    try:
+        from air_scrapper.db_ops import AirIndiaFirestoreDB
+        air_india_db = AirIndiaFirestoreDB(db)
+        settings = air_india_db.get_scheduler_settings()
+        
+        if not settings or not settings.get('auto_run'):
+            return
+
+        current_time = datetime.now(pytz.UTC)
+        stored_next_run = settings.get('next_run')
+        
+        if stored_next_run:
+            try:
+                if isinstance(stored_next_run, (int, float)):
+                    stored_next_run = datetime.fromtimestamp(stored_next_run/1000, pytz.UTC)
+                elif isinstance(stored_next_run, str):
+                    stored_next_run = datetime.fromisoformat(stored_next_run.replace('Z', '+00:00'))
+            except Exception as e:
+                logger.error(f"Error parsing next_run time: {e}")
+                stored_next_run = current_time
+            
+            if stored_next_run <= current_time:
+                next_run = current_time + timedelta(minutes=5)
+                next_run_ts = int(next_run.timestamp() * 1000)
+                
+                scheduler.add_job(
+                    run_airindia_automated_scrape,
+                    'date',
+                    run_date=next_run,
+                    id='airindia_auto_scraper',
+                    replace_existing=True,
+                    misfire_grace_time=None
+                )
+                
+                air_india_db.update_scheduler_settings(True, settings.get('interval', 60), next_run)
+                
+                last_state = air_india_db.get_last_scraper_state()
+                if last_state:
+                    air_india_db.store_scraper_state(
+                        pnr=last_state.get('pnr'),
+                        state='scheduled',
+                        origin=last_state.get('origin'),
+                        vendor=last_state.get('vendor'),
+                        message="Scheduled to run in 5 minutes",
+                        next_run=next_run,
+                        auto_run=True
+                    )
+                
+                socketio.emit('air_india_settings_updated', {
+                    "next_run": next_run_ts,
+                    "auto_run": True,
+                    "interval": settings.get('interval', 60)
+                })
+                
+                logger.info(f"Scheduled Air India scraper to run at: {next_run}")
+            else:
+                if scheduler.get_job('airindia_auto_scraper'):
+                    scheduler.remove_job('airindia_auto_scraper')
+                
+                scheduler.add_job(
+                    run_airindia_automated_scrape,
+                    'date',
+                    run_date=stored_next_run,
+                    id='airindia_auto_scraper',
+                    replace_existing=True,
+                    misfire_grace_time=None
+                )
+                logger.info(f"Scheduled future Air India run for: {stored_next_run}")
+
+        # Add verification of scheduler job
+        if scheduler.get_job('airindia_auto_scraper'):
+            next_run = scheduler.get_job('airindia_auto_scraper').next_run_time
+            logger.info(f"Air India scheduler job exists, next run at: {next_run}")
+        else:
+            logger.warning("No Air India scheduler job found")
+
+    except Exception as e:
+        logger.error(f"Error verifying Air India scheduler: {e}")
+
 @socketio.on('disconnect')
 def handle_disconnect():
     logger.info("Client disconnected")
@@ -1527,12 +1998,13 @@ if __name__ == '__main__':
     
     initialize_scheduler()
     initialize_akasa_scheduler()
+    initialize_airindia_scheduler()  # Add Air India scheduler initialization
     scheduler.start()
     
     # Only start the URL monitoring thread
     t = threading.Thread(target=monitor_urls)
     t.daemon = True
-    t.start()
+    # t.start()
     
     # Remove the automated scraper thread - it will be handled by the scheduler
     # s = threading.Thread(target=run_automated_scraper)
@@ -1543,7 +2015,18 @@ if __name__ == '__main__':
         socketio.run(app, debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+        scheduler.shutdown()
         stop_thread = True
         t.join(timeout=5)
+        # Remove this line since we removed the thread
+        # s.join(timeout=5)
+
+        stop_thread = True
+        t.join(timeout=5)
+    # Initialize scheduler with thread pool
+        # Remove this line since we removed the thread
+        # s.join(timeout=5)
+
+
         # Remove this line since we removed the thread
         # s.join(timeout=5)

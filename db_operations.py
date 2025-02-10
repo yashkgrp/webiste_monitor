@@ -414,7 +414,7 @@ class FirestoreDB:
         try:
             firebase_logger.log_query('notification_email_list_file_upload', 'get_emails')
             # Changed collection and document names to match file_upload implementation
-            doc = self.db.collection('notification _email_list_file_upload').document('email').get()
+            doc = self.db.collection('monitor_mails').document('email').get()
             if doc.exists:
                 emails = doc.to_dict().get('emails', [])
                 logging.info(f"Found notification emails: {emails}")

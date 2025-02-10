@@ -228,6 +228,31 @@
                     </button>
                   </td>
                 </tr>
+                <!-- Add Air India Express Row -->
+                <tr>
+                  <td>Air India Express</td>
+                  <td id="airIndiaLastRunTime">-</td>
+                  <td id="airIndiaScraperStatus">
+                    <span class="badge bg-secondary">Not Started</span>
+                  </td>
+                  <td id="airIndiaCurrentPNR">-</td>
+                  <td id="airIndiaOtherDetails">-</td>
+                  <td id="airIndiaNextRunTime">-</td>
+                  <td id="airIndiaAutoRunStatus">
+                    <span class="badge bg-secondary">Disabled</span>
+                  </td>
+                  <td>
+                    <span class="badge bg-secondary">N/A</span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      onclick="viewAirIndiaScraper()"
+                    >
+                      View Scraper
+                    </button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -940,6 +965,51 @@
           if (akasaData.success && akasaData.data) {
             updateAkasaTableRow(akasaData.data);
           }
+
+          // Load Air India state
+          const airIndiaResponse = await fetch("/air_india/last_state");
+          const airIndiaData = await airIndiaResponse.json();
+          console.log(airIndiaData);
+          if (airIndiaData.success && airIndiaData.data) {
+            const data = airIndiaData.data;
+            document.getElementById("airIndiaLastRunTime").textContent =
+              data.last_run ? new Date(data.last_run).toLocaleString() : "-";
+            document.getElementById("airIndiaCurrentPNR").textContent =
+              data.pnr || "-";
+            document.getElementById(
+              "airIndiaOtherDetails"
+            ).textContent = `Origin: ${data.origin || "-"} | Vendor: ${
+              data.vendor || "-"
+            }`;
+            document.getElementById("airIndiaNextRunTime").textContent =
+              data.next_run
+                ? new Date(data.next_run).toLocaleString()
+                : "Not scheduled";
+            document.getElementById("airIndiaScraperStatus").innerHTML = `
+                  <span class="badge ${getStatusBadgeClass(data.state)} ${
+              data.state === "failed" ? "status-failed" : ""
+            }"
+                      ${
+                        data.state === "failed" && data.message
+                          ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
+                            data.message +
+                            '"'
+                          : ""
+                      }>
+                      ${data.state || "Not Started"}
+                  </span>
+              `;
+            document.getElementById("airIndiaAutoRunStatus").innerHTML = `
+                  <span class="badge ${
+                    data.auto_run ? "bg-success" : "bg-secondary"
+                  }">
+                      ${data.auto_run ? "Enabled" : "Disabled"}
+                  </span>
+              `;
+          }
+
+          // Initialize tooltips
+          initializeTooltips();
         } catch (error) {
           console.error("Error loading scraper status:", error);
           // Show error state for both rows
@@ -1233,6 +1303,59 @@
       }
 
       // Add Akasa-specific socket event listeners
+      socket.on("air_scraper_completed", function (data) {
+        const statusClass = data.success ? "bg-success" : "bg-danger";
+        const statusText = data.success ? "Success" : "Failed";
+        const statusBadge = `<span class="badge ${statusClass} ${
+          !data.success ? "status-failed" : ""
+        }" 
+        ${
+          !data.success
+            ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
+              (data.message || "Unknown error") +
+              '"'
+            : ""
+        }>
+        ${statusText}
+    </span>`;
+
+        document.getElementById("airIndiaScraperStatus").innerHTML =
+          statusBadge;
+        document.getElementById("airIndiaLastRunTime").textContent =
+          new Date().toLocaleString();
+        document.getElementById("airIndiaCurrentPNR").textContent =
+          data.pnr || "-";
+        document.getElementById(
+          "airIndiaOtherDetails"
+        ).textContent = `Origin: ${data.origin || "-"} | Vendor: ${
+          data.vendor || "-"
+        }`;
+
+        // Initialize new tooltips if error
+        if (!data.success) {
+          initializeTooltips();
+        }
+      });
+
+      // Add function to view Air India scraper page
+      function viewAirIndiaScraper() {
+        window.location.href = "/airindiaexpress_scraper";
+      }
+
+      // Add handler for Air India settings updates
+      socket.on("air_india_settings_updated", function (data) {
+        document.getElementById("airIndiaNextRunTime").textContent =
+          data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
+        document.getElementById("airIndiaAutoRunStatus").innerHTML = `
+        <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            ${data.auto_run ? "Enabled" : "Disabled"}
+        </span>
+    `;
+      });
+
+      // Add Akasa-specific socket event listeners
       socket.on("akasa_scraper_status", function (data) {
         const statusBadge = document.getElementById("akasaScraperStatus");
         if (statusBadge) {
@@ -1496,6 +1619,49 @@
           if (akasaData.success && akasaData.data) {
             updateAkasaTableRow(akasaData.data);
           }
+          const airIndiaResponse = await fetch("/air_india/last_state");
+          const airIndiaData = await airIndiaResponse.json();
+          console.log(airIndiaData);
+          if (airIndiaData.success && airIndiaData.data) {
+            const data = airIndiaData.data;
+            document.getElementById("airIndiaLastRunTime").textContent =
+              data.last_run ? new Date(data.last_run).toLocaleString() : "-";
+            document.getElementById("airIndiaCurrentPNR").textContent =
+              data.pnr || "-";
+            document.getElementById(
+              "airIndiaOtherDetails"
+            ).textContent = `Origin: ${data.origin || "-"} | Vendor: ${
+              data.vendor || "-"
+            }`;
+            document.getElementById("airIndiaNextRunTime").textContent =
+              data.next_run
+                ? new Date(data.next_run).toLocaleString()
+                : "Not scheduled";
+            document.getElementById("airIndiaScraperStatus").innerHTML = `
+                  <span class="badge ${getStatusBadgeClass(data.state)} ${
+              data.state === "failed" ? "status-failed" : ""
+            }"
+                      ${
+                        data.state === "failed" && data.message
+                          ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
+                            data.message +
+                            '"'
+                          : ""
+                      }>
+                      ${data.state || "Not Started"}
+                  </span>
+              `;
+            document.getElementById("airIndiaAutoRunStatus").innerHTML = `
+                  <span class="badge ${
+                    data.auto_run ? "bg-success" : "bg-secondary"
+                  }">
+                      ${data.auto_run ? "Enabled" : "Disabled"}
+                  </span>
+              `;
+          }
+
+          // Initialize tooltips
+          initializeTooltips();
         } catch (error) {
           console.error("Error loading scraper status:", error);
         }
