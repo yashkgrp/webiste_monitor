@@ -253,6 +253,31 @@
                     </button>
                   </td>
                 </tr>
+                <!-- Add Alliance Air Row -->
+                <tr>
+                  <td>Alliance Air</td>
+                  <td id="allianceLastRunTime">-</td>
+                  <td id="allianceScraperStatus">
+                    <span class="badge bg-secondary">Not Started</span>
+                  </td>
+                  <td id="allianceCurrentPNR">-</td>
+                  <td id="allianceOtherDetails">-</td>
+                  <td id="allianceNextRunTime">-</td>
+                  <td id="allianceAutoRunStatus">
+                    <span class="badge bg-secondary">Disabled</span>
+                  </td>
+                  <td id="allianceDomChangesCell">
+                    <span class="badge bg-secondary">Checking...</span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      onclick="viewAllianceScraper()"
+                    >
+                      View Scraper
+                    </button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -1008,6 +1033,48 @@
               `;
           }
 
+          // Load Alliance state
+          const allianceResponse = await fetch("/alliance/last_state");
+          const allianceData = await allianceResponse.json();
+          if (allianceData.success && allianceData.data) {
+            const data = allianceData.data;
+            document.getElementById("allianceLastRunTime").textContent =
+              data.last_run ? new Date(data.last_run).toLocaleString() : "-";
+            document.getElementById("allianceCurrentPNR").textContent =
+              data.pnr || "-";
+            document.getElementById(
+              "allianceOtherDetails"
+            ).textContent = `Transaction Date: ${data.transaction_date || "-"}`;
+            document.getElementById("allianceNextRunTime").textContent =
+              data.next_run
+                ? new Date(data.next_run).toLocaleString()
+                : "Not scheduled";
+            document.getElementById("allianceScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)} ${
+              data.state === "failed" ? "status-failed" : ""
+            }"
+                    ${
+                      data.state === "failed" && data.message
+                        ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
+                          data.message +
+                          '"'
+                        : ""
+                    }>
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+            document.getElementById("allianceAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+
+            // Update DOM changes
+            updateAllianceDomChanges();
+          }
+
           // Initialize tooltips
           initializeTooltips();
         } catch (error) {
@@ -1197,6 +1264,10 @@
 
       function viewAkasaScraper() {
         window.location.href = "/akasa_scraper";
+      }
+
+      function viewAllianceScraper() {
+        window.location.href = "/alliance";
       }
 
       function initializeTooltips() {
@@ -1542,155 +1613,6 @@
         `;
       });
 
-      socket.on("akasa_scraper_completed", function (data) {
-        // Update only relevant fields
-        if (data.success) {
-          document.getElementById("akasaScraperStatus").innerHTML =
-            '<span class="badge bg-success">Completed</span>';
-        } else {
-          document.getElementById("akasaScraperStatus").innerHTML =
-            '<span class="badge bg-danger">Failed</span>';
-        }
-        if (data.last_run) {
-          document.getElementById("akasaLastRunTime").textContent = new Date(
-            data.last_run
-          ).toLocaleString();
-        }
-        if (data.traveller_name) {
-          document.getElementById("akasaOtherDetails").textContent =
-            data.traveller_name;
-        }
-        loadScraperStatus();
-      });
-
-      socket.on("akasa_scraper_state_updated", function (data) {
-        // Keep existing data and only update what's provided
-        const currentState = {
-          last_run: document.getElementById("akasaLastRunTime").textContent,
-          pnr: document.getElementById("akasaCurrentPNR").textContent,
-          traveller_name:
-            document.getElementById("akasaOtherDetails").textContent,
-          next_run: document.getElementById("akasaNextRunTime").textContent,
-          auto_run: document
-            .getElementById("akasaAutoRunStatus")
-            .querySelector(".badge")
-            .classList.contains("bg-success"),
-        };
-
-        updateAkasaTableRow({
-          ...currentState,
-          ...data,
-        });
-        loadScraperStatus();
-      });
-
-      socket.on("akasa_settings_updated", function (data) {
-        // Only update settings-related fields
-        if (data.next_run !== undefined) {
-          document.getElementById("akasaNextRunTime").textContent =
-            data.next_run
-              ? new Date(data.next_run).toLocaleString()
-              : "Not scheduled";
-        }
-        if (data.auto_run !== undefined) {
-          document.getElementById("akasaAutoRunStatus").innerHTML = `
-                <span class="badge ${
-                  data.auto_run ? "bg-success" : "bg-secondary"
-                }">
-                    ${data.auto_run ? "Enabled" : "Disabled"}
-                </span>
-            `;
-        }
-      });
-
-      // Modify loadScraperStatus to handle both scrapers independently
-      async function loadScraperStatus() {
-        try {
-          // Load Star Air state
-          const starResponse = await fetch("/scraper/last_state");
-          const starData = await starResponse.json();
-          if (starData.success && starData.data) {
-            updateScraperTableRow(starData.data);
-          }
-
-          // Load Akasa state independently
-          const akasaResponse = await fetch("/akasa/last_state");
-          const akasaData = await akasaResponse.json();
-          if (akasaData.success && akasaData.data) {
-            updateAkasaTableRow(akasaData.data);
-          }
-          const airIndiaResponse = await fetch("/air_india/last_state");
-          const airIndiaData = await airIndiaResponse.json();
-          console.log(airIndiaData);
-          if (airIndiaData.success && airIndiaData.data) {
-            const data = airIndiaData.data;
-            document.getElementById("airIndiaLastRunTime").textContent =
-              data.last_run ? new Date(data.last_run).toLocaleString() : "-";
-            document.getElementById("airIndiaCurrentPNR").textContent =
-              data.pnr || "-";
-            document.getElementById(
-              "airIndiaOtherDetails"
-            ).textContent = `Origin: ${data.origin || "-"} | Vendor: ${
-              data.vendor || "-"
-            }`;
-            document.getElementById("airIndiaNextRunTime").textContent =
-              data.next_run
-                ? new Date(data.next_run).toLocaleString()
-                : "Not scheduled";
-            document.getElementById("airIndiaScraperStatus").innerHTML = `
-                  <span class="badge ${getStatusBadgeClass(data.state)} ${
-              data.state === "failed" ? "status-failed" : ""
-            }"
-                      ${
-                        data.state === "failed" && data.message
-                          ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
-                            data.message +
-                            '"'
-                          : ""
-                      }>
-                      ${data.state || "Not Started"}
-                  </span>
-              `;
-            document.getElementById("airIndiaAutoRunStatus").innerHTML = `
-                  <span class="badge ${
-                    data.auto_run ? "bg-success" : "bg-secondary"
-                  }">
-                      ${data.auto_run ? "Enabled" : "Disabled"}
-                  </span>
-              `;
-          }
-
-          // Initialize tooltips
-          initializeTooltips();
-        } catch (error) {
-          console.error("Error loading scraper status:", error);
-        }
-      }
-
-      // Update socket event listeners for Akasa
-      socket.on("akasa_scraper_status", function (data) {
-        // Preserve existing data
-        const currentState = {
-          last_run: document.getElementById("akasaLastRunTime").textContent,
-          pnr: document.getElementById("akasaCurrentPNR").textContent,
-          traveller_name:
-            document.getElementById("akasaOtherDetails").textContent,
-          next_run: document.getElementById("akasaNextRunTime").textContent,
-          auto_run: document
-            .getElementById("akasaAutoRunStatus")
-            .querySelector(".badge")
-            .classList.contains("bg-success"),
-        };
-
-        // Only update status
-        document.getElementById("akasaScraperStatus").innerHTML = `
-            <span class="badge ${getStatusBadgeClass(data.status)}">
-                ${data.status === "running" ? "Running" : data.status}
-            </span>
-        `;
-        loadScraperStatus();
-      });
-
       socket.on("akasa_scraper_state_updated", function (data) {
         // Format dates if they exist, otherwise keep existing values
         const lastRun = data.last_run
@@ -1720,7 +1642,6 @@
                     ${data.state || "Not Started"}
                 </span>
             `;
-          loadScraperStatus();
         }
         if (data.hasOwnProperty("auto_run")) {
           document.getElementById("akasaAutoRunStatus").innerHTML = `
@@ -1965,6 +1886,51 @@
         setTimeout(function () {
           socket.connect();
         }, 1000);
+      });
+
+      // Add function to update Alliance DOM changes
+      function updateAllianceDomChanges() {
+        fetch("/alliance/changes")
+          .then((response) => response.json())
+          .then((data) => {
+            const domChangesCell = document.getElementById(
+              "allianceDomChangesCell"
+            );
+            if (data.success) {
+              const changes = data.data.changes || [];
+              domChangesCell.innerHTML = `
+                        <div>
+                            <span class="badge ${
+                              changes.length > 0 ? "bg-warning" : "bg-success"
+                            }">
+                                ${
+                                  changes.length > 0
+                                    ? `${changes.length} Changes`
+                                    : "No Changes"
+                                }
+                            </span>
+                            <button onclick="window.location.href='/alliance#domChangesSection'" 
+                                    class="badge bg-info border-0 ms-2" 
+                                    style="cursor: pointer;">
+                                View History
+                            </button>
+                        </div>
+                    `;
+            } else {
+              domChangesCell.innerHTML =
+                '<span class="badge bg-secondary">No Data</span>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching Alliance DOM changes:", error);
+            document.getElementById("allianceDomChangesCell").innerHTML =
+              '<span class="badge bg-warning">Error</span>';
+          });
+      }
+
+      // Add event listener for alliance scraper completion
+      socket.on("alliance_scrapper_run_completed", function () {
+        loadScraperStatus(); // Refresh scraper status table
       });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

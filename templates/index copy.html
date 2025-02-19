@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Website Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        background-color: #f8f9fa;
+        padding: 20px;
+      }
+      .status-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+      .connection-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        z-index: 1000;
+      }
+      .status-connected {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .status-disconnected {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .status-connecting {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      .url-form {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .status-up {
+        color: #28a745;
+      }
+      .status-down {
+        color: #dc3545;
+      }
+      .status-slow {
+        color: #ffc107;
+      } /* Add this line for slow status */
+      .response-time {
+        font-size: 0.9em;
+        color: #6c757d;
+      }
+      .table-responsive {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .error-tooltip {
+        cursor: help;
+        color: #dc3545;
+        margin-left: 5px;
+        font-size: 1rem;
+      }
+      .status-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      [data-bs-toggle="tooltip"] {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .tooltip-error {
+        cursor: help;
+        text-decoration: underline dotted;
+      }
+      .status-failed {
+        cursor: help;
+      }
+      .status-badge {
+        position: relative;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="connection-status" class="connection-status status-connecting">
+        Connecting...
+      </div>
+
+      <h1 class="mb-4">Website Monitor</h1>
+
+      <!-- Add this button in your navigation or wherever appropriate -->
+
+      <div
+        class="alert alert-danger"
+        id="errorAlert"
+        style="display: none"
+      ></div>
+
+      <div class="url-form mb-4">
+        <form id="urlForm" onsubmit="addUrl(event)" class="row g-3">
+          <div class="col-md-6">
+            <input
+              type="text"
+              class="form-control"
+              id="newUrl"
+              placeholder="Enter URL to monitor"
+              required
+            />
+          </div>
+          <div class="col-md-3">
+            <input
+              type="number"
+              class="form-control"
+              id="interval"
+              placeholder="Interval (seconds)"
+              min="1"
+              value="5"
+              required
+            />
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Add URL</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>URL</th>
+              <th>Status</th>
+              <th>Response Time</th>
+              <th>Average Time</th>
+              <th>Check Interval</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="urls"></tbody>
+        </table>
+      </div>
+
+      <!-- Scraper Status Table -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Scraper Status</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Airline</th>
+                  <th>Last Run</th>
+                  <th>Status</th>
+                  <th>PNR</th>
+                  <th>Other Details</th>
+                  <th>Next Run</th>
+                  <th>Auto Run</th>
+                  <th>DOM Changes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="scraperStatusTable">
+                <tr>
+                  <td>Star Air</td>
+                  <td id="lastRunTime">-</td>
+                  <td id="scraperStatus">
+                    <span class="badge bg-secondary">Not Started</span>
+                  </td>
+                  <td id="currentPNR">-</td>
+                  <td id="currentGSTIN">-</td>
+                  <td id="nextRunTime">-</td>
+                  <td id="autoRunStatus">
+                    <span class="badge bg-secondary">Disabled</span>
+                  </td>
+                  <td id="domChangesCell">
+                    <span class="badge bg-secondary">Checking...</span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      onclick="viewScraper()"
+                    >
+                      View Scraper
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Akasa Air</td>
+                  <td id="akasaLastRunTime">-</td>
+                  <td id="akasaScraperStatus">
+                    <span class="badge bg-secondary">Not Started</span>
+                  </td>
+                  <td id="akasaCurrentPNR">-</td>
+                  <td id="akasaOtherDetails">-</td>
+                  <td id="akasaNextRunTime">-</td>
+                  <td id="akasaAutoRunStatus">
+                    <span class="badge bg-secondary">Disabled</span>
+                  </td>
+                  <td id="akasaDomChangesCell">
+                    <span class="badge bg-secondary">Checking...</span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      onclick="viewAkasaScraper()"
+                    >
+                      View Scraper
+                    </button>
+                  </td>
+                </tr>
+                <!-- Add Air India Express Row -->
+                <tr>
+                  <td>Air India Express</td>
+                  <td id="airIndiaLastRunTime">-</td>
+                  <td id="airIndiaScraperStatus">
+                    <span class="badge bg-secondary">Not Started</span>
+                  </td>
+                  <td id="airIndiaCurrentPNR">-</td>
+                  <td id="airIndiaOtherDetails">-</td>
+                  <td id="airIndiaNextRunTime">-</td>
+                  <td id="airIndiaAutoRunStatus">
+                    <span class="badge bg-secondary">Disabled</span>
+                  </td>
+                  <td>
+                    <span class="badge bg-secondary">N/A</span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      onclick="viewAirIndiaScraper()"
+                    >
+                      View Scraper
+                    </button>
+                  </td>
+                </tr>
+                <!-- FCM Row removed -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Replace the existing View DOM Changes History link with this -->
+    </div>
+
+    <!-- Add Analytics Modal -->
+    <div class="modal fade" id="analyticsModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">URL Analytics Dashboard</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- Spinner for analytics loading -->
+            <div id="analyticsSpinner" class="text-center my-3">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Loading analytics data...</p>
+            </div>
+            <div id="analyticsContent" style="display: none">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="timeInterval" class="form-label"
+                    >Time Interval</label
+                  >
+                  <select
+                    class="form-select"
+                    id="timeInterval"
+                    onchange="updateCharts()"
+                  >
+                    <optgroup label="Minutes">
+                      <option value="1">1 minute</option>
+                      <option value="5">5 minutes</option>
+                      <option value="10">10 minutes</option>
+                      <option value="15">15 minutes</option>
+                      <option value="30">30 minutes</option>
+                    </optgroup>
+                    <optgroup label="Hours">
+                      <option value="60">1 hour</option>
+                      <option value="180">3 hours</option>
+                      <option value="360">6 hours</option>
+                      <option value="720">12 hours</option>
+                    </optgroup>
+                    <optgroup label="Days">
+                      <option value="1440">1 day</option>
+                      <option value="4320">3 days</option>
+                      <option value="10080">1 week</option>
+                    </optgroup>
+                  </select>
+                </div>
+                <div class="col-md-8 text-end">
+                  <button
+                    class="btn btn-primary"
+                    id="loadMoreBtn"
+                    onclick="loadMoreData()"
+                    style="display: none"
+                  >
+                    Load More Data
+                  </button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="card mb-3">
+                    <div class="card-body">
+                      <h5 class="card-title">Reliability Stats</h5>
+                      <div id="reliabilityStats"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <div class="card mb-3">
+                    <div class="card-body">
+                      <h5 class="card-title">Response Time by Hour</h5>
+                      <canvas id="hourlyChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Response Time History</h5>
+                      <canvas id="historyChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="mt-3 text-center"
+                id="loadMoreContainer"
+                style="display: none"
+              >
+                <button class="btn btn-primary" onclick="loadMoreData()">
+                  Load More Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const socket = io();
+
+      // Initial data load
+      async function loadInitialData() {
+        try {
+          const response = await fetch("/sync");
+          const result = await response.json();
+
+          if (result.status === "success") {
+            updateDisplay(result.data);
+          } else {
+            showError("Failed to load initial data");
+          }
+        } catch (error) {
+          console.error("Error loading initial data:", error);
+          showError("Failed to connect to server");
+        }
+      }
+
+      // Load data when page loads
+      document.addEventListener("DOMContentLoaded", loadInitialData);
+
+      socket.on("connect", () => {
+        updateConnectionStatus("Connected", "status-connected");
+        // Reload data on reconnect
+        loadInitialData();
+      });
+
+      socket.on("disconnect", () => {
+        updateConnectionStatus("Disconnected", "status-disconnected");
+      });
+
+      socket.on("connect_error", (error) => {
+        updateConnectionStatus("Connection Error", "status-disconnected");
+      });
+
+      function updateConnectionStatus(text, className) {
+        const status = document.getElementById("connection-status");
+        status.textContent = text;
+        status.className = "connection-status " + className;
+      }
+
+      socket.on("update_data", (data) => {
+        updateDisplay(data);
+      });
+
+      // Add this to your existing socket event listeners
+      socket.on("settings_updated", function (data) {
+        // Update next run time in scraper status table
+        const nextRunCell = document.getElementById("nextRunTime");
+        if (data.next_run) {
+          nextRunCell.textContent = new Date(data.next_run).toLocaleString();
+        } else {
+          nextRunCell.textContent = "Not scheduled";
+        }
+
+        // Update auto run status
+        document.getElementById("autoRunStatus").innerHTML = `
+              <span class="badge ${
+                data.auto_run ? "bg-success" : "bg-secondary"
+              }">
+                  ${data.auto_run ? "Enabled" : "Disabled"}
+              </span>
+          `;
+      });
+
+      socket.on("scraper_auto_run_complete", function (data) {
+        // Update next run time if provided
+        if (data.next_run) {
+          document.getElementById("nextRunTime").textContent = new Date(
+            data.next_run
+          ).toLocaleString();
+        }
+
+        // Update scraper status
+        document.getElementById("scraperStatus").innerHTML = `
+              <span class="badge ${data.success ? "bg-success" : "bg-danger"}">
+                  ${data.success ? "Success" : "Failed"}
+              </span>
+          `;
+      });
+
+      function updateDisplay(data) {
+        if (!Array.isArray(data)) {
+          console.error("Invalid data format:", data);
+          return;
+        }
+
+        // Destroy existing tooltips
+        const tooltips = document.querySelectorAll(
+          '[data-bs-toggle="tooltip"]'
+        );
+        tooltips.forEach((t) => bootstrap.Tooltip.getInstance(t)?.dispose());
+
+        const urlsTable = document.getElementById("urls");
+        urlsTable.innerHTML = "";
+
+        data.forEach((site) => {
+          const row = document.createElement("tr");
+          const isPaused = site.paused;
+          const isDown = site.status.startsWith("Down:");
+          const isSlow = site.status === "Slow";
+          const errorMessage = isDown ? site.status.replace("Down: ", "") : "";
+
+          row.innerHTML = `
+                    <td>${site.url}</td>
+                    <td>
+                        <div class="status-cell">
+                            <span class="${
+                              isDown
+                                ? "status-down"
+                                : isSlow
+                                ? "status-slow"
+                                : "status-up"
+                            }">
+                                ${
+                                  isPaused
+                                    ? "Paused"
+                                    : isDown
+                                    ? "Down"
+                                    : site.status
+                                }
+                            </span>
+                            ${
+                              isDown
+                                ? `
+                                <i class="bi bi-exclamation-circle-fill error-tooltip" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="right"
+                                   title="${errorMessage.replace(
+                                     /"/g,
+                                     "&quot;"
+                                   )}"></i>
+                            `
+                                : ""
+                            }
+                        </div>
+                    </td>
+                    <td class="response-time">${site.last_response_time.toFixed(
+                      2
+                    )} ms</td>
+                    <td class="response-time">${site.avg_response_time.toFixed(
+                      2
+                    )} ms</td>
+                    <td>${site.interval} seconds</td>
+                    <td>
+                        <button onclick="togglePause('${
+                          site.url
+                        }')" class="btn btn-sm ${
+            isPaused ? "btn-success" : "btn-warning"
+          }">
+                            ${isPaused ? "Resume" : "Pause"}
+                        </button>
+                        <button onclick="showAnalytics('${
+                          site.url
+                        }')" class="btn btn-sm btn-info ms-2">
+                            Analytics
+                        </button>
+                        <button onclick="deleteUrl('${
+                          site.url
+                        }')" class="btn btn-sm btn-danger ms-2">Delete</button>
+                    </td>
+                `;
+          urlsTable.appendChild(row);
+        });
+
+        // Initialize new tooltips
+        const newTooltips = document.querySelectorAll(
+          '[data-bs-toggle="tooltip"]'
+        );
+        newTooltips.forEach((el) => new bootstrap.Tooltip(el));
+      }
+
+      function showLoading(button, loadingText = "Loading...") {
+        button.disabled = true;
+        button.dataset.originalText = button.innerText;
+        button.innerHTML = `<span class="spinner-border spinner-border-sm"></span> ${loadingText}`;
+      }
+
+      function hideLoading(button) {
+        button.disabled = false;
+        button.innerHTML = button.dataset.originalText || "Button";
+        delete button.dataset.originalText;
+      }
+
+      async function togglePause(url) {
+        const button = event.target;
+        showLoading(button, "Pausing...");
+        try {
+          await fetch("/toggle_pause", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `url=${encodeURIComponent(url)}`,
+          });
+        } catch (error) {
+          console.error("Error toggling pause:", error);
+        } finally {
+          hideLoading(button);
+        }
+      }
+
+      async function deleteUrl(url) {
+        const button = event.target;
+        showLoading(button, "Deleting...");
+        try {
+          if (confirm("Are you sure you want to delete this URL?")) {
+            await fetch("/delete_url", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: `url=${encodeURIComponent(url)}`,
+            });
+          }
+        } catch (error) {
+          console.error("Error deleting URL:", error);
+        } finally {
+          hideLoading(button);
+        }
+      }
+
+      async function addUrl(event) {
+        event.preventDefault();
+        const newUrl = document.getElementById("newUrl").value;
+        const interval = document.getElementById("interval").value;
+
+        try {
+          const response = await fetch("/add_url", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `new_url=${encodeURIComponent(
+              newUrl
+            )}&interval=${encodeURIComponent(interval)}`,
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to add URL");
+          }
+
+          document.getElementById("newUrl").value = "";
+          document.getElementById("interval").value = "5";
+          showError(""); // Clear any existing error
+
+          // Show success message
+          showSuccess(data.message || "URL added successfully");
+        } catch (error) {
+          console.error("Error adding URL:", error);
+          showError(error.message);
+        }
+      }
+
+      function showSuccess(message) {
+        const errorAlert = document.getElementById("errorAlert");
+        errorAlert.className = "alert alert-success";
+        errorAlert.textContent = message;
+        errorAlert.style.display = "block";
+        setTimeout(() => {
+          errorAlert.style.display = "none";
+        }, 3000);
+      }
+
+      function showError(message) {
+        const errorAlert = document.getElementById("errorAlert");
+        if (message) {
+          errorAlert.className = "alert alert-danger";
+          errorAlert.textContent = message;
+          errorAlert.style.display = "block";
+        } else {
+          errorAlert.style.display = "none";
+        }
+      }
+
+      let currentAnalyticsData = null;
+      let historyChart = null;
+      let hourlyChart = null;
+      let currentUrl = null;
+      let currentOffset = 0;
+      let hasMoreData = true;
+      let totalChecks = 0;
+
+      async function showAnalytics(url) {
+        currentUrl = url;
+        currentOffset = 0;
+        hasMoreData = true;
+        totalChecks = 0;
+
+        // Show modal immediately
+        const modal = new bootstrap.Modal(
+          document.getElementById("analyticsModal")
+        );
+        modal.show();
+
+        // Reset and show loading state
+        document.getElementById("analyticsSpinner").style.display = "block";
+        document.getElementById("analyticsContent").style.display = "none";
+        document.getElementById("loadMoreBtn").style.display = "none";
+
+        // Clear previous data
+        document.getElementById("reliabilityStats").innerHTML = "";
+        if (historyChart) historyChart.destroy();
+        if (hourlyChart) hourlyChart.destroy();
+
+        await loadAnalyticsData();
+      }
+
+      async function loadAnalyticsData() {
+        try {
+          const response = await fetch(
+            `/get_url_history/${encodeURIComponent(
+              currentUrl
+            )}?offset=${currentOffset}`
+          );
+          const result = await response.json();
+
+          if (result.status === "success") {
+            // Update current analytics data
+            if (currentOffset === 0) {
+              currentAnalyticsData = result.data;
+              totalChecks = result.data.analysis.reliability.total_checks;
+            } else {
+              // Append new history data to existing data
+              currentAnalyticsData.history = [
+                ...currentAnalyticsData.history,
+                ...result.data.history,
+              ];
+            }
+
+            // Update has more data flag
+            hasMoreData = result.data.has_more;
+
+            // Show/hide load more button
+            document.getElementById("loadMoreBtn").style.display = hasMoreData
+              ? "block"
+              : "none";
+
+            // Update the dashboard with correct total checks
+            updateAnalyticsDashboard(currentAnalyticsData, totalChecks);
+
+            // Show content and hide spinner
+            document.getElementById("analyticsSpinner").style.display = "none";
+            document.getElementById("analyticsContent").style.display = "block";
+          } else {
+            throw new Error(result.message || "Failed to load analytics data");
+          }
+        } catch (error) {
+          console.error("Error loading analytics:", error);
+          showError("Failed to load analytics: " + error.message);
+          document.getElementById("analyticsSpinner").style.display = "none";
+        }
+      }
+
+      async function loadMoreData() {
+        if (!hasMoreData) return;
+
+        // Show loading state on button
+        const button = document.getElementById("loadMoreBtn");
+        button.disabled = true;
+        button.innerHTML =
+          '<span class="spinner-border spinner-border-sm"></span> Loading...';
+
+        // Increment offset for next batch
+        currentOffset += 5000;
+
+        await loadAnalyticsData();
+
+        // Reset button state
+        button.disabled = false;
+        button.textContent = "Load More Data";
+      }
+
+      function updateCharts() {
+        if (currentAnalyticsData) {
+          updateAnalyticsDashboard(currentAnalyticsData, totalChecks);
+        }
+      }
+
+      function groupDataByInterval(data, intervalMinutes) {
+        if (!data || data.length === 0) return [];
+
+        // Sort data chronologically
+        const sortedData = data.sort((a, b) => a.timestamp - b.timestamp);
+
+        // Calculate time range that includes all data points
+        const startTime = sortedData[0].timestamp * 1000; // Convert to milliseconds
+        const endTime = sortedData[sortedData.length - 1].timestamp * 1000;
+        const intervalMs = intervalMinutes * 60 * 1000;
+
+        // Create empty groups for each interval in the range
+        const groups = new Map();
+        for (let time = startTime; time <= endTime; time += intervalMs) {
+          groups.set(time, {
+            times: [],
+            statuses: [],
+          });
+        }
+
+        // Distribute data points into intervals
+        sortedData.forEach((entry) => {
+          const entryTime = entry.timestamp * 1000;
+          const intervalStart =
+            startTime +
+            Math.floor((entryTime - startTime) / intervalMs) * intervalMs;
+
+          const group = groups.get(intervalStart);
+          if (group) {
+            group.times.push(entry.response_time);
+            group.statuses.push(entry.status);
+          }
+        });
+
+        // Convert to array format and calculate statistics
+        return Array.from(groups.entries())
+          .filter(([_, group]) => group.times.length > 0) // Only keep intervals with data
+          .map(([timestamp, group]) => ({
+            timestamp,
+            response_time:
+              group.times.reduce((a, b) => a + b, 0) / group.times.length,
+            count: group.times.length,
+            uptime:
+              (group.statuses.filter((s) => s.includes("Up")).length /
+                group.statuses.length) *
+              100,
+          }));
+      }
+
+      function showWarning(message) {
+        const errorAlert = document.getElementById("errorAlert");
+        errorAlert.className = "alert alert-warning";
+        errorAlert.textContent = message;
+        errorAlert.style.display = "block";
+        setTimeout(() => {
+          errorAlert.style.display = "none";
+        }, 5000);
+      }
+
+      function updateAnalyticsDashboard(data, totalChecks) {
+        // Show content and hide spinner
+        document.getElementById("analyticsSpinner").style.display = "none";
+        document.getElementById("analyticsContent").style.display = "block";
+
+        const stats = data.analysis.reliability;
+        // Update stats with correct total checks
+        document.getElementById("reliabilityStats").innerHTML = `
+                <div class="mb-3">
+                    <p class="mb-2"><strong>Uptime:</strong> ${
+                      stats.uptime
+                    }%</p>
+                    <p class="mb-2"><strong>Average Response:</strong> ${
+                      stats.avg_response
+                    } ms</p>
+                    <p class="mb-2"><strong>Total Checks:</strong> ${totalChecks}</p>
+                    <p class="mb-2"><strong>Last Down Period:</strong> <span class="text-danger">${
+                      stats.last_down_period || "Never"
+                    }</span></p>
+                    <p class="mb-2"><strong>Last Slow Period:</strong> <span class="text-warning">${
+                      stats.last_slow_period || "Never"
+                    }</span></p>
+                    <p class="mb-2"><strong>Data Age:</strong> ${(
+                      (Date.now() -
+                        Math.min(
+                          ...data.history.map((entry) => entry.timestamp * 1000)
+                        )) /
+                      (1000 * 60 * 60)
+                    ).toFixed(1)} hours</p>
+                </div>
+            `;
+
+        // Get selected interval
+        const intervalMinutes = parseInt(
+          document.getElementById("timeInterval").value
+        );
+
+        // Update hourly chart
+        const hourlyData = data.analysis.avg_response_by_hour;
+        if (hourlyChart) hourlyChart.destroy();
+        hourlyChart = new Chart(document.getElementById("hourlyChart"), {
+          type: "bar",
+          data: {
+            labels: hourlyData.map((d) => `${d.hour}:00`),
+            datasets: [
+              {
+                label: "Average Response Time (ms)",
+                data: hourlyData.map((d) => d.avg_response_time),
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Response Time (ms)",
+                },
+              },
+            },
+          },
+        });
+
+        // Group and sort history data
+        const groupedData = groupDataByInterval(data.history, intervalMinutes);
+
+        // Update history chart with reversed: false to maintain chronological order
+        if (historyChart) historyChart.destroy();
+        historyChart = new Chart(document.getElementById("historyChart"), {
+          type: "line",
+          data: {
+            labels: groupedData.map((d) =>
+              new Date(d.timestamp).toLocaleString()
+            ),
+            datasets: [
+              {
+                label: `Response Time (${formatInterval(
+                  intervalMinutes
+                )} intervals)`,
+                data: groupedData.map((d) => d.response_time.toFixed(2)),
+                borderColor: "rgb(75, 192, 192)",
+                tension: 0.1,
+                pointRadius: 2, // Make points smaller for dense data
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Response Time (ms)",
+                },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 45,
+                  minRotation: 45,
+                  autoSkip: true,
+                  maxTicksLimit: 20, // Limit number of x-axis labels
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const dataPoint = groupedData[context.dataIndex];
+                    return [
+                      `Response Time: ${context.raw} ms`,
+                      `Samples in interval: ${dataPoint.count}`,
+                      `Uptime: ${dataPoint.uptime.toFixed(1)}%`,
+                    ];
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function formatInterval(minutes) {
+        if (minutes < 60) return `${minutes} min`;
+        if (minutes < 1440)
+          return `${minutes / 60} hour${minutes / 60 > 1 ? "s" : ""}`;
+        if (minutes < 10080)
+          return `${minutes / 1440} day${minutes / 1440 > 1 ? "s" : ""}`;
+        return `${minutes / 10080} week${minutes / 10080 > 1 ? "s" : ""}`;
+      }
+
+      socket.connect();
+
+      setInterval(() => {
+        if (!socket.connected) {
+          updateConnectionStatus("Reconnecting...", "status-connecting");
+          socket.connect();
+        }
+      }, 5000);
+
+      // Add functions to handle scraper status
+      async function loadScraperStatus() {
+        try {
+          // Load Star Air state
+          const starResponse = await fetch("/scraper/last_state");
+          const starData = await starResponse.json();
+          if (starData.success && starData.data) {
+            updateScraperTableRow(starData.data); // Using existing function for Star Air
+          }
+
+          // Load Akasa state
+          const akasaResponse = await fetch("/akasa/last_state");
+          const akasaData = await akasaResponse.json();
+          if (akasaData.success && akasaData.data) {
+            updateAkasaTableRow(akasaData.data);
+          }
+
+          // Load Air India state
+          const airIndiaResponse = await fetch("/air_india/last_state");
+          const airIndiaData = await airIndiaResponse.json();
+          console.log(airIndiaData);
+          if (airIndiaData.success && airIndiaData.data) {
+            const data = airIndiaData.data;
+            document.getElementById("airIndiaLastRunTime").textContent =
+              data.last_run ? new Date(data.last_run).toLocaleString() : "-";
+            document.getElementById("airIndiaCurrentPNR").textContent =
+              data.pnr || "-";
+            document.getElementById(
+              "airIndiaOtherDetails"
+            ).textContent = `Origin: ${data.origin || "-"} | Vendor: ${
+              data.vendor || "-"
+            }`;
+            document.getElementById("airIndiaNextRunTime").textContent =
+              data.next_run
+                ? new Date(data.next_run).toLocaleString()
+                : "Not scheduled";
+            document.getElementById("airIndiaScraperStatus").innerHTML = `
+                  <span class="badge ${getStatusBadgeClass(data.state)} ${
+              data.state === "failed" ? "status-failed" : ""
+            }"
+                      ${
+                        data.state === "failed" && data.message
+                          ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
+                            data.message +
+                            '"'
+                          : ""
+                      }>
+                      ${data.state || "Not Started"}
+                  </span>
+              `;
+            document.getElementById("airIndiaAutoRunStatus").innerHTML = `
+                  <span class="badge ${
+                    data.auto_run ? "bg-success" : "bg-secondary"
+                  }">
+                      ${data.auto_run ? "Enabled" : "Disabled"}
+                  </span>
+              `;
+          }
+
+          // Initialize tooltips
+          initializeTooltips();
+        } catch (error) {
+          console.error("Error loading scraper status:", error);
+          // Show error state for both rows
+          updateScraperTableRow({
+            state: "error",
+            error: "Failed to load status",
+          });
+          updateAkasaTableRow({
+            state: "error",
+            error: "Failed to load status",
+          });
+        }
+      }
+
+      function updateScraperTableRow(data) {
+        const statusColors = {
+          success: "bg-success",
+          failed: "bg-danger",
+          running: "bg-warning",
+          idle: "bg-secondary",
+          error: "bg-danger",
+        };
+
+        // Destroy existing tooltips before updating
+        const tooltips = document.querySelectorAll(
+          '[data-bs-toggle="tooltip"]'
+        );
+        tooltips.forEach((t) => bootstrap.Tooltip.getInstance(t)?.dispose());
+
+        document.getElementById("lastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("currentPNR").textContent = data.pnr || "-";
+        document.getElementById("currentGSTIN").textContent = data.gstin || "-";
+        document.getElementById("nextRunTime").textContent = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "-";
+        document.getElementById("autoRunStatus").innerHTML = `
+        <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            ${data.auto_run ? "Enabled" : "Disabled"}
+        </span>
+    `;
+        document.getElementById("scraperStatus").innerHTML = `
+        <span class="badge ${statusColors[data.state] || "bg-secondary"} 
+            ${data.state === "failed" ? "status-failed" : ""}"
+            ${
+              data.state === "failed"
+                ? `data-bs-toggle="tooltip" data-bs-placement="top" 
+                   title="${data.error || "Unknown error"}"`
+                : ""
+            }>
+            ${data.state || "Not Started"}
+        </span>
+    `;
+
+        // Update DOM changes display
+        function updateDOMChanges() {
+          fetch("/scraper/dom_changes")
+            .then((response) => response.json())
+            .then((result) => {
+              const domChangesCell = document.getElementById("domChangesCell");
+              if (result.success) {
+                const status = result.currentStatus || { has_changes: false };
+                const history = result.data || [];
+
+                domChangesCell.innerHTML = `
+                        <div>
+                            <span class="badge ${
+                              status.has_changes ? "bg-danger" : "bg-success"
+                            }">
+                                ${
+                                  status.has_changes
+                                    ? "Changes Detected"
+                                    : "No Changes"
+                                }
+                            </span>
+                            <button onclick="window.location.href='/scraper#domChangesSection'" 
+                                    class="badge bg-info border-0 ms-2" 
+                                    style="cursor: pointer;">
+                                View History (${history.length})
+                            </button>
+                        </div>
+                    `;
+              } else {
+                domChangesCell.innerHTML =
+                  '<span class="badge bg-warning">Error</span>';
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching DOM changes:", error);
+              domChangesCell.innerHTML =
+                '<span class="badge bg-warning">Error</span>';
+            });
+        }
+
+        // Call updateDOMChanges
+        updateDOMChanges();
+
+        // Initialize tooltips for new elements
+        initializeTooltips();
+      }
+
+      // Add new function specifically for Akasa
+      function updateAkasaTableRow(data) {
+        const statusColors = {
+          success: "bg-success",
+          failed: "bg-danger",
+          running: "bg-warning",
+          idle: "bg-secondary",
+          error: "bg-danger",
+          completed: "bg-success",
+        };
+
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${statusColors[data.state] || "bg-secondary"}">
+                ${data.state || "Not Started"}
+            </span>
+        `;
+        document.getElementById("akasaNextRunTime").textContent =
+          data.auto_run && data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
+        document.getElementById("akasaAutoRunStatus").innerHTML = `
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
+                ${data.auto_run ? "Enabled" : "Disabled"}
+            </span>
+        `;
+
+        // Update DOM changes status if available
+        updateAkasaDomChanges();
+      }
+
+      // Add function to update DOM changes
+      function updateAkasaDomChanges() {
+        fetch("/akasa/dom_changes")
+          .then((response) => response.json())
+          .then((data) => {
+            const domChangesCell = document.getElementById(
+              "akasaDomChangesCell"
+            );
+            if (data.success) {
+              const changes = data.changes || [];
+              domChangesCell.innerHTML = `
+                        <span class="badge ${
+                          changes.length > 0 ? "bg-warning" : "bg-success"
+                        }">
+                            ${
+                              changes.length > 0
+                                ? `${changes.length} Changes`
+                                : "No Changes"
+                            }
+                        </span>
+                    `;
+            } else {
+              domChangesCell.innerHTML =
+                '<span class="badge bg-secondary">No Data</span>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching Akasa DOM changes:", error);
+            document.getElementById("akasaDomChangesCell").innerHTML =
+              '<span class="badge bg-warning">Error</span>';
+          });
+      }
+
+      // Add new function to handle the click event
+      function handleDOMChangesClick(event, encodedChanges) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Redirect to scraper page DOM changes section
+        window.location.href = "/scraper#domChangesSection";
+      }
+
+      function viewScraper() {
+        window.location.href = "/scraper";
+      }
+
+      function viewAkasaScraper() {
+        window.location.href = "/akasa_scraper";
+      }
+
+      function initializeTooltips() {
+        var tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+        tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      }
+
+      // Initialize tooltips on page load and after content updates
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeTooltips();
+      });
+
+      // Load scraper status on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        loadScraperStatus();
+        // Refresh status every 30 seconds
+        setInterval(loadScraperStatus, 30000);
+      });
+
+      // Add new function to update Akasa row
+      function updateAkasaRow(data) {
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.state)}">
+                ${data.state || "Not Started"}
+            </span>
+        `;
+        document.getElementById("akasaNextRunTime").textContent = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaAutoRunStatus").innerHTML = `
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
+                ${data.auto_run ? "Enabled" : "Disabled"}
+            </span>
+        `;
+        // Update DOM changes cell
+        updateAkasaDOMChanges();
+      }
+
+      // Add function to handle Akasa DOM changes
+      function updateAkasaDOMChanges() {
+        fetch("/akasa/dom_changes")
+          .then((response) => response.json())
+          .then((result) => {
+            const domChangesCell = document.getElementById(
+              "akasaDomChangesCell"
+            );
+            if (result.success) {
+              const changes = result.changes || [];
+              domChangesCell.innerHTML = `
+                        <div>
+                            <span class="badge ${
+                              changes.length > 0 ? "bg-warning" : "bg-success"
+                            }">
+                                ${
+                                  changes.length > 0
+                                    ? `${changes.length} Changes`
+                                    : "No Changes"
+                                }
+                            </span>
+                            <button onclick="window.location.href='/akasa_scraper#domChangesSection'" 
+                                    class="badge bg-info border-0 ms-2" 
+                                    style="cursor: pointer;">
+                                View History
+                            </button>
+                        </div>
+                    `;
+            } else {
+              domChangesCell.innerHTML =
+                '<span class="badge bg-secondary">No Data</span>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching Akasa DOM changes:", error);
+            document.getElementById("akasaDomChangesCell").innerHTML =
+              '<span class="badge bg-warning">Error</span>';
+          });
+      }
+
+      // Add helper function for status badge classes
+      function getStatusBadgeClass(state) {
+        switch (state) {
+          case "completed":
+          case "success":
+            return "bg-success";
+          case "failed":
+          case "error":
+            return "bg-danger";
+          case "running":
+            return "bg-warning";
+          default:
+            return "bg-secondary";
+        }
+      }
+
+      // Add Akasa-specific socket event listeners
+      socket.on("air_scraper_completed", function (data) {
+        const statusClass = data.success ? "bg-success" : "bg-danger";
+        const statusText = data.success ? "Success" : "Failed";
+        const statusBadge = `<span class="badge ${statusClass} ${
+          !data.success ? "status-failed" : ""
+        }" 
+        ${
+          !data.success
+            ? 'data-bs-toggle="tooltip" data-bs-placement="top" title="' +
+              (data.message || "Unknown error") +
+              '"'
+            : ""
+        }>
+        ${statusText}
+    </span>`;
+
+        document.getElementById("airIndiaScraperStatus").innerHTML =
+          statusBadge;
+        document.getElementById("airIndiaLastRunTime").textContent =
+          new Date().toLocaleString();
+        document.getElementById("airIndiaCurrentPNR").textContent =
+          data.pnr || "-";
+        document.getElementById(
+          "airIndiaOtherDetails"
+        ).textContent = `Origin: ${data.origin || "-"} | Vendor: ${
+          data.vendor || "-"
+        }`;
+
+        // Initialize new tooltips if error
+        if (!data.success) {
+          initializeTooltips();
+        }
+      });
+
+      // Add function to view Air India scraper page
+      function viewAirIndiaScraper() {
+        window.location.href = "/airindiaexpress_scraper";
+      }
+
+      // Add handler for Air India settings updates
+      socket.on("air_india_settings_updated", function (data) {
+        document.getElementById("airIndiaNextRunTime").textContent =
+          data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
+        document.getElementById("airIndiaAutoRunStatus").innerHTML = `
+        <span class="badge ${data.auto_run ? "bg-success" : "bg-secondary"}">
+            ${data.auto_run ? "Enabled" : "Disabled"}
+        </span>
+    `;
+      });
+
+      // Add Akasa-specific socket event listeners
+      socket.on("akasa_scraper_status", function (data) {
+        const statusBadge = document.getElementById("akasaScraperStatus");
+        if (statusBadge) {
+          statusBadge.innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.status)}">
+                    ${data.status === "running" ? "Running" : data.status}
+                </span>
+            `;
+        }
+      });
+
+      socket.on("akasa_scraper_completed", function (data) {
+        if (data.success) {
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-success">Completed</span>';
+        } else {
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-danger">Failed</span>';
+        }
+        document.getElementById("akasaLastRunTime").textContent =
+          new Date().toLocaleString();
+        loadScraperStatus();
+      });
+
+      socket.on("akasa_settings_updated", function (data) {
+        document.getElementById("akasaNextRunTime").textContent = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaAutoRunStatus").innerHTML = `
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
+                ${data.auto_run ? "Enabled" : "Disabled"}
+            </span>
+        `;
+      });
+
+      // Update the periodic refresh to include Akasa
+      setInterval(() => {
+        loadScraperStatus();
+        // Only refresh DOM changes if table is visible
+        if (
+          document.getElementById("akasaDomChangesCell").offsetParent !== null
+        ) {
+          updateAkasaDOMChanges();
+        }
+      }, 30000);
+
+      // Update the Akasa table row update function
+      function updateAkasaTableRow(data) {
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
+        // Update to show lastName in Other Details column
+        document.getElementById("akasaOtherDetails").textContent =
+          data.traveller_name || "-";
+        document.getElementById("akasaNextRunTime").textContent =
+          data.auto_run && data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.state)}">
+                ${data.state || "Not Started"}
+            </span>
+        `;
+        document.getElementById("akasaAutoRunStatus").innerHTML = `
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
+                ${data.auto_run ? "Enabled" : "Disabled"}
+            </span>
+        `;
+      }
+
+      // Update the socket event listeners for Akasa
+      socket.on("akasa_scraper_completed", function (data) {
+        if (data.success) {
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-success">Completed</span>';
+          // Update last name when scraping completes
+          if (data.traveller_name) {
+            document.getElementById("akasaOtherDetails").textContent =
+              data.traveller_name;
+          }
+        } else {
+          document.getElementById("akasaScraperStatus").innerHTML =
+            '<span class="badge bg-danger">Failed</span>';
+        }
+        document.getElementById("akasaLastRunTime").textContent =
+          new Date().toLocaleString();
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        document.getElementById("akasaLastRunTime").textContent = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : "-";
+        document.getElementById("akasaCurrentPNR").textContent =
+          data.pnr || "-";
+        // Update Other Details with traveller name
+        document.getElementById("akasaOtherDetails").textContent =
+          data.traveller_name || "-";
+        document.getElementById("akasaNextRunTime").textContent =
+          data.auto_run && data.next_run
+            ? new Date(data.next_run).toLocaleString()
+            : "Not scheduled";
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.state)}">
+                ${data.state || "Not Started"}
+            </span>
+        `;
+        document.getElementById("akasaAutoRunStatus").innerHTML = `
+            <span class="badge ${
+              data.auto_run ? "bg-success" : "bg-secondary"
+            }">
+                ${data.auto_run ? "Enabled" : "Disabled"}
+            </span>
+        `;
+      });
+
+      // Replace the updateAkasaTableRow function and add akasa event listeners
+      function updateAkasaTableRow(data) {
+        // Don't clear other fields if they exist
+        if (data.last_run !== undefined) {
+          document.getElementById("akasaLastRunTime").textContent =
+            data.last_run ? new Date(data.last_run).toLocaleString() : "-";
+        }
+        if (data.pnr !== undefined) {
+          document.getElementById("akasaCurrentPNR").textContent =
+            data.pnr || "-";
+        }
+        if (data.traveller_name !== undefined) {
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name || "-";
+        }
+        if (data.state !== undefined) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+        }
+        if (data.next_run !== undefined || data.auto_run !== undefined) {
+          document.getElementById("akasaNextRunTime").textContent =
+            data.auto_run && data.next_run
+              ? new Date(data.next_run).toLocaleString()
+              : "Not scheduled";
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+
+        // Only update DOM changes if we're not in the middle of a scraping operation
+        if (data.state !== "running") {
+          updateAkasaDomChanges();
+        }
+      }
+
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        // Preserve existing data
+        const currentState = {
+          last_run: document.getElementById("akasaLastRunTime").textContent,
+          pnr: document.getElementById("akasaCurrentPNR").textContent,
+          traveller_name:
+            document.getElementById("akasaOtherDetails").textContent,
+          next_run: document.getElementById("akasaNextRunTime").textContent,
+          auto_run: document
+            .getElementById("akasaAutoRunStatus")
+            .querySelector(".badge")
+            .classList.contains("bg-success"),
+        };
+
+        // Only update status
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.status)}">
+                ${data.status === "running" ? "Running" : data.status}
+            </span>
+        `;
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        // Format dates if they exist, otherwise keep existing values
+        const lastRun = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : document.getElementById("akasaLastRunTime").textContent;
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : document.getElementById("akasaNextRunTime").textContent;
+
+        // Update only if new data is provided, otherwise keep existing
+        if (data.last_run) {
+          document.getElementById("akasaLastRunTime").textContent = lastRun;
+        }
+        if (data.pnr) {
+          document.getElementById("akasaCurrentPNR").textContent = data.pnr;
+        }
+        if (data.traveller_name) {
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name;
+        }
+        if (data.next_run) {
+          document.getElementById("akasaNextRunTime").textContent = nextRun;
+        }
+        if (data.state) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+        }
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      socket.on("akasa_settings_updated", function (data) {
+        // Handle next_run time properly
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaNextRunTime").textContent = nextRun;
+
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      function updateAkasaTableRow(data) {
+        // Handle last run time
+        if (data.last_run) {
+          document.getElementById("akasaLastRunTime").textContent = new Date(
+            data.last_run
+          ).toLocaleString();
+        }
+
+        // Handle PNR
+        if (data.pnr !== undefined) {
+          document.getElementById("akasaCurrentPNR").textContent =
+            data.pnr || "-";
+        }
+
+        // Handle traveller name - check multiple possible fields and fallback gracefully
+        const currentDetails =
+          document.getElementById("akasaOtherDetails").textContent;
+        const newDetails =
+          data.traveller_name || data.lastName || data.last_name || "-";
+        // Only update if we have new data and it's different from current
+        if (newDetails !== "-" || currentDetails === "-") {
+          document.getElementById("akasaOtherDetails").textContent = newDetails;
+        }
+
+        // Handle status
+        if (data.state) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+        }
+
+        // Handle next run time and auto run status
+        if (data.next_run !== undefined || data.auto_run !== undefined) {
+          // Only update next run time if auto run is enabled and next run is provided
+          document.getElementById("akasaNextRunTime").textContent =
+            data.auto_run && data.next_run
+              ? new Date(data.next_run).toLocaleString()
+              : "Not scheduled";
+
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+
+        // Only update DOM changes if we're not in the middle of a scraping operation
+        if (data.state !== "running") {
+          updateAkasaDomChanges();
+        }
+      }
+
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        // Preserve existing data
+        const currentState = {
+          last_run: document.getElementById("akasaLastRunTime").textContent,
+          pnr: document.getElementById("akasaCurrentPNR").textContent,
+          traveller_name:
+            document.getElementById("akasaOtherDetails").textContent,
+          next_run: document.getElementById("akasaNextRunTime").textContent,
+          auto_run: document
+            .getElementById("akasaAutoRunStatus")
+            .querySelector(".badge")
+            .classList.contains("bg-success"),
+        };
+
+        // Only update status
+        document.getElementById("akasaScraperStatus").innerHTML = `
+            <span class="badge ${getStatusBadgeClass(data.status)}">
+                ${data.status === "running" ? "Running" : data.status}
+            </span>
+        `;
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        // Format dates if they exist, otherwise keep existing values
+        const lastRun = data.last_run
+          ? new Date(data.last_run).toLocaleString()
+          : document.getElementById("akasaLastRunTime").textContent;
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : document.getElementById("akasaNextRunTime").textContent;
+
+        // Update only if new data is provided, otherwise keep existing
+        if (data.last_run) {
+          document.getElementById("akasaLastRunTime").textContent = lastRun;
+        }
+        if (data.pnr) {
+          document.getElementById("akasaCurrentPNR").textContent = data.pnr;
+        }
+        if (data.traveller_name) {
+          document.getElementById("akasaOtherDetails").textContent =
+            data.traveller_name;
+        }
+        if (data.next_run) {
+          document.getElementById("akasaNextRunTime").textContent = nextRun;
+        }
+        if (data.state) {
+          document.getElementById("akasaScraperStatus").innerHTML = `
+                <span class="badge ${getStatusBadgeClass(data.state)}">
+                    ${data.state || "Not Started"}
+                </span>
+            `;
+        }
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      socket.on("akasa_settings_updated", function (data) {
+        // Handle next_run time properly
+        const nextRun = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+        document.getElementById("akasaNextRunTime").textContent = nextRun;
+
+        if (data.hasOwnProperty("auto_run")) {
+          document.getElementById("akasaAutoRunStatus").innerHTML = `
+                <span class="badge ${
+                  data.auto_run ? "bg-success" : "bg-secondary"
+                }">
+                    ${data.auto_run ? "Enabled" : "Disabled"}
+                </span>
+            `;
+        }
+      });
+
+      // Update socket event listeners for Akasa
+      socket.on("akasa_scraper_status", function (data) {
+        try {
+          const statusBadge = document.getElementById("akasaScraperStatus");
+          if (statusBadge) {
+            statusBadge.innerHTML = `
+                    <span class="badge ${getStatusBadgeClass(data.status)}">
+                        ${data.status === "running" ? "Running" : data.status}
+                    </span>
+                `;
+          }
+          console.log("Akasa status update:", data); // Debug log
+        } catch (error) {
+          console.error("Error handling akasa_scraper_status:", error);
+        }
+      });
+
+      socket.on("akasa_scraper_state_updated", function (data) {
+        try {
+          console.log("Akasa state update received:", data); // Debug log
+
+          if (data.last_run) {
+            document.getElementById("akasaLastRunTime").textContent = new Date(
+              data.last_run
+            ).toLocaleString();
+          }
+          if (data.pnr) {
+            document.getElementById("akasaCurrentPNR").textContent = data.pnr;
+          }
+          if (data.traveller_name) {
+            document.getElementById("akasaOtherDetails").textContent =
+              data.traveller_name;
+          }
+          if (data.next_run) {
+            document.getElementById("akasaNextRunTime").textContent = new Date(
+              data.next_run
+            ).toLocaleString();
+          }
+          if (data.state) {
+            document.getElementById("akasaScraperStatus").innerHTML = `
+                    <span class="badge ${getStatusBadgeClass(data.state)}">
+                        ${data.state || "Not Started"}
+                    </span>
+                `;
+          }
+          if (data.hasOwnProperty("auto_run")) {
+            document.getElementById("akasaAutoRunStatus").innerHTML = `
+                    <span class="badge ${
+                      data.auto_run ? "bg-success" : "bg-secondary"
+                    }">
+                        ${data.auto_run ? "Enabled" : "Disabled"}
+                    </span>
+                `;
+          }
+        } catch (error) {
+          console.error("Error handling akasa_scraper_state_updated:", error);
+        }
+      });
+
+      // Add socket reconnection handling
+      socket.on("connect", function () {
+        console.log("Socket connected");
+        // Refresh scraper status on reconnect
+        loadScraperStatus();
+      });
+
+      socket.on("disconnect", function () {
+        console.log("Socket disconnected");
+      });
+
+      socket.on("connect_error", function (error) {
+        console.log("Socket connection error:", error);
+        // Try to reconnect
+        setTimeout(function () {
+          socket.connect();
+        }, 1000);
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

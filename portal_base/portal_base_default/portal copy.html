@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Portal Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <style>
+      .stage {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: all 0.3s;
+      }
+      .stage.active {
+        background: #fff3cd;
+        border-color: #ffeeba;
+      }
+      .stage.completed {
+        background: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .stage.error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .event-log {
+        height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-top: 15px;
+      }
+      .event-item {
+        padding: 5px;
+        margin: 5px 0;
+        border-left: 3px solid #007bff;
+      }
+      .event-item.error {
+        border-left-color: #dc3545;
+      }
+      .last-run-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      .last-run-info {
+        min-width: 250px;
+      }
+      .error-details {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-top: 1rem;
+        word-break: break-word;
+      }
+      .toast-container {
+        z-index: 1050;
+      }
+      @media (max-width: 768px) {
+        .last-run-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-4">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/"> Website Monitor </a>
+          <a class="btn btn-outline-primary" href="/">Back to Dashboard</a>
+        </div>
+      </nav>
+
+      <!-- Last Run Status section -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">Last Run Status</h5>
+        </div>
+        <div class="card-body">
+          <div id="lastRunStatus">
+            <div class="alert alert-info">
+              <div class="last-run-container">
+                <div class="last-run-info">
+                  <p>
+                    <strong>Last Run:</strong>
+                    <span id="lastRunTime">Never</span>
+                  </p>
+                  <p>
+                    <strong>Status:</strong>
+                    <span id="lastRunStatus">No runs yet</span>
+                  </p>
+                  <p>
+                    <strong>Username:</strong>
+                    <span id="lastUsername">N/A</span>
+                  </p>
+                  <p>
+                    <strong>Portal:</strong> <span id="lastPortal">N/A</span>
+                  </p>
+                  <p>
+                    <strong>Auto Run:</strong>
+                    <span id="autoRunStatus">Disabled</span>
+                  </p>
+                  <p>
+                    <strong>Next Run:</strong>
+                    <span id="nextRunDisplay" class="text-muted"
+                      >Not scheduled</span
+                    >
+                  </p>
+                </div>
+                <div
+                  id="errorDetails"
+                  class="error-details"
+                  style="display: none"
+                >
+                  <h6 class="text-danger">Error Details</h6>
+                  <div id="errorMessage"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h1 class="mb-4">Portal Scraper</h1>
+
+      <div class="row">
+        <!-- Scraper Form -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Start New Scrape</h5>
+            </div>
+            <div class="card-body">
+              <form id="scraperForm" onsubmit="startScraper(event)">
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password *</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="portal" class="form-label">Portal *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="portal"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Start Scraping
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Scheduler Settings -->
+          <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Scheduler Settings</h5>
+            </div>
+            <div class="card-body">
+              <form id="schedulerForm" onsubmit="saveSchedulerSettings(event)">
+                <div class="mb-3">
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="autoRunEnabled"
+                    />
+                    <label class="form-check-label" for="autoRunEnabled"
+                      >Enable Auto Run</label
+                    >
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="runInterval" class="form-label"
+                    >Run Interval (minutes)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="runInterval"
+                    value="60"
+                    min="1"
+                  />
+                  <div class="form-text">Minimum interval: 1 minute</div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Next Scheduled Run:</label>
+                  <p id="nextRunTime" class="mb-0 text-primary">
+                    Not scheduled
+                  </p>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Save Settings
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Display -->
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Scraper Status</h5>
+            </div>
+            <div class="card-body">
+              <div id="scrapperStatus">
+                <p class="text-muted">Waiting to start...</p>
+              </div>
+
+              <!-- Progress Stages -->
+              <div class="progress-stages mt-4">
+                <div class="stage" id="initialization-stage">
+                  <h6>Browser Setup</h6>
+                  <p>Not started</p>
+                  <small></small>
+                </div>
+                <div class="stage" id="authentication-stage">
+                  <h6>Portal Login</h6>
+                  <p>Not started</p>
+                  <small></small>
+                </div>
+                <div class="stage" id="navigation-stage">
+                  <h6>Workspace Navigation</h6>
+                  <p>Not started</p>
+                  <small></small>
+                </div>
+                <div class="stage" id="processing-stage">
+                  <h6>Invoice Processing</h6>
+                  <p>Not started</p>
+                  <small></small>
+                </div>
+              </div>
+
+              <!-- Event Log -->
+              <div class="event-log mt-4">
+                <h6 class="text-primary">Event Log</h6>
+                <div id="eventLog"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Container -->
+      <div
+        id="toastContainer"
+        class="toast-container position-fixed top-0 end-0 p-3"
+      ></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const socket = io();
+
+      // API endpoints definition
+      const API_ENDPOINTS = {
+        START_SCRAPING: "/portal/start_scraping",
+        LAST_STATE: "/portal/last_state",
+        SETTINGS: "/portal/settings",
+        UPDATE_SETTINGS: "/portal/settings", // Not UPDATE_SETTINGS to match route
+      };
+
+      // Socket Event Handlers
+      socket.on("connect", function () {
+        console.log("Socket connected");
+        showToast("Connected to server", "success");
+        // Refresh states on reconnection
+        Promise.all([loadInitialState(), loadSchedulerSettings()]);
+      });
+
+      socket.on("portal_scraper_status", function (data) {
+        console.log("Status update:", data);
+
+        // Update status message
+        updateStatus(data.message, data.status === "error" ? "error" : "info");
+
+        // Update stage with timing
+        if (data.stage && data.status) {
+          updateStageStatus(data.stage, data.status, data.message, data.timing);
+          // Add to event log with timing
+          addEventLog({
+            type: data.status === "error" ? "error" : "info",
+            message: `${data.stage.toUpperCase()}: ${data.message}`,
+            elapsed: data.timing,
+          });
+        }
+      });
+
+      socket.on("portal_scraper_progress", function (data) {
+        console.log("Progress update:", data);
+        // Update progress display with detailed step information
+        updateProgressDisplay({
+          stage: data.stage,
+          stage_name: data.stage_name,
+          step: data.step,
+          status: data.status,
+          message: data.message,
+          stepIndex: data.step_index,
+          totalSteps: data.total_steps,
+        });
+        // Add step to event log
+        addEventLog({
+          type: "info",
+          message: `${data.stage_name} - ${data.step}: ${data.message}`,
+        });
+        // Update stage visual state
+        updateStageVisual(data.stage, data.status);
+      });
+
+      socket.on("portal_scraper_completed", function (data) {
+        console.log("Scraping completed:", data);
+        if (data.success) {
+          showToast("Scraping completed successfully", "success");
+          updateStatus("Files downloaded successfully", "success");
+          // Update stage completion
+          updateAllStagesCompletion();
+        } else {
+          showToast(data.message || "Scraping failed", "error");
+          updateStatus(data.message || "Scraping failed", "error");
+          // Show error details if available
+          if (data.message) {
+            showError(data.message, data.error);
+          }
+        }
+        // Refresh states after completion
+        Promise.all([loadInitialState(), loadSchedulerSettings()]);
+      });
+
+      socket.on("portal_scraper_error", function (data) {
+        console.error("Scraper error:", data);
+        // Show error in UI
+        showError(data.message, data.error);
+        updateStatus(data.message, "error");
+        // Update stage status if provided
+        if (data.stage) {
+          updateStageStatus(data.stage, "error", data.message);
+        }
+        // Add to error log
+        addEventLog({
+          type: "error",
+          message: `ERROR: ${data.message}`,
+        });
+      });
+
+      socket.on("portal_settings_updated", function (data) {
+        console.log("Settings updated:", data);
+        // Update scheduler UI
+        updateSchedulerUI({
+          auto_run: data.auto_run,
+          interval: data.interval,
+          next_run: data.next_run,
+        });
+        // Update next run display
+        updateNextRunDisplay(data.next_run, data.auto_run);
+        // Refresh state to show updated auto-run state
+        loadInitialState();
+        // Show confirmation
+        showToast("Scheduler settings updated", "success");
+      });
+
+      // Add helper functions for new UI updates
+      function updateStageVisual(stage, status) {
+        const stageElement = document.getElementById(`${stage}-stage`);
+        if (stageElement) {
+          // Remove existing status classes
+          stageElement.classList.remove("active", "completed", "error");
+          // Add appropriate status class
+          switch (status) {
+            case "starting":
+            case "in_progress":
+              stageElement.classList.add("active");
+              break;
+            case "completed":
+              stageElement.classList.add("completed");
+              break;
+            case "error":
+              stageElement.classList.add("error");
+              break;
+          }
+        }
+      }
+
+      function updateAllStagesCompletion() {
+        const stages = [
+          "initialization",
+          "authentication",
+          "navigation",
+          "processing",
+        ];
+        stages.forEach((stage) => {
+          updateStageStatus(stage, "completed", "Completed");
+        });
+      }
+
+      function updateNextRunDisplay(nextRun, autoRun) {
+        const nextRunDisplay = document.getElementById("nextRunDisplay");
+        const nextRunTime = document.getElementById("nextRunTime");
+        const displayText = nextRun
+          ? new Date(nextRun).toLocaleString()
+          : "Not scheduled";
+        const displayClass = autoRun ? "text-success" : "text-muted";
+        if (nextRunDisplay) {
+          nextRunDisplay.textContent = displayText;
+          nextRunDisplay.className = displayClass;
+        }
+        if (nextRunTime) {
+          nextRunTime.textContent = displayText;
+          nextRunTime.className = displayClass;
+        }
+      }
+
+      // Form Handlers
+      async function startScraper(event) {
+        event.preventDefault();
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const form = event.target;
+
+        try {
+          submitBtn.disabled = true;
+          form.classList.add("was-validated");
+
+          if (!form.checkValidity()) {
+            throw new Error("Please fill all required fields");
+          }
+
+          const formData = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            portal: document.getElementById("portal").value,
+          };
+
+          resetUI();
+          showProgressTracker();
+
+          const response = await fetch(API_ENDPOINTS.START_SCRAPING, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+
+          updateStatus("Scraper started successfully", "info");
+        } catch (error) {
+          showToast(error.message, "error");
+          updateStatus(error.message, "error");
+        } finally {
+          submitBtn.disabled = false;
+        }
+      }
+
+      async function saveSchedulerSettings(event) {
+        event.preventDefault();
+        const button = event.submitter;
+        button.disabled = true;
+        try {
+          const settings = {
+            auto_run: document.getElementById("autoRunEnabled").checked,
+            interval: parseInt(document.getElementById("runInterval").value),
+          };
+          if (settings.interval < 1) {
+            throw new Error("Minimum interval is 1 minute");
+          }
+          const response = await fetch(API_ENDPOINTS.UPDATE_SETTINGS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(settings),
+          });
+          const result = await response.json();
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+          updateSchedulerUI(result.settings);
+          showToast("Settings updated successfully", "success");
+          await loadInitialState();
+        } catch (error) {
+          showToast(error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      // State Loading Functions
+      async function loadInitialState() {
+        try {
+          const response = await fetch(API_ENDPOINTS.LAST_STATE);
+          const data = await response.json();
+          if (!data.success) {
+            throw new Error(data.message);
+          }
+          updateLastRunStatus(data.data || {});
+          prefillForm(data.data);
+        } catch (error) {
+          console.error("Error loading initial state:", error);
+          updateLastRunStatus({});
+        }
+      }
+
+      async function loadSchedulerSettings() {
+        try {
+          const response = await fetch(API_ENDPOINTS.SETTINGS);
+          const data = await response.json();
+          if (!data.success) {
+            throw new Error(data.message);
+          }
+          updateSchedulerUI(
+            data.settings || { auto_run: false, interval: 60, next_run: null }
+          );
+        } catch (error) {
+          console.error("Error loading scheduler settings:", error);
+          updateSchedulerUI({ auto_run: false, interval: 60, next_run: null });
+        }
+      }
+
+      // UI Update Functions
+      function updateLastRunStatus(data) {
+        const statusDiv = document.getElementById("lastRunStatus");
+        const statusClass = getStatusClass(data.state);
+        statusDiv.innerHTML = `
+        <div class="alert alert-${statusClass}">
+          <div class="last-run-container">
+            <div class="last-run-info">
+              <p><strong>Last Run:</strong> ${formatTimestamp(
+                data.last_run
+              )}</p>
+              <p><strong>Status:</strong> ${data.state || "Never run"}</p>
+              <p><strong>Username:</strong> ${data.username || "N/A"}</p>
+              <p><strong>Portal:</strong> ${data.portal || "N/A"}</p>
+              <p>
+                <strong>Auto Run:</strong> ${
+                  data.auto_run ? "Enabled" : "Disabled"
+                }
+              </p>
+              <p><strong>Next Run:</strong> ${formatTimestamp(
+                data.next_run
+              )}</p>
+            </div>
+            ${data.state === "failed" ? createErrorDetails(data) : ""}
+          </div>
+        </div>
+        `;
+      }
+
+      function updateSchedulerUI(settings) {
+        document.getElementById("autoRunEnabled").checked = settings.auto_run;
+        document.getElementById("runInterval").value = settings.interval;
+        document.getElementById("nextRunTime").textContent = formatTimestamp(
+          settings.next_run
+        );
+      }
+
+      function updateProgressDisplay(data) {
+        const stageElement = document.getElementById(`${data.stage}-stage`);
+        if (stageElement) {
+          stageElement.querySelector(
+            "p"
+          ).textContent = `${data.step}: ${data.message}`;
+          stageElement.className = `stage ${data.status}`;
+        }
+      }
+
+      // Utility Functions
+      function resetUI() {
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.className = "stage";
+          stage.querySelector("p").textContent = "Not started";
+          stage.querySelector("small").textContent = "";
+        });
+        document.getElementById("eventLog").innerHTML = "";
+        document.getElementById("scrapperStatus").innerHTML =
+          '<p class="text-muted">Starting...</p>';
+      }
+
+      function showProgressTracker() {
+        document
+          .querySelectorAll(".stage")
+          .forEach((stage) => stage.classList.remove("d-none"));
+        updateStageStatus("initialization", "starting", "Initializing...");
+      }
+
+      function formatTimestamp(timestamp) {
+        if (!timestamp) return "Not scheduled";
+        return new Date(timestamp).toLocaleString();
+      }
+
+      function getStatusClass(state) {
+        switch (state) {
+          case "completed":
+            return "success";
+          case "failed":
+            return "danger";
+          case "running":
+            return "warning";
+          default:
+            return "info";
+        }
+      }
+
+      function createErrorDetails(data) {
+        if (!data.message) return "";
+        return `
+        <div class="error-details mt-3">
+          <h6 class="text-danger">Error Details</h6>
+          <p class="mb-0">${data.message}</p>
+        </div>
+        `;
+      }
+
+      function prefillForm(data) {
+        if (!data) return;
+        if (data.username)
+          document.getElementById("username").value = data.username;
+        if (data.portal) document.getElementById("portal").value = data.portal;
+      }
+
+      function showToast(message, type = "info") {
+        const toastContainer = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast show bg-${
+          type === "error" ? "danger" : "success"
+        } text-white`;
+        toast.innerHTML = `
+        <div class="toast-body">
+          ${message}
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", async function () {
+        try {
+          await Promise.all([loadInitialState(), loadSchedulerSettings()]);
+        } catch (error) {
+          console.error("Initialization error:", error);
+          showToast("Failed to initialize application", "error");
+        }
+      });
+    </script>
+  </body>
+</html>

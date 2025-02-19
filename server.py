@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Blueprint
 from flask_socketio import SocketIO, emit
 import pytz
 from flask_cors import CORS
@@ -10,6 +10,8 @@ from db_operations import FirestoreDB
 from datetime import datetime, timedelta
 import os
 from email_utils import send_email, generate_status_email  # New import
+from fcm.server_routes import init_fcm_routes
+from alliance_copy.server_routes import init_alliance_routes  # Add Alliance import
 from socket_logger import SocketLogger
 import pdfkit
 from bs4 import BeautifulSoup
@@ -25,6 +27,8 @@ from email_utils import (
 )
 from notification_handler import NotificationHandler
 from dom_utils import DOMChangeTracker
+from portal_base.server_routes import portal_routes, init_portal_routes, initialize_portal_scheduler
+from portal_base.db_util import PortalFirestoreDB
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -534,6 +538,14 @@ def akasa_scraper_page():
 @app.route('/airindiaexpress_scraper')
 def airindiaexpress_scraper_page():
     return render_template('air_india_scraper.html')
+@app.route('/qatar')
+def qatar_page():
+    return render_template('portal.html')
+
+
+@app.route('/alliance')
+def alliance_page():
+    return render_template('alliance.html')
 
 @app.route('/run_starair_scraper', methods=['POST'])
 def run_starair_scraper():
@@ -1987,6 +1999,11 @@ def initialize_airindia_scheduler():
     except Exception as e:
         logger.error(f"Error verifying Air India scheduler: {e}")
 
+@app.route('/portal')
+def portal_page():
+    """Add route for portal scraper page"""
+    return render_template('portal.html')
+
 @socketio.on('disconnect')
 def handle_disconnect():
     logger.info("Client disconnected")
@@ -1994,11 +2011,22 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     # Initialize scheduler with thread pool
-    scheduler.configure(thread_pool_size=4)  # Allow more concurrent jobs
+    scheduler.configure(thread_pool_size=4)
     
+    # Initialize all scrapers' schedulers
     initialize_scheduler()
     initialize_akasa_scheduler()
-    initialize_airindia_scheduler()  # Add Air India scheduler initialization
+    initialize_airindia_scheduler()
+    
+    # Initialize Portal scraper
+    app = init_portal_routes(app, db, socketio)  # Make sure this returns app
+    portal_db = PortalFirestoreDB(db, 'default_portal')
+    initialize_portal_scheduler(portal_db, socketio)
+    # app = init_fcm_routes(app, db, socketio)  # Replace old init_portal_routes call
+    app = init_alliance_routes(app, db, socketio)  # Add Alliance routes initialization
+    # fcm_db = PortalFirestoreDB(db, 'fcm')  # Use fcm as collection name
+    # initialize_portal_scheduler(portal_db, socketio)
+    
     scheduler.start()
     
     # Only start the URL monitoring thread

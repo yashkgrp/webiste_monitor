@@ -188,6 +188,7 @@ def send_email(subject='', body='', to_email=os.getenv('SMTP_NOTIFICATIONEMAIL')
         smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
         smtp_port = int(os.getenv('SMTP_PORT', 587))
         smtp_user = os.getenv('SMTP_USER')
+        
         smtp_password = os.getenv('SMTP_PASSWORD')
 
         msg = MIMEMultipart()

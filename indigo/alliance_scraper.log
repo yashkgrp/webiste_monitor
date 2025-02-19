@@ -1,0 +1,53 @@
+2025-02-17 12:21:59,708 - INFO - Starting scraper for PNR: P6CZDL, Vendor: ALLIANCE AIR
+2025-02-17 12:21:59,708 - INFO - Attempt 1 for PNR: P6CZDL
+2025-02-17 12:21:59,910 - INFO - Chromedriver is already installed.
+2025-02-17 12:22:02,443 - INFO - Navigating to URL: https://allianceair.co.in/gst/
+2025-02-17 12:22:07,995 - INFO - Filling form for PNR: P6CZDL, Date: 06-06-2024
+2025-02-17 12:22:14,354 - INFO - Attempting to solve CAPTCHA
+2025-02-17 12:22:45,310 - INFO - CAPTCHA solved: 39648E
+2025-02-17 12:22:52,259 - INFO - File downloaded successfully
+2025-02-17 12:22:52,782 - INFO - Screenshot saved: C:\Users\yash chawla\Desktop\finkraft\webiste_monitor-beta\webiste_monitor-beta\alliance\screenshots\success_P6CZDL.png
+2025-02-17 12:22:57,785 - INFO - Downloaded file found: C:\Users\yash chawla\Desktop\finkraft\webiste_monitor-beta\webiste_monitor-beta\alliance\downloads\P6CZDL_06_06_2024.pdf
+2025-02-17 12:22:57,785 - INFO - Scraper successful for PNR: P6CZDL
+2025-02-17 12:22:57,795 - INFO - Saved file locally: downloaded_tickets\P6CZDL_06_06_2024.pdf
+2025-02-17 13:45:57,521 - INFO - Chromedriver is already installed.
+2025-02-17 13:46:38,670 - ERROR - Scraper execution failed: 'AllianceScraper' object has no attribute 'handle_error'
+2025-02-17 13:55:40,826 - INFO - Chromedriver is already installed.
+2025-02-17 13:56:32,059 - ERROR - Scraper execution failed: 'AllianceScraper' object has no attribute 'current_step'
+2025-02-17 15:02:09,934 - INFO - Chromedriver is already installed.
+2025-02-17 15:02:12,036 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 16:14:23,716 - INFO - Chromedriver is already installed.
+2025-02-17 16:14:25,845 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 16:14:31,258 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:14:35,458 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:15:17,120 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:15:28,383 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:15:28,383 - WARNING - Attempt 1 failed: Error in fetch_invoice_data: local variable 'error_screenshot' referenced before assignment
+2025-02-17 16:15:38,488 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:15:42,656 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:16:10,422 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:16:21,672 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:16:21,673 - WARNING - Attempt 2 failed: Error in fetch_invoice_data: local variable 'error_screenshot' referenced before assignment
+2025-02-17 16:16:31,797 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:16:36,000 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:17:08,787 - ERROR - Error tracking changes: 'NoneType' object has no attribute 'get_dom_snapshot'
+2025-02-17 16:17:08,788 - ERROR - Scraper execution failed: Error in fetch_invoice_data: cannot unpack non-iterable NoneType object
+2025-02-17 16:29:53,623 - INFO - Chromedriver is already installed.
+2025-02-17 16:29:55,710 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 16:30:56,663 - WARNING - Attempt 1 failed: Error in fetch_invoice_data: Download link not found after form submission
+2025-02-17 16:33:17,735 - INFO - Chromedriver is already installed.
+2025-02-17 16:33:19,807 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 16:33:58,396 - WARNING - Attempt 1 failed: Error in fetch_invoice_data: local variable 'error_screenshot' referenced before assignment
+2025-02-17 16:34:25,093 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))': /session/c8be4c2fe4e2d2bb3a67e6640ce1a652
+2025-02-17 16:35:02,808 - INFO - Chromedriver is already installed.
+2025-02-17 16:35:04,905 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 16:35:55,378 - WARNING - Attempt 1 failed: Error in fetch_invoice_data: local variable 'error_screenshot' referenced before assignment
+2025-02-17 16:36:08,926 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))': /session/8ba06131dda86ffd9057a5821a6094f2
+2025-02-17 16:44:26,002 - INFO - Chromedriver is already installed.
+2025-02-17 16:44:28,169 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 17:04:44,125 - INFO - Chromedriver is already installed.
+2025-02-17 17:04:46,206 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 17:29:39,409 - INFO - Chromedriver is already installed.
+2025-02-17 17:29:41,558 - INFO - Successfully initialized Chrome driver with auto-installer
+2025-02-17 18:48:59,599 - INFO - Chromedriver is already installed.
+2025-02-17 18:49:01,685 - INFO - Successfully initialized Chrome driver with auto-installer

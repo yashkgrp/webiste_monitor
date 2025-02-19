@@ -524,13 +524,7 @@ class AirIndiaScraper:
             
             # Only track changes after a delay to ensure page is fully loaded
             time.sleep(2)
-            changes = self.dom_tracker.track_page_changes(
-                page_id=self.page_ids['login'],
-                html_content=self.driver.page_source,
-                pnr=pnr,
-                origin=origin,
-                skip_snapshot=True  # Add this flag to prevent duplicate snapshots
-            )
+            
 
             # Load invoice page
             self.emit_stage_progress('request', 'page_load', 'starting', 'Loading invoice page')
@@ -550,18 +544,23 @@ class AirIndiaScraper:
                 html_content=self.driver.page_source,
                 pnr=pnr,
                 origin=origin,
-                skip_snapshot=True  # Add this flag
             )
 
             self.emit_stage_progress('request', 'form_fill', 'starting', 'Entering PNR and origin')
             
-            # Use exact same selectors as raw code
-            pnr_input = self.driver.find_element(By.XPATH, '//*[@id="pnr"]')
-            pnr_input.send_keys(pnr)
-            
-            origin_input = self.driver.find_element(By.XPATH, '//*[@id="Origin"]')
-            origin_input.send_keys(origin)
-            time.sleep(2)
+            try:
+                # Use exact same selectors as raw code
+                pnr_input = self.driver.find_element(By.XPATH, '//*[@id="pnr"]')
+                pnr_input.send_keys(pnr)
+                
+                origin_input = self.driver.find_element(By.XPATH, '//*[@id="Origin"]')
+                origin_input.send_keys(origin)
+                time.sleep(2)
+            except Exception as e:
+                import traceback
+                error_details = f"Failed to input PNR/Origin. Location: form_fill step. Error: {str(e)}. Stack: {traceback.format_exc()}"
+                self.handle_error('request', 'form_fill', error_details)
+                raise Exception(error_details)
             
             try:
                 # Use exact same selector as raw code
@@ -572,8 +571,10 @@ class AirIndiaScraper:
                 time.sleep(5)
                 self.emit_stage_progress('request', 'form_fill', 'completed', 'Form filled successfully')
             except Exception as e:
-                self.handle_error('request', 'form_fill', e)
-                raise Exception(f"Failed to select origin: {str(e)}")
+                import traceback
+                error_details = f"Failed to select origin suggestion. Location: form_fill step (suggestion selection). Error: {str(e)}. Stack: {traceback.format_exc()}"
+                self.handle_error('request', 'form_fill', error_details)
+                raise Exception(error_details)
 
             self.emit_stage_progress('request', 'submission', 'starting', 'Submitting request')
             try:
@@ -582,23 +583,45 @@ class AirIndiaScraper:
                 search_button.click()
                 time.sleep(5)
             except Exception as e:
-                self.handle_error('request', 'submission', e)
-                raise Exception(f"Failed to submit form: {str(e)}")
+                import traceback
+                error_details = f"Failed to click search button. Location: submission step. Error: {str(e)}. Stack: {traceback.format_exc()}"
+                self.handle_error('request', 'submission', error_details)
+                raise Exception(error_details)
 
-            # Use exact same selector as raw code for rows
-            rows = self.driver.find_elements(By.CSS_SELECTOR, 'tr.gstdetail-td')
-            row_count = len(rows)
-            
-            if row_count == 0:
-                raise Exception("No invoices found")
+            try:
+                # Use exact same selector as raw code for rows
+                rows = self.driver.find_elements(By.CSS_SELECTOR, 'tr.gstdetail-td')
+                row_count = len(rows)
                 
+                if row_count == 0:
+                    # Take screenshot for debugging
+                    screenshot_path = os.path.join(self.temp_dir, f"error_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+                    self.driver.save_screenshot(screenshot_path)
+                    
+                    # Get page source for debugging
+                    page_source = self.driver.page_source
+                    
+                    error_details = (
+                        f"No invoices found. Location: invoice retrieval step. "
+                        f"PNR: {pnr}, Origin: {origin}. "
+                        f"URL: {self.driver.current_url}. "
+                        f"Screenshot saved at: {screenshot_path}. "
+                        f"Page contains error message: {'error-message' in page_source.lower()}. "
+                        f"Page contains table: {'gstdetail-td' in page_source}"
+                    )
+                    raise Exception(error_details)
+            except Exception as e:
+                import traceback
+                error_details = f"Failed to process invoice rows. Location: invoice retrieval step. Error: {str(e)}. Stack: {traceback.format_exc()}"
+                self.handle_error('request', 'invoice_retrieval', error_details)
+                raise Exception(error_details)
+
             # Invoice list page DOM check
             changes = self.dom_tracker.track_page_changes(
                 page_id=self.page_ids['invoice_list'],
                 html_content=self.driver.page_source,
                 pnr=pnr,
                 origin=origin,
-                skip_snapshot=True  # Add this flag
             )
 
             # After form submission, store invoice list page
@@ -612,8 +635,10 @@ class AirIndiaScraper:
             return {'rows': rows, 'count': row_count}
             
         except Exception as e:
-            error_msg = self.handle_error('request', self.current_step or 'unknown', e)
-            raise Exception(error_msg)
+            import traceback
+            error_details = f"Error in fetch_invoice_data. Stage: {self.current_stage}, Step: {self.current_step or 'unknown'}. Error: {str(e)}. Stack: {traceback.format_exc()}"
+            self.handle_error('request', self.current_step or 'unknown', error_details)
+            raise Exception(error_details)
 
     def verify_file(self, file_path):
         """Verify file with detailed logging"""
