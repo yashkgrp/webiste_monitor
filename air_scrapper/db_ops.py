@@ -572,33 +572,79 @@ class AirIndiaFirestoreDB:
             logger.error(f"Error getting DOM snapshot: {e}")
             return None
 
-    def store_dom_changes(self, changes_data):
-        """Store DOM changes with path information"""
+    def store_dom_data(self, data, page_id):
+        """Store DOM data with atomic operations and verification"""
         try:
-            # Ensure each change has a path field (even if null)
-            if changes_data.get('changes'):
-                for change in changes_data['changes']:
-                    if 'path' not in change:
-                        change['path'] = None
-                        
-            # Add timestamp if not present
-            if 'timestamp' not in changes_data:
-                changes_data['timestamp'] = datetime.now(pytz.UTC)
+            current_time = datetime.now(pytz.UTC)
+            batch = self.db.batch()
             
-            # Store changes in history
-            self.dom_history_collection.add(changes_data)
+            # 1. Handle snapshot storage atomically
+            if data.get('snapshot'):
+                # Verify if content is actually different
+                current_snapshot = self.get_dom_snapshot(page_id)
+                if current_snapshot:
+                    current_hash = hash(current_snapshot.get('content', ''))
+                    new_hash = hash(data['snapshot']['content'])
+                    
+                    if current_hash == new_hash:
+                        logger.info(f"Skipping identical snapshot for {page_id}")
+                        return True
+                
+                # Ensure snapshot has timestamp and hash
+                snapshot_ref = self.dom_snapshots_collection.document(page_id)
+                snapshot_data = data['snapshot']
+                if 'metadata' not in snapshot_data:
+                    snapshot_data['metadata'] = {}
+                snapshot_data['metadata'].update({
+                    'timestamp': current_time,
+                    'content_hash': hash(snapshot_data['content'])
+                })
+                
+                batch.set(snapshot_ref, snapshot_data)
+                
+                # Add to history
+                history_ref = self.dom_history_collection.document()
+                history_data = snapshot_data.copy()
+                history_data.update({
+                    'page_id': page_id,
+                    'type': 'snapshot',
+                    'timestamp': current_time
+                })
+                batch.set(history_ref, history_data)
             
-            # Update last comparison state
-            self.dom_changes_collection.document('last_comparison').set({
-                'has_changes': bool(changes_data.get('changes')),
-                'timestamp': changes_data['timestamp'],
-                'changes_count': len(changes_data.get('changes', [])),
-                'page_id': changes_data.get('page_id')
-            })
+            # 2. Handle changes storage atomically
+            if data.get('changes') and data['changes'].get('changes'):
+                changes_ref = self.dom_history_collection.document()
+                changes_data = data['changes']
+                changes_data.update({
+                    'timestamp': current_time,
+                    'page_id': page_id
+                })
+                batch.set(changes_ref, changes_data)
+                
+                # Update last comparison atomically
+                last_comp_ref = self.dom_changes_collection.document('last_comparison')
+                batch.set(last_comp_ref, {
+                    'has_changes': True,
+                    'timestamp': current_time,
+                    'changes_count': len(changes_data['changes']),
+                    'page_id': page_id
+                })
+            
+            # Commit all changes atomically
+            batch.commit()
+            
+            # Verify snapshot was updated
+            if data.get('snapshot'):
+                new_snapshot = self.get_dom_snapshot(page_id)
+                if not new_snapshot or hash(new_snapshot.get('content', '')) != hash(data['snapshot']['content']):
+                    logger.error(f"Snapshot verification failed for {page_id}")
+                    return False
             
             return True
+            
         except Exception as e:
-            logger.error(f"Error storing DOM changes: {e}")
+            logger.error(f"Error storing DOM data: {e}")
             return False
 
     def get_recent_dom_changes(self, limit=50):
@@ -702,22 +748,39 @@ class AirIndiaFirestoreDB:
             logger.error(f"Error handling DOM changes notification: {e}")
 
     def store_dom_data(self, data, page_id):
-        """Store both snapshot and changes data"""
+        """Store DOM data with deduplication"""
         try:
-            # Store snapshot
-            if data.get('snapshot'):
-                self.store_dom_snapshot(page_id, data['snapshot'])
+            current_time = datetime.now(pytz.UTC)
             
-            # Store changes if they exist
-            if data.get('changes'):
-                self.store_dom_changes(data['changes'])
+            # 1. Handle snapshot storage
+            if data.get('snapshot'):
+                # Ensure snapshot has timestamp
+                if 'timestamp' not in data['snapshot'].get('metadata', {}):
+                    data['snapshot']['metadata']['timestamp'] = current_time
+                    
+                # Store current snapshot
+                self.dom_snapshots_collection.document(page_id).set(data['snapshot'])
                 
-            # Update last comparison
+                # Add to history
+                history_data = data['snapshot'].copy()
+                history_data['page_id'] = page_id
+                history_data['type'] = 'snapshot'
+                self.dom_history_collection.add(history_data)
+            
+            # 2. Handle changes storage
             if data.get('changes') and data['changes'].get('changes'):
+                changes_data = data['changes']
+                changes_data['timestamp'] = current_time
+                changes_data['page_id'] = page_id
+                
+                # Store in history collection
+                self.dom_history_collection.add(changes_data)
+                
+                # Update last comparison state
                 self.dom_changes_collection.document('last_comparison').set({
                     'has_changes': True,
-                    'timestamp': datetime.now(pytz.UTC),
-                    'changes_count': len(data['changes']['changes']),
+                    'timestamp': current_time,
+                    'changes_count': len(changes_data['changes']),
                     'page_id': page_id
                 })
             
@@ -726,7 +789,7 @@ class AirIndiaFirestoreDB:
         except Exception as e:
             logger.error(f"Error storing DOM data: {e}")
             return False
-            
+
     def get_dom_changes(self, limit=1000):
         """Get DOM changes with path handling"""
         try:
@@ -751,9 +814,10 @@ class AirIndiaFirestoreDB:
             logger.error(f"Error getting DOM changes: {e}")
             return []
 
-    def store_dom_snapshot(self, page_id, snapshot_data):
+    def store_dom_snapshot_history(self, page_id, snapshot_data):
         """Store a DOM snapshot"""
         try:
+
             # Ensure timestamp exists
             if 'timestamp' not in snapshot_data:
                 snapshot_data['timestamp'] = datetime.now(pytz.UTC)
@@ -771,3 +835,26 @@ class AirIndiaFirestoreDB:
         except Exception as e:
             logger.error(f"Error storing DOM snapshot: {e}")
             return False
+    def get_notification_emails(self):
+        """Get list of notification emails from Firestore"""
+        try:
+            print('notification_email_list_file_upload', 'get_emails')
+            # Changed collection and document names to match file_upload implementation
+            doc = self.db.collection('monitor_mails').document('email').get()
+            if doc.exists:
+                emails = doc.to_dict().get('emails', [])
+                logging.info(f"Found notification emails: {emails}")
+                return emails
+            logging.warning("No notification emails document found")
+            return []
+        except Exception as e:
+            print('get_notification_emails', str(e))
+            logging.error(f"Error fetching notification emails: {e}")
+            # Fallback to email document
+            try:
+                doc = self.db.collection('notification_email_list_file_upload').document('emails').get()
+                if doc.exists:
+                    return doc.to_dict().get('email', [])
+                return []
+            except Exception:
+                return []

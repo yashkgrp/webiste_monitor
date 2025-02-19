@@ -107,28 +107,38 @@ class NotificationHandler:
             print(f"Error in send_scraper_notification: {e}")
             logger.error(f"Error in send_scraper_notification: {e}")
 
-    def send_dom_change_notification(self, changes, gstin, pnr, airline="Star Air"):
-        """Send DOM change notifications to both email and Slack"""
+    def send_dom_change_notification(self, changes, gstin, pnr, airline="Star Air", html_content=None, subject=None):
+        """Send DOM change notifications with support for direct HTML content"""
         try:
             if not changes:
+                print("no changes provided to support email")
                 return
 
             notification_emails = self.db_ops.get_notification_emails()
+            print(f"fetched notification emails {notification_emails}")
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             if notification_emails:
-                self._safe_send('email',
-                    send_notification_email,
-                    subject=f"DOM Changes Detected - PNR: {pnr}",
-                    html_content=generate_dom_change_email(
+                # Use provided HTML/subject if available, otherwise generate default
+                if not html_content:
+                    html_content = generate_dom_change_email(
                         pnr=pnr,
                         gstin=gstin,
                         changes=changes,
                         timestamp=timestamp
-                    ),
+                    )
+
+                if not subject:
+                    subject = f"DOM Changes Detected - PNR: {pnr}"
+
+                self._safe_send('email',
+                    send_notification_email,
+                    subject=subject,
+                    html_content=html_content,
                     notification_emails=notification_emails
                 )
 
+            # Send Slack notification as usual
             self._safe_send('slack',
                 self.slack.send_dom_change_alert,
                 pnr=pnr,

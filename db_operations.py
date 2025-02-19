@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta
 import pytz
 import base64
@@ -581,7 +582,7 @@ class FirestoreDB:
             logging.debug(f"Stored scraper state: {state_data}")
             
         except Exception as e:
-            logger.error(f"Error storing scraper state: {e}")
+            print(f"Error storing scraper state: {e}")
             raise
 
     def get_last_scraper_state(self):
@@ -740,7 +741,7 @@ class FirestoreDB:
             
             return True
         except Exception as e:
-            logger.error(f"Error storing DOM data: {e}")
+            print(f"Error storing DOM data: {e}")
             return False
             
     def get_dom_changes(self, limit=1000):
@@ -752,7 +753,7 @@ class FirestoreDB:
                 .stream()
             return [change.to_dict() for change in changes]
         except Exception as e:
-            logger.error(f"Error getting DOM changes: {e}")
+            print(f"Error getting DOM changes: {e}")
             return []
 
     def get_last_dom_comparison_result(self, page_id):
@@ -772,7 +773,7 @@ class FirestoreDB:
                 'changes_count': 0
             }
         except Exception as e:
-            logger.error(f"Error getting last DOM comparison: {e}")
+            print(f"Error getting last DOM comparison: {e}")
             return None
 
     def save_dom_comparison(self, page_id, has_changes, changes, html_content, gstin=None, pnr=None):
@@ -802,7 +803,7 @@ class FirestoreDB:
             
             return True
         except Exception as e:
-            logger.error(f"Error saving DOM comparison: {e}")
+            print(f"Error saving DOM comparison: {e}")
             return False
 
     def get_scheduler_settings(self):
@@ -821,7 +822,7 @@ class FirestoreDB:
                 'next_run': None
             }
         except Exception as e:
-            logger.error(f"Error getting scheduler settings: {e}")
+            print(f"Error getting scheduler settings: {e}")
             return None
 
     def update_scheduler_settings(self, auto_run, interval, next_run=None):
@@ -842,7 +843,7 @@ class FirestoreDB:
             )
             return True
         except Exception as e:
-            logger.error(f"Error updating scheduler settings: {e}")
+            print(f"Error updating scheduler settings: {e}")
             return False
 
     def update_next_run_time(self, next_run):
@@ -853,5 +854,5 @@ class FirestoreDB:
             })
             return True
         except Exception as e:
-            logger.error(f"Error updating next run time: {e}")
+            print(f"Error updating next run time: {e}")
             return False

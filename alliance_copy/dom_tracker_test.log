@@ -1,0 +1,60 @@
+2025-02-17 16:46:56,451 - INFO - Previous snapshot for alliance_gst_portal_test: none
+2025-02-17 16:46:56,680 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 16:46:56,683 - ERROR - Failed to send notification: NotificationHandler.send_dom_change_notification() got an unexpected keyword argument 'transaction_date'
+2025-02-17 16:46:56,848 - INFO - Stored 1 changes for alliance_gst_portal_test
+2025-02-17 16:57:28,213 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 16:57:28,323 - INFO - Connecting to smtp.gmail.com:587
+2025-02-17 16:57:29,084 - INFO - TLS connection established successfully
+2025-02-17 16:57:29,561 - INFO - Login attempt for user: None
+2025-02-17 16:57:30,236 - ERROR - SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-02-17 16:57:30,236 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: TEST123 | Error: 'NoneType' object has no attribute 'encode'
+2025-02-17 16:57:30,237 - ERROR - Failed to send slack notification: sequence item 0: expected str instance, dict found
+2025-02-17 16:57:30,237 - INFO - Sent notification for 1 changes
+2025-02-17 16:57:30,411 - INFO - Stored 1 changes for alliance_gst_portal_test
+2025-02-17 16:57:30,474 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 16:57:30,544 - INFO - Connecting to smtp.gmail.com:587
+2025-02-17 16:57:30,807 - INFO - TLS connection established successfully
+2025-02-17 16:57:31,288 - INFO - Login attempt for user: None
+2025-02-17 16:57:31,971 - ERROR - SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-02-17 16:57:31,971 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: TEST123 | Error: 'NoneType' object has no attribute 'encode'
+2025-02-17 16:57:31,972 - ERROR - Failed to send slack notification: sequence item 0: expected str instance, dict found
+2025-02-17 16:57:31,972 - INFO - Sent notification for 1 changes
+2025-02-17 16:57:32,121 - INFO - Stored 1 changes for alliance_gst_portal_test
+2025-02-17 17:04:29,220 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 17:04:29,311 - INFO - Connecting to smtp.gmail.com:587
+2025-02-17 17:04:29,782 - INFO - TLS connection established successfully
+2025-02-17 17:04:30,235 - INFO - Login attempt for user: None
+2025-02-17 17:04:30,895 - ERROR - SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-02-17 17:04:30,895 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: TEST123 | Error: 'NoneType' object has no attribute 'encode'
+2025-02-17 17:04:30,896 - ERROR - Failed to send slack notification: sequence item 0: expected str instance, dict found
+2025-02-17 17:04:30,896 - INFO - Sent notification for 1 changes
+2025-02-17 17:04:31,046 - INFO - Stored 1 changes for alliance_gst_portal_test
+2025-02-17 17:04:31,102 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 17:04:31,157 - INFO - Connecting to smtp.gmail.com:587
+2025-02-17 17:04:31,622 - INFO - TLS connection established successfully
+2025-02-17 17:04:32,083 - INFO - Login attempt for user: None
+2025-02-17 17:04:32,742 - ERROR - SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-02-17 17:04:32,743 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: TEST123 | Error: 'NoneType' object has no attribute 'encode'
+2025-02-17 17:04:32,744 - ERROR - Failed to send slack notification: sequence item 0: expected str instance, dict found
+2025-02-17 17:04:32,744 - INFO - Sent notification for 1 changes
+2025-02-17 17:04:32,863 - INFO - Stored 1 changes for alliance_gst_portal_test
+2025-02-17 17:06:01,556 - INFO - Previous snapshot for alliance_gst_portal_test: none
+2025-02-17 17:06:01,727 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 17:06:01,802 - INFO - Connecting to smtp.gmail.com:587
+2025-02-17 17:06:02,139 - INFO - TLS connection established successfully
+2025-02-17 17:06:02,623 - INFO - Login attempt for user: None
+2025-02-17 17:06:03,330 - ERROR - SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-02-17 17:06:03,331 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: TEST123 | Error: 'NoneType' object has no attribute 'encode'
+2025-02-17 17:06:03,332 - ERROR - Failed to send slack notification: sequence item 0: expected str instance, dict found
+2025-02-17 17:06:03,332 - INFO - Sent notification for 1 changes
+2025-02-17 17:06:03,461 - INFO - Stored 1 changes for alliance_gst_portal_test
+2025-02-17 18:51:17,216 - INFO - Previous snapshot for alliance_gst_portal_test: none
+2025-02-17 18:51:17,994 - INFO - Previous snapshot for alliance_gst_portal_test: exists
+2025-02-17 18:51:18,088 - INFO - Connecting to smtp.gmail.com:587
+2025-02-17 18:51:18,608 - INFO - TLS connection established successfully
+2025-02-17 18:51:19,095 - INFO - Login attempt for user: None
+2025-02-17 18:51:19,781 - ERROR - SMTP unknown failed: 'NoneType' object has no attribute 'encode'
+2025-02-17 18:51:19,782 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: TEST123 | Error: 'NoneType' object has no attribute 'encode'
+2025-02-17 18:51:19,783 - ERROR - Failed to send slack notification: sequence item 0: expected str instance, dict found
+2025-02-17 18:51:19,783 - INFO - Sent notification for 1 changes
+2025-02-17 18:51:19,959 - INFO - Stored 1 changes for alliance_gst_portal_test
