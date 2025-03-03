@@ -105,6 +105,7 @@ def run_automated_scrape(db_ops, socketio):
                     'processing_time': result.get('data', {}).get('processing_time')
                 }
             })
+            
         
         # Schedule next run if auto-run enabled
         if settings.get('auto_run'):
@@ -117,6 +118,7 @@ def run_automated_scrape(db_ops, socketio):
                 interval=interval_minutes,
                 next_run=next_run
             )
+            g.get('socketio').emit('fcm_run_completed')
         
         return result
 
@@ -128,9 +130,10 @@ def run_automated_scrape(db_ops, socketio):
                 'message': error_msg,
                 'timestamp': datetime.now(pytz.UTC).isoformat()
             })
+            g.get('socketio').emit('fcm_run_completed')
         return None
 
-@portal_routes.route('/fcm/start_scraping', methods=['POST'])
+@portal_routes.route('/start_scraping', methods=['POST'])
 def start_portal_scraping():
     """Start portal scraping with secure credential handling"""
     try:
@@ -149,17 +152,20 @@ def start_portal_scraping():
 
         # Run scraper with simplified data
         result = run_scraper(data, db_ops, g.get('socketio'))
+        g.get('socketio').emit('fcm_run_completed')
+    
         return jsonify(result)
 
     except Exception as e:
         error_msg = str(e)
         logger.error(f"Portal scraping error: {error_msg}")
+        g.get('socketio').emit('fcm_run_completed')
         return jsonify({
             'success': False,
             'message': error_msg
         })
 
-@portal_routes.route('/fcm/last_state')
+@portal_routes.route('/last_state')
 def get_portal_last_state():
     """Get last state with secure credential handling"""
     try:
@@ -193,7 +199,7 @@ def get_portal_last_state():
             'message': str(e)
         })
 
-@portal_routes.route('/fcm/settings', methods=['GET', 'POST'])
+@portal_routes.route('/settings', methods=['GET', 'POST'])
 def portal_scheduler_settings():
     """Handle portal scheduler settings"""
     try:
@@ -263,123 +269,43 @@ def portal_scheduler_settings():
             'message': str(e)
         })
 
-@portal_routes.route('/fcm/member', methods=['POST'])
-def manage_portal_member():
-    """Handle member management operations"""
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'})
-            
-        required_fields = ['username', 'password', 'member_data']
-        if not all(field in data for field in required_fields):
-            return jsonify({'success': False, 'message': 'Missing required fields'})
-            
-        # Add member management flag
-        data['manage_members'] = True
-        
-        # Run scraper with member management
-        result = run_scraper(data, g.get('db_ops'), g.get('socketio'))
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Member management error: {e}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        })
-
-@portal_routes.route('/upload', methods=['POST'])
-def upload_file():
-    """Handle file uploads for CSV invoice lists"""
-    try:
-        if 'file' not in request.files:
-            return jsonify({
-                'success': False,
-                'message': 'No file provided'
-            })
-            
-        file = request.files['file']
-        if not file.filename:
-            return jsonify({
-                'success': False,
-                'message': 'No file selected'
-            })
-            
-        if not file.filename.endswith('.csv'):
-            return jsonify({
-                'success': False,
-                'message': 'Only CSV files are allowed'
-            })
-            
-        result = file_handler.save_upload(file, 'invoice_lists')
-        if not result['success']:
-            raise Exception(result.get('error', 'Failed to save file'))
-            
-        return jsonify({
-            'success': True,
-            'path': result['path']
-        })
-        
-    except Exception as e:
-        logger.error(f"File upload error: {e}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        })
-
-@portal_routes.route('/fcm/files', methods=['GET'])
-def get_portal_files():
-    """Get processed file records with filtering"""
-    try:
-        db_ops = g.get('db_ops')
-        if not db_ops:
-            raise Exception("Database connection not available")
-            
-        # Parse query parameters
-        username = request.args.get('username')
-        file_type = request.args.get('type')
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
-        
-        # Convert date strings to datetime if provided
-        if start_date:
-            start_date = datetime.fromtimestamp(int(start_date)/1000, pytz.UTC)
-        if end_date:
-            end_date = datetime.fromtimestamp(int(end_date)/1000, pytz.UTC)
-            
-        records = db_ops.get_file_records(
-            username=username,
-            file_type=file_type,
-            start_date=start_date,
-            end_date=end_date
-        )
-        
-        return jsonify({
-            'success': True,
-            'data': records
-        })
-        
-    except Exception as e:
-        logger.error(f"Error retrieving file records: {e}")
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        })
 
 def init_fcm_routes(app, db, socketio):
     """Initialize routes with dependencies"""
-    app.register_blueprint(portal_routes)
+
+    def initialize_context():
+        if not hasattr(g, 'db_ops'):
+            g.db_ops = PortalFirestoreDB(db,'fcm')
+        if not hasattr(g, 'socketio'):
+            g.socketio = socketio
+
+    # Register middleware for all fcm routes
+    @portal_routes.before_request
+    def before_portal_request():
+        try:
+            initialize_context()
+        except Exception as e:
+            logger.error(f"Failed to initialize request context: {e}")
+            return jsonify({
+                'success': False,
+                'message': 'Failed to initialize database connection',
+                'error': str(e)
+            }), 500
+
+        # Register blueprint with url_prefix to ensure middleware only runs for fcm routes
+        app.register_blueprint(portal_routes, url_prefix='/fcm')
+
+
+
+
+    
     
     # Add dependencies to request context
-    @app.before_request
-    def before_request():
-        g.db_ops = PortalFirestoreDB(db, 'fcm')
-        g.socketio = socketio
+    
         # g.file_handler = file_handler
     
     # Initialize scheduler
-    # initialize_portal_scheduler(PortalFirestoreDB(db, 'portal'), socketio)
+    initialize_portal_scheduler(PortalFirestoreDB(db, 'portal'), socketio)
     
     # Schedule cleanup of old files
     # scheduler.add_job(

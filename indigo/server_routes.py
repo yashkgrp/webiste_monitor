@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, g
 from datetime import datetime, timedelta
-from .alliance_scrapper import run_scraper
-from .db_util import AllianceFirestoreDB
+from .indigo_scrapper import run_scraper
+from .db_util import IndigoFirestoreDB
 import logging
 import os
 import pytz
@@ -10,7 +10,7 @@ import traceback
 import atexit
 
 logger = logging.getLogger(__name__)
-alliance_routes = Blueprint('alliance_routes', __name__)
+indigo_routes = Blueprint('indigo_routes', __name__)
 
 # Initialize scheduler
 scheduler = BackgroundScheduler(
@@ -21,21 +21,21 @@ scheduler = BackgroundScheduler(
 )
 scheduler.start()
 
-# Initialize file handler for alliance
+# Initialize file handler for indigo
 current_dir = os.path.dirname(os.path.abspath(__file__))
 download_dir = os.path.join(current_dir, "downloads")
 os.makedirs(download_dir, exist_ok=True)
 
-def initialize_alliance_scheduler(db_ops, socketio):
-    """Initialize alliance scheduler with delayed scheduling for missed runs"""
+def initialize_indigo_scheduler(db_ops, socketio):
+    """Initialize indigo scheduler with delayed scheduling for missed runs"""
     try:
         settings = db_ops.get_scheduler_settings()
         if not settings or not settings.get('auto_run'):
             logger.info("Auto-run disabled, skipping scheduler initialization")
-            if scheduler.get_job('alliance_auto_scrape'):
-                scheduler.remove_job('alliance_auto_scrape')
+            if scheduler.get_job('indigo_auto_scrape'):
+                scheduler.remove_job('indigo_auto_scrape')
             if socketio:
-                socketio.emit('alliance_scheduler_status', {
+                socketio.emit('indigo_scheduler_status', {
                     'status': 'disabled',
                     'message': 'Auto-run is disabled',
                     'next_run': None
@@ -53,7 +53,6 @@ def initialize_alliance_scheduler(db_ops, socketio):
                 stored_next_run = datetime.fromisoformat(stored_next_run.replace('Z', '+00:00'))
             
             if current_time > stored_next_run:
-                # Missed run - schedule for 5 minutes from now
                 next_run = current_time + timedelta(minutes=5)
                 logger.info(f"Missed run detected. Scheduling for 5 minutes later: {next_run}")
                 run_missed=True
@@ -68,8 +67,8 @@ def initialize_alliance_scheduler(db_ops, socketio):
             interval=interval_minutes,
             next_run=next_run
         )
-        if scheduler.get_job('alliance_auto_scrape'):
-            scheduler.remove_job('alliance_auto_scrape')
+        if scheduler.get_job('indigo_auto_scrape'):
+            scheduler.remove_job('indigo_auto_scrape')
 
         # Schedule next run
         scheduler.add_job(
@@ -78,7 +77,7 @@ def initialize_alliance_scheduler(db_ops, socketio):
             minutes=interval_minutes,
             next_run_time=next_run,
             args=[db_ops, socketio],
-            id='alliance_auto_scrape',
+            id='indigo_auto_scrape',
             replace_existing=True
         )
         
@@ -86,7 +85,7 @@ def initialize_alliance_scheduler(db_ops, socketio):
         
         # Emit initialization status
         if socketio:
-            socketio.emit('alliance_scheduler_status', {
+            socketio.emit('indigo_scheduler_status', {
                 'status': 'initialized',
                 'message': f'Scheduler initialized with {interval_minutes}m interval',
                 'next_run': next_run.isoformat(),
@@ -94,7 +93,7 @@ def initialize_alliance_scheduler(db_ops, socketio):
                 'auto_run': True
             })
             if run_missed:
-                g.socketio.emit('alliance_settings_updated', {
+                g.socketio.emit('indigo_settings_updated', {
                             'auto_run': True,
                             'interval': interval_minutes,
                             'next_run': next_run.isoformat(),
@@ -102,10 +101,10 @@ def initialize_alliance_scheduler(db_ops, socketio):
                         })
 
     except Exception as e:
-        logger.error(f"Failed to initialize alliance scheduler: {e}")
+        logger.error(f"Failed to initialize indigo scheduler: {e}")
         logger.error(traceback.format_exc())
         if socketio:
-            socketio.emit('alliance_scheduler_error', {
+            socketio.emit('indigo_scheduler_error', {
                 'message': str(e)
             })
 
@@ -116,27 +115,26 @@ def run_automated_scrape(db_ops, socketio):
         settings = db_ops.get_scheduler_settings()
         
         if not settings or not settings.get('auto_run'):
-            initialize_alliance_scheduler(db_ops,socketio)
+            initialize_indigo_scheduler(db_ops,socketio)
             if socketio:
-                socketio.emit('alliance_auto_scrape_status', {
+                socketio.emit('indigo_auto_scrape_status', {
                     'status': 'skipped',
                     'message': 'Auto-run is disabled'
                 })
             return
 
-        # Get company details from latest state
+        # Get last state from scraper
         last_state = db_ops.get_last_scraper_state()
         if last_state:
-            
-            company_data={
-                'Ticket/PNR':last_state.get('pnr','no pnr avlr'),
-                'Transaction_Date':last_state.get('transaction_date','no date avl'),
-                'Vendor':last_state.get('vendor','ALLIANCE AIR ')
+            company_data = {
+                'Ticket/PNR': last_state.get('pnr'),
+                'SSR_Email': last_state.get('ssr_email'),
+                'Port': 24000
             }
-            data=company_data
-            if company_data:
+            
+            if company_data.get('Ticket/PNR') and company_data.get('SSR_Email'):
                 if socketio:
-                    socketio.emit('alliance_auto_scrape_status', {
+                    socketio.emit('indigo_auto_scrape_status', {
                         'status': 'starting',
                         'message': 'Starting automated scrape',
                         'pnr': company_data.get('Ticket/PNR')
@@ -146,61 +144,36 @@ def run_automated_scrape(db_ops, socketio):
                 
                 next_run = datetime.now(pytz.UTC) + timedelta(minutes=settings.get('interval', 60))
                 db_ops.update_scheduler_settings(
-                        auto_run=True,
-                        interval=settings.get('interval', 60),
-                        next_run=next_run
-                    )
-                initialize_alliance_scheduler(db_ops,socketio)
-                socketio.emit('alliance_settings_updated', {
+                    auto_run=True,
+                    interval=settings.get('interval', 60),
+                    next_run=next_run
+                )
+                initialize_indigo_scheduler(db_ops, socketio)
+                
+                if socketio:
+                    socketio.emit('indigo_settings_updated', {
                         'auto_run': True,
                         'interval': settings.get('interval', 60),
                         'next_run': next_run.isoformat(),
                         'message': 'Scheduler settings updated and activated'
                     })
-                
-                if result.get('success'):
-                    g.db_ops.store_scraper_state(
-                        pnr=data['Ticket/PNR'],
-                        state='completed',
-                        message='Scraping completed successfully',
-                        data={
-                            'files': result.get('data', {}).get('files', []),
-                            'timing': result.get('data', {}).get('timing_data', {}),
-                            'screenshot': result.get('data', {}).get('screenshot_path'),
-                            'airline': 'alliance_air'
-                        },
-                        
-                    )
-                else:
-                    g.db_ops.store_scraper_state(
-                        pnr=data['Ticket/PNR'],
-                        state='failed',
-                        message=result.get('message', 'Scraping failed'),
-                        data={'error': result.get('message')},
-                        
-                    )
 
     except Exception as e:
         error_msg = str(e)
         logger.error(f"Scraping error: {error_msg}")
         logger.error(traceback.format_exc())
         
-        try:
-            if 'data' in locals() and 'Ticket/PNR' in data:
-                g.db_ops.store_scraper_state(
-                    pnr=data['Ticket/PNR'],
-                    state='error',
-                    message=error_msg,
-                    transaction_date=data['Transaction_Date'],
-                )
-        except:
-            pass
+        if socketio:
+            socketio.emit('indigo_auto_scrape_error', {
+                'message': error_msg
+            })
     finally:
-        socketio.emit('alliance_scrapper_run_completed')
+        if socketio:
+            socketio.emit('indigo_scrapper_run_completed')
 
-@alliance_routes.route('/alliance/start_scraping', methods=['POST'])
-def start_alliance_scraping():
-    """Start alliance scraping with complete validation and error handling"""
+@indigo_routes.route('/start_scraping', methods=['POST'])
+def start_indigo_scraping():
+    """Start indigo scraping with complete validation and error handling"""
     try:
         data = request.get_json()
         if not data:
@@ -209,7 +182,7 @@ def start_alliance_scraping():
                 'message': 'No data provided'
             }), 400
 
-        required_fields = ['Ticket/PNR', 'Transaction_Date']
+        required_fields = ['Ticket/PNR', 'SSR_Email']
         missing_fields = [field for field in required_fields if not data.get(field)]
         if missing_fields:
             return jsonify({
@@ -217,22 +190,12 @@ def start_alliance_scraping():
                 'message': f'Missing required fields: {", ".join(missing_fields)}'
             }), 400
 
-        # Validate date format
-        try:
-            datetime.strptime(data['Transaction_Date'], '%d-%m-%Y')
-        except ValueError:
-            return jsonify({
-                'success': False,
-                'message': 'Invalid date format. Required format: DD-MM-YYYY'
-            }), 400
-
-        # Store initial state
+        # Store initial state with new field pattern
         g.db_ops.store_scraper_state(
             pnr=data['Ticket/PNR'],
             state='starting',
             message='Initiating scraping process',
-            transaction_date=data['Transaction_Date'],
-            vendor='ALLIANCE AIR'
+            ssr_email=data['SSR_Email']
         )
         
         result = run_scraper(data, g.db_ops, g.socketio)
@@ -243,12 +206,11 @@ def start_alliance_scraping():
                 state='completed',
                 message='Scraping completed successfully',
                 data={
-                    'files': result.get('data', {}).get('files', []),
-                    'timing': result.get('data', {}).get('timing_data', {}),
-                    'screenshot': result.get('data', {}).get('screenshot_path'),
-                    'airline': 'alliance_air'
+                    'files': result.get('data', {}).get('s3_link', []),
+                    'timing': result.get('data', {}).get('processing_time'),
+                    'airline': 'indigo'
                 },
-                transaction_date=data['Transaction_Date'],
+                ssr_email=data['SSR_Email']
             )
         else:
             g.db_ops.store_scraper_state(
@@ -256,7 +218,7 @@ def start_alliance_scraping():
                 state='failed',
                 message=result.get('message', 'Scraping failed'),
                 data={'error': result.get('message')},
-                transaction_date=data['Transaction_Date'],
+                ssr_email=data['SSR_Email']
             )
         
         return jsonify(result)
@@ -272,7 +234,7 @@ def start_alliance_scraping():
                     pnr=data['Ticket/PNR'],
                     state='error',
                     message=error_msg,
-                    transaction_date=data['Transaction_Date'],
+                    ssr_email=data['SSR_Email']
                 )
         except:
             pass
@@ -283,10 +245,10 @@ def start_alliance_scraping():
             'data': None
         }), 500
     finally:
-        g.socketio.emit('alliance_scrapper_run_completed')
+        g.socketio.emit('indigo_scrapper_run_completed')
 
-@alliance_routes.route('/alliance/last_state')
-def get_alliance_last_state():
+@indigo_routes.route('/last_state')
+def get_indigo_last_state():
     """Get last scraper state with complete error handling and safe defaults"""
     try:
         state = g.db_ops.get_last_scraper_state()
@@ -327,9 +289,9 @@ def get_alliance_last_state():
             }
         }), 500
 
-@alliance_routes.route('/alliance/settings', methods=['GET', 'POST'])
-def alliance_scheduler_settings():
-    """Manage alliance scheduler settings with event emissions"""
+@indigo_routes.route('/settings', methods=['GET', 'POST'])
+def indigo_scheduler_settings():
+    """Manage indigo scheduler settings with event emissions"""
     try:
         if request.method == 'GET':
             settings = g.db_ops.get_scheduler_settings()
@@ -392,34 +354,27 @@ def alliance_scheduler_settings():
                 'message': 'Failed to update settings in database'
             }), 500
 
-        # Update scheduler state
         try:
             if auto_run:
-                
-                initialize_alliance_scheduler(g.db_ops, g.socketio)
-                
-                # Emit settings update event
+                initialize_indigo_scheduler(g.db_ops, g.socketio)
                 if g.socketio:
-                    g.socketio.emit('alliance_settings_updated', {
+                    g.socketio.emit('indigo_settings_updated', {
                         'auto_run': auto_run,
                         'interval': interval,
                         'next_run': next_run.isoformat(),
                         'message': 'Scheduler settings updated and activated'
                     })
             else:
-                
-                # Emit disabled status
                 if g.socketio:
-                    initialize_alliance_scheduler(g.db_ops, g.socketio)
-                    g.socketio.emit('alliance_settings_updated', {
+                    initialize_indigo_scheduler(g.db_ops, g.socketio)
+                    g.socketio.emit('indigo_settings_updated', {
                         'auto_run': False,
                         'message': 'Scheduler paused'
                     })
                 
         except Exception as e:
             logger.error(f"Scheduler state update failed: {e}")
-            # Don't fail the request if scheduler update fails
-        
+            
         return jsonify({
             'success': True,
             'message': 'Settings updated successfully',
@@ -440,86 +395,38 @@ def alliance_scheduler_settings():
             'data': None
         }), 500
 
-@alliance_routes.route('/alliance/changes', methods=['GET'])
-def get_alliance_changes():
-    """Get alliance DOM changes with complete validation and error handling"""
-    try:
-        # Validate and sanitize input parameters
-        try:
-            limit = min(int(request.args.get('limit', 1000)), 5000)  # Cap at 5000
-        except ValueError:
-            limit = 1000  # Default if invalid
-
-        page_id = request.args.get('page_id')
-        if page_id and not isinstance(page_id, str):
-            
-            page_id='alliance_gst_portal'
-        
-        changes = g.db_ops.get_dom_changes(
-            page_id=page_id,
-            limit=limit
-        )
-        
-        # Ensure we always return a list, even if empty
-        if changes is None:
-            changes = []
-            
-        # Format timestamps in changes
-        for change in changes:
-            if 'timestamp' in change:
-                try:
-                    change['timestamp'] = change['timestamp'].isoformat() if isinstance(change['timestamp'], datetime) else change['timestamp']
-                except:
-                    change['timestamp'] = str(change['timestamp'])
-        
-        return jsonify({
-            'success': True,
-            'data': {
-                'changes': changes,
-                'count': len(changes),
-                'limit': limit,
-                'page_id': page_id
-            }
-        })
-    except Exception as e:
-        logger.error(f"Error getting DOM changes: {e}")
-        logger.error(traceback.format_exc())
-        return jsonify({
-            'success': False,
-            'message': str(e),
-            'data': {
-                'changes': [],
-                'count': 0,
-                'error': str(e)
-            }
-        }), 500
-
-def init_alliance_routes(app, db, socketio):
+def init_indigo_routes(app, db, socketio):
     """Initialize routes with complete error handling and cleanup"""
     try:
-        # Register blueprint
-        app.register_blueprint(alliance_routes)
-        
-        # Initialize DB connection before each request
-        @app.before_request
-        def before_request():
-            try:
-                g.db_ops = AllianceFirestoreDB(db)
+        # Create a middleware function to initialize db and socketio
+        def initialize_context():
+            if not hasattr(g, 'db_ops'):
+                g.db_ops = IndigoFirestoreDB(db)
+            if not hasattr(g, 'socketio'):
                 g.socketio = socketio
+
+        # Register middleware for all indigo routes
+        @indigo_routes.before_request
+        def before_indigo_request():
+            try:
+                initialize_context()
             except Exception as e:
                 logger.error(f"Failed to initialize request context: {e}")
-                # Still set the attributes to avoid attribute errors
-                g.db_ops = None
-                g.socketio = None
+                return jsonify({
+                    'success': False,
+                    'message': 'Failed to initialize database connection',
+                    'error': str(e)
+                }), 500
+
+        # Register blueprint with url_prefix to ensure middleware only runs for indigo routes
+        app.register_blueprint(indigo_routes, url_prefix='/indigo')
     
-        # Initialize scheduler with error handling
         try:
-            db_ops = AllianceFirestoreDB(db)
-            initialize_alliance_scheduler(db_ops, socketio)
+            db_ops = IndigoFirestoreDB(db)
+            initialize_indigo_scheduler(db_ops, socketio)
         except Exception as e:
             logger.error(f"Failed to initialize scheduler: {e}")
     
-        # Schedule daily cleanup with error handling
         def cleanup_old_files():
             """Clean up files older than 7 days"""
             try:
@@ -543,23 +450,22 @@ def init_alliance_routes(app, db, socketio):
                 logger.error(f"Cleanup error: {e}")
     
         try:
-            if scheduler.get_job('alliance_cleanup'):
-                scheduler.remove_job('alliance_cleanup')    
+            if scheduler.get_job('indigo_cleanup'):
+                scheduler.remove_job('indigo_cleanup')    
             scheduler.add_job(
                 cleanup_old_files,
                 'interval',
                 hours=24,
-                id='alliance_cleanup',
+                id='indigo_cleanup',
                 replace_existing=True
             )
         except Exception as e:
             logger.error(f"Failed to schedule cleanup job: {e}")
         
-        # Register shutdown handlers
         def shutdown_handlers():
             try:
                 scheduler.shutdown()
-                logger.info("Alliance scheduler shutdown complete")
+                logger.info("indigo scheduler shutdown complete")
             except:
                 pass
                 
@@ -568,7 +474,42 @@ def init_alliance_routes(app, db, socketio):
         return app
         
     except Exception as e:
-        logger.error(f"Failed to initialize alliance routes: {e}")
+        logger.error(f"Failed to initialize indigo routes: {e}")
         logger.error(traceback.format_exc())
-        # Still return app to prevent application startup failure
         return app
+
+if __name__ == '__main__':
+    from flask import Flask
+    from flask_socketio import SocketIO
+    import firebase_admin
+    from firebase_admin import credentials, firestore
+    import logging
+
+    # Configure logging
+    logging.basicConfig(level=logging.INFO)
+
+    # Initialize Flask app
+    app = Flask(__name__)
+    socketio = SocketIO(app, cors_allowed_origins="*")
+
+    # Initialize Firebase
+    try:
+        # Try to get the credentials file from parent directory
+        cred_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'firebase-adminsdk.json')
+        cred = credentials.Certificate(cred_path)
+        firebase_admin.initialize_app(cred)
+    except Exception as e:
+        print(f"Failed to initialize Firebase: {e}")
+        print("Make sure firebase-adminsdk.json is present in the parent directory")
+        exit(1)
+
+    # Get Firestore client
+    db = firestore.client()
+
+    # Initialize routes
+    app = init_indigo_routes(app, db, socketio)
+
+    # Run the application
+    print("Starting Indigo Routes Test Server...")
+    print("Access the server at http://localhost:5000")
+    socketio.run(app, debug=True, port=5000)

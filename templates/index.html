@@ -278,6 +278,29 @@
                     </button>
                   </td>
                 </tr>
+                <!-- Add Indigo Air Row -->
+                <tr>
+                  <td>Indigo Air</td>
+                  <td id="indigoLastRunTime">-</td>
+                  <td id="indigoScraperStatus">
+                    <span class="badge bg-secondary">Not Started</span>
+                  </td>
+                  <td id="indigoCurrentPNR">-</td>
+                  <td id="indigoOtherDetails">-</td>
+                  <td id="indigoNextRunTime">-</td>
+                  <td id="indigoAutoRunStatus">
+                    <span class="badge bg-secondary">Disabled</span>
+                  </td>
+                  <td>N/A</td>
+                  <td>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      onclick="viewIndigoScraper()"
+                    >
+                      View Page
+                    </button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -1075,6 +1098,43 @@
             updateAllianceDomChanges();
           }
 
+          // Load Indigo state
+          const indigoResponse = await fetch("/indigo/last_state");
+          const indigoData = await indigoResponse.json();
+          if (indigoData.success && indigoData.data) {
+            const data = indigoData.data;
+            document.getElementById("indigoLastRunTime").textContent =
+              data.timestamp ? new Date(data.timestamp).toLocaleString() : "-";
+            document.getElementById("indigoCurrentPNR").textContent =
+              data.pnr || "-";
+            document.getElementById(
+              "indigoOtherDetails"
+            ).textContent = `Email: ${data.ssr_email || "-"}`;
+            document.getElementById("indigoNextRunTime").textContent =
+              data.next_run
+                ? new Date(data.next_run).toLocaleString()
+                : "Not scheduled";
+            document.getElementById("indigoScraperStatus").innerHTML = `
+                  <span class="badge ${getStatusBadgeClass(data.state)} ${
+              data.state === "failed" ? "status-failed" : ""
+            }"
+                  ${
+                    data.state === "failed" && data.message
+                      ? `data-bs-toggle="tooltip" data-bs-placement="top" title="${data.message}"`
+                      : ""
+                  }>
+                      ${data.state || "Not Started"}
+                  </span>
+              `;
+            document.getElementById("indigoAutoRunStatus").innerHTML = `
+                  <span class="badge ${
+                    data.auto_run ? "bg-success" : "bg-secondary"
+                  }">
+                      ${data.auto_run ? "Enabled" : "Disabled"}
+                  </span>
+              `;
+          }
+
           // Initialize tooltips
           initializeTooltips();
         } catch (error) {
@@ -1268,6 +1328,10 @@
 
       function viewAllianceScraper() {
         window.location.href = "/alliance";
+      }
+
+      function viewIndigoScraper() {
+        window.location.href = "/indigo";
       }
 
       function initializeTooltips() {
@@ -1930,6 +1994,11 @@
 
       // Add event listener for alliance scraper completion
       socket.on("alliance_scrapper_run_completed", function () {
+        loadScraperStatus(); // Refresh scraper status table
+      });
+
+      // Add event listener for Indigo scraper completion
+      socket.on("indigo_scrapper_run_completed", function () {
         loadScraperStatus(); // Refresh scraper status table
       });
     </script>

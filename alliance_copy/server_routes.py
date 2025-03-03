@@ -198,7 +198,7 @@ def run_automated_scrape(db_ops, socketio):
     finally:
         socketio.emit('alliance_scrapper_run_completed')
 
-@alliance_routes.route('/alliance/start_scraping', methods=['POST'])
+@alliance_routes.route('/start_scraping', methods=['POST'])
 def start_alliance_scraping():
     """Start alliance scraping with complete validation and error handling"""
     try:
@@ -285,7 +285,7 @@ def start_alliance_scraping():
     finally:
         g.socketio.emit('alliance_scrapper_run_completed')
 
-@alliance_routes.route('/alliance/last_state')
+@alliance_routes.route('/last_state')
 def get_alliance_last_state():
     """Get last scraper state with complete error handling and safe defaults"""
     try:
@@ -327,7 +327,7 @@ def get_alliance_last_state():
             }
         }), 500
 
-@alliance_routes.route('/alliance/settings', methods=['GET', 'POST'])
+@alliance_routes.route('/settings', methods=['GET', 'POST'])
 def alliance_scheduler_settings():
     """Manage alliance scheduler settings with event emissions"""
     try:
@@ -440,7 +440,7 @@ def alliance_scheduler_settings():
             'data': None
         }), 500
 
-@alliance_routes.route('/alliance/changes', methods=['GET'])
+@alliance_routes.route('/changes', methods=['GET'])
 def get_alliance_changes():
     """Get alliance DOM changes with complete validation and error handling"""
     try:
@@ -497,20 +497,28 @@ def get_alliance_changes():
 def init_alliance_routes(app, db, socketio):
     """Initialize routes with complete error handling and cleanup"""
     try:
-        # Register blueprint
-        app.register_blueprint(alliance_routes)
-        
-        # Initialize DB connection before each request
-        @app.before_request
-        def before_request():
-            try:
+        # Create a middleware function to initialize db and socketio
+        def initialize_context():
+            if not hasattr(g, 'db_ops'):
                 g.db_ops = AllianceFirestoreDB(db)
+            if not hasattr(g, 'socketio'):
                 g.socketio = socketio
+
+        # Register middleware for all alliance routes
+        @alliance_routes.before_request
+        def before_alliance_request():
+            try:
+                initialize_context()
             except Exception as e:
                 logger.error(f"Failed to initialize request context: {e}")
-                # Still set the attributes to avoid attribute errors
-                g.db_ops = None
-                g.socketio = None
+                return jsonify({
+                    'success': False,
+                    'message': 'Failed to initialize database connection',
+                    'error': str(e)
+                }), 500
+
+        # Register blueprint with url_prefix to ensure middleware only runs for alliance routes
+        app.register_blueprint(alliance_routes, url_prefix='/alliance')
     
         # Initialize scheduler with error handling
         try:
