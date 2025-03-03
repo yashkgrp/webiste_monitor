@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400&display=swap");
+
+:root {
+  /* Colors */
+  --neutral-50: #fff;
+  --neutral-700: #72747d;
+  --neutral-800: #3f4047;
+  --icon-label: #c3c4cd;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography System */
+.text-table-header {
+  color: var(--neutral-700);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.text-table-content {
+  color: var(--neutral-700);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.text-button {
+  color: var(--neutral-50);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.text-form-field {
+  color: var(--neutral-800);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.text-icon-label {
+  color: var(--icon-label);
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: normal;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

@@ -1,0 +1,46 @@
+.custom-tabs {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.custom-tabs .nav-link {
+  color: #495057;
+  background: none;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  margin-right: 0.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out;
+}
+
+.custom-tabs .nav-link:hover {
+  color: var(--teal-primary);
+  border-color: transparent;
+}
+
+.custom-tabs .nav-link.active {
+  color: var(--teal-primary);
+  background: none;
+  border-bottom: 2px solid var(--teal-primary);
+}
+
+/* DOM Changes Table Styles */
+.table {
+  --bs-table-striped-bg: none;
+}
+
+.table > tbody > tr {
+  background-color: white;
+  border-bottom: 1px solid #dee2e6;
+}
+
+
+.btn-outline-primary {
+  --bs-btn-color: var(--teal-primary);
+  --bs-btn-border-color: var(--teal-primary);
+  --bs-btn-hover-bg: var(--teal-primary);
+  --bs-btn-hover-border-color: var(--teal-primary);
+  --bs-btn-active-bg: var(--teal-primary);
+  --bs-btn-active-border-color: var(--teal-primary);
+}
