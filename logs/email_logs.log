@@ -1351,3 +1351,90 @@
 2025-02-19 11:58:43,468 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
 2025-02-19 11:59:29,719 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air Scraper Error - PROCESSING - download | Type: OTHER
 2025-02-19 13:15:10,890 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air Scraper Error - PROCESSING - save_files | Type: OTHER
+2025-02-19 14:46:40,964 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Air India Express Scraper Error - manual_run | Type: OTHER
+2025-02-20 11:22:13,162 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-02-20 11:45:50,924 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-02-21 13:12:27,234 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Air India Express DOM Changes - PNR: M18P4S | Type: OTHER
+2025-02-21 16:09:59,745 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-21 16:10:03,019 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-21 16:10:05,987 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-21 17:06:10,790 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-21 17:52:22,815 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-21 18:19:31,240 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-21 18:29:37,574 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-24 12:11:43,063 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air Scraper Error - PROCESSING - save_files | Type: OTHER
+2025-02-24 12:13:21,323 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-02-24 12:15:22,159 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-02-24 12:27:53,026 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-02-24 12:28:54,691 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-02-24 12:29:10,452 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air Scraper Error - PROCESSING - save_files | Type: OTHER
+2025-02-24 13:13:06,747 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Air India Express DOM Changes - PNR: M18P4S | Type: OTHER
+2025-02-24 19:50:06,682 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - initialization/session_setup | Type: OTHER
+2025-02-24 19:50:41,480 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - initialization/session_setup | Type: OTHER
+2025-02-27 11:20:26,929 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-27 17:24:43,363 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http:localhot:700 | Type: DOWN
+2025-02-27 17:24:46,793 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http:localhot:700 | Type: DOWN
+2025-02-27 17:25:34,115 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:500/ | Type: DOWN
+2025-02-27 17:25:37,806 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:500/ | Type: DOWN
+2025-02-27 17:42:12,433 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:500/ | Type: DOWN
+2025-02-27 17:42:15,940 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - http://localhost:500/ | Type: DOWN
+2025-02-27 17:46:19,507 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:46:22,809 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:46:34,014 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:46:37,428 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:47:47,068 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:47:50,408 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:48:01,590 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:48:04,773 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:51:25,619 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:51:29,126 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:51:40,850 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:51:44,026 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:56:29,135 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:56:32,573 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 17:56:43,520 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 17:56:46,786 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 18:43:01,577 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 18:43:05,491 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 18:43:31,087 - ERROR - Failed to send email | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Error: Connection unexpectedly closed
+2025-02-27 18:43:34,291 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:02:30,682 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:02:33,839 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:02:45,467 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:02:48,754 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:28:11,923 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:28:15,185 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:28:26,793 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:28:29,945 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:33:49,784 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:33:53,013 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:34:04,367 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:34:07,648 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:34:38,096 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:34:41,339 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:34:52,510 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:34:55,790 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:35:43,076 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:35:46,263 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Down Alert - https://etihad.supertaxgst.in/guestinvoices | Type: DOWN
+2025-02-27 19:35:57,625 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-27 19:36:01,063 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Website Recovered - https://etihad.supertaxgst.in/guestinvoices | Type: UP
+2025-02-28 15:37:38,701 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-02-28 15:42:42,777 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - initialization/session_setup | Type: OTHER
+2025-02-28 16:30:03,869 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - initialization/session_setup | Type: OTHER
+2025-03-03 12:00:29,409 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Akasa Air Scraper Error - automated_run | Type: OTHER
+2025-03-03 12:24:04,209 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 12:25:31,790 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 13:01:01,033 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDE | Type: OTHER
+2025-03-03 13:02:42,056 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 15:06:02,969 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 15:07:25,956 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Indigo Air Scraper Error - request/get_invoice_ids | Type: OTHER
+2025-03-03 15:09:26,552 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 15:16:21,697 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Star Air Scraper Error - login | Type: OTHER
+2025-03-03 15:21:59,375 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Star Air Scraper Error - login | Type: OTHER
+2025-03-03 15:23:14,607 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Star Air Scraper Error - login | Type: OTHER
+2025-03-03 15:28:31,754 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Star Air Scraper Error - login | Type: OTHER
+2025-03-03 16:56:07,811 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 16:56:09,494 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER
+2025-03-03 16:56:20,655 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air Scraper Error - PROCESSING - save_files | Type: OTHER
+2025-03-03 16:56:21,239 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air Scraper Error - PROCESSING - save_files | Type: OTHER
+2025-03-03 17:12:30,827 - INFO - Email sent successfully | To: yash@kgrp.in | Subject: Alliance Air DOM Changes - PNR: P6CZDL | Type: OTHER

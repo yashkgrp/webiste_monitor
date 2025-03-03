@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Scraper Monitor</title>
+    <title>Star air</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       rel="stylesheet"
@@ -157,7 +157,7 @@
         </div>
       </div>
 
-      <h1>Scraper Monitor</h1>
+      <h1>Star air</h1>
       <div class="row mt-4">
         <!-- Scraper Form -->
         <div class="col-md-4">
@@ -233,13 +233,26 @@
           <form id="schedulerForm" onsubmit="saveSchedulerSettings(event)">
             <div class="mb-3">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="autoRunEnabled">
-                <label class="form-check-label" for="autoRunEnabled">Enable Auto Run</label>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="autoRunEnabled"
+                />
+                <label class="form-check-label" for="autoRunEnabled"
+                  >Enable Auto Run</label
+                >
               </div>
             </div>
             <div class="mb-3">
-              <label for="runInterval" class="form-label">Run Interval (minutes)</label>
-              <input type="number" class="form-control" id="runInterval" value="60">
+              <label for="runInterval" class="form-label"
+                >Run Interval (minutes)</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="runInterval"
+                value="60"
+              />
             </div>
             <div class="mb-3">
               <label class="form-label">Next Run:</label>
@@ -380,6 +393,7 @@
 
       // Update socket connection handling
       socket.on("connect", () => {
+        console.log("Socket event: connect");
         loadInitialState(); // Reload state when socket connects
         addEventLog({
           type: "info",
@@ -388,6 +402,7 @@
       });
 
       socket.on("disconnect", () => {
+        console.log("Socket event: disconnect");
         addEventLog({
           type: "error",
           message: "Disconnected from server",
@@ -395,7 +410,7 @@
       });
 
       socket.on("scraper_status", function (data) {
-        console.log("Scraper status update:", data);
+        console.log("Socket event: scraper_status", data);
         updateStageProgress(data);
 
         // Update general status display
@@ -415,6 +430,7 @@
       });
 
       socket.on("scraper_error", function (data) {
+        console.log("Socket event: scraper_error", data);
         console.error("Scraper error:", data);
         addEventLog({
           type: "error",
@@ -423,6 +439,7 @@
       });
 
       socket.on("scraper_general_status", function (data) {
+        console.log("Socket event: scraper_general_status", data);
         const scrapperStatus = document.getElementById("scrapperStatus");
         const statusClass =
           data.status === "error"
@@ -440,71 +457,78 @@
       });
 
       // Add socket listener for the refresh event
-      socket.on('refresh_dom_table', function() {
+      socket.on("refresh_dom_table", function () {
+        console.log("Socket event: refresh_dom_table");
         // Refresh the DOM changes table
         loadDOMChangesTable();
       });
 
       // Add new socket event handlers
-      socket.on('scraper_auto_run_complete', function(data) {
-          // Update status display
-          const scrapperStatus = document.getElementById("scrapperStatus");
-          const statusClass = data.success ? "text-success" : "text-danger";
-          scrapperStatus.innerHTML = `
+      socket.on("scraper_auto_run_complete", function (data) {
+        console.log("Socket event: scraper_auto_run_complete", data);
+        // Update status display
+        const scrapperStatus = document.getElementById("scrapperStatus");
+        const statusClass = data.success ? "text-success" : "text-danger";
+        scrapperStatus.innerHTML = `
               <p class="${statusClass}">
                   ${data.message}
                   <small class="text-muted d-block">Auto Run Completed</small>
               </p>
           `;
 
-          // Add to event log
-          addEventLog({
-              type: data.success ? "info" : "error",
-              message: `Auto Run: ${data.message}`
-          });
+        // Add to event log
+        addEventLog({
+          type: data.success ? "info" : "error",
+          message: `Auto Run: ${data.message}`,
+        });
 
-          // Update next run display if provided
-          if (data.next_run) {
-              updateNextRunDisplay(data.next_run);
-          }
+        // Update next run display if provided
+        if (data.next_run) {
+          updateNextRunDisplay(data.next_run);
+        }
       });
 
-      socket.on('update_last_run_status', function(data) {
-          updateLastRunStatus(data);
+      socket.on("update_last_run_status", function (data) {
+        console.log("Socket event: update_last_run_status", data);
+        updateLastRunStatus(data);
       });
 
-      socket.on('scraper_reset', function() {
-          // Reset status display
-          const scrapperStatus = document.getElementById("scrapperStatus");
-          scrapperStatus.innerHTML = '<p class="text-info">Starting automated scrape...</p>';
+      socket.on("scraper_reset", function () {
+        console.log("Socket event: scraper_reset");
+        // Reset status display
+        const scrapperStatus = document.getElementById("scrapperStatus");
+        scrapperStatus.innerHTML =
+          '<p class="text-info">Starting automated scrape...</p>';
 
-          // Reset stages
-          document.querySelectorAll(".stage").forEach((stage) => {
-              stage.classList.remove("active", "completed", "error");
-              const statusElement = stage.querySelector("p");
-              if (statusElement) statusElement.textContent = "not yet started";
-              const timingElement = stage.querySelector("small");
-              if (timingElement) timingElement.textContent = "";
-          });
+        // Reset stages
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.classList.remove("active", "completed", "error");
+          const statusElement = stage.querySelector("p");
+          if (statusElement) statusElement.textContent = "not yet started";
+          const timingElement = stage.querySelector("small");
+          if (timingElement) timingElement.textContent = "";
+        });
 
-          // Clear event log
-          document.getElementById("eventLog").innerHTML = "";
+        // Clear event log
+        document.getElementById("eventLog").innerHTML = "";
       });
 
       // Add new socket event handler for settings update
-      socket.on('settings_updated', function(data) {
+      socket.on("settings_updated", function (data) {
+        console.log("Socket event: settings_updated", data);
         // Update next run display
         if (data.next_run) {
-            // Convert timestamp to local time
-            const nextRunDate = new Date(data.next_run);  // data.next_run is already in milliseconds
-            document.getElementById('nextRunTime').textContent = nextRunDate.toLocaleString();
+          // Convert timestamp to local time
+          const nextRunDate = new Date(data.next_run); // data.next_run is already in milliseconds
+          document.getElementById("nextRunTime").textContent =
+            nextRunDate.toLocaleString();
         } else {
-            document.getElementById('nextRunTime').textContent = 'Not scheduled';
+          document.getElementById("nextRunTime").textContent = "Not scheduled";
         }
-        
+
         // Update form values
-        document.getElementById('autoRunEnabled').checked = data.auto_run;
-        document.getElementById('runInterval').value = data.interval;
+        document.getElementById("autoRunEnabled").checked = data.auto_run;
+        document.getElementById("runInterval").value = data.interval;
       });
 
       // Load last state on page load
@@ -530,8 +554,8 @@
         // Check for anchor link and add smooth scrolling
         if (window.location.hash === "#domChangesSection") {
           setTimeout(() => {
-            document.getElementById("domChangesSection").scrollIntoView({ 
-              behavior: 'smooth' 
+            document.getElementById("domChangesSection").scrollIntoView({
+              behavior: "smooth",
             });
           }, 500);
         }
@@ -573,9 +597,13 @@
                             <p><strong>Auto Run:</strong> ${
                               state.auto_run ? "Enabled" : "Disabled"
                             }</p>
-                            ${state.state === "failed" && state.error ? `
+                            ${
+                              state.state === "failed" && state.error
+                                ? `
                                 <p class="text-danger"><strong>Error:</strong> ${state.error}</p>
-                            ` : ''}
+                            `
+                                : ""
+                            }
                         </div>
                     </div>
                 `;
@@ -727,34 +755,39 @@
 
       function formatChange(change) {
         const typeColors = {
-            'added': 'success',
-            'removed': 'danger',
-            'modified': 'warning'
+          added: "success",
+          removed: "danger",
+          modified: "warning",
         };
-        
+
         // Helper function to escape HTML correctly
         function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;  // This ensures proper HTML escaping
-            return div.innerHTML;
+          const div = document.createElement("div");
+          div.textContent = text; // This ensures proper HTML escaping
+          return div.innerHTML;
         }
-        
+
         // Function to display HTML tags with syntax highlighting
         function formatElementString(text) {
-            // First escape HTML to show tags as text
-            let escaped = escapeHtml(text);
-            
-            // Then add syntax highlighting classes without making it render as HTML
-            escaped = escaped
-                // Color HTML tags
-                .replace(/(&lt;\/?[a-zA-Z][a-zA-Z0-9]*)/g, '<span style="color: #22863a">$1</span>')
-                // Color attributes
-                .replace(/([a-zA-Z-]+)=(&quot;|&#39;)([^&]*)(&quot;|&#39;)/g, 
-                    '<span style="color: #6f42c1">$1</span>=<span style="color: #032f62">$2$3$4</span>');
-            
-            return escaped;
+          // First escape HTML to show tags as text
+          let escaped = escapeHtml(text);
+
+          // Then add syntax highlighting classes without making it render as HTML
+          escaped = escaped
+            // Color HTML tags
+            .replace(
+              /(&lt;\/?[a-zA-Z][a-zA-Z0-9]*)/g,
+              '<span style="color: #22863a">$1</span>'
+            )
+            // Color attributes
+            .replace(
+              /([a-zA-Z-]+)=(&quot;|&#39;)([^&]*)(&quot;|&#39;)/g,
+              '<span style="color: #6f42c1">$1</span>=<span style="color: #032f62">$2$3$4</span>'
+            );
+
+          return escaped;
         }
-        
+
         return `
             <div class="change-item border-${typeColors[change.type]} p-3 mb-2">
                 <div class="change-path text-muted mb-2">
@@ -762,18 +795,22 @@
                 </div>
                 <div class="change-element font-monospace">
                     <strong>Element:</strong>
-                    <pre class="mb-0 mt-1 p-2 bg-light rounded"><code>${formatElementString(change.element)}</code></pre>
+                    <pre class="mb-0 mt-1 p-2 bg-light rounded"><code>${formatElementString(
+                      change.element
+                    )}</code></pre>
                 </div>
-                <div class="change-description text-${typeColors[change.type]} mt-2">
+                <div class="change-description text-${
+                  typeColors[change.type]
+                } mt-2">
                     ${escapeHtml(change.description)}
                 </div>
             </div>
         `;
-    }
-  
-    function loadDOMChangesTable() {
+      }
+
+      function loadDOMChangesTable() {
         // Add loading indicator
-        const tableBody = document.querySelector('#domChangesTable tbody');
+        const tableBody = document.querySelector("#domChangesTable tbody");
         tableBody.innerHTML = `
             <tr>
                 <td colspan="8" class="text-center">
@@ -784,65 +821,73 @@
                 </td>
             </tr>
         `;
-        
-        fetch('/scraper/dom_changes')
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    const tableBody = document.querySelector('#domChangesTable tbody');
-                    tableBody.innerHTML = '';
-                    
-                    result.data.forEach((change, index) => {
-                        // Create main row with detailed timestamp
-                        const row = document.createElement('tr');
-                        row.className = 'change-row';
-                        row.dataset.index = index;
-                        row.innerHTML = `
+
+        fetch("/scraper/dom_changes")
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.success) {
+              const tableBody = document.querySelector(
+                "#domChangesTable tbody"
+              );
+              tableBody.innerHTML = "";
+
+              result.data.forEach((change, index) => {
+                // Create main row with detailed timestamp
+                const row = document.createElement("tr");
+                row.className = "change-row";
+                row.dataset.index = index;
+                row.innerHTML = `
                             <td>
                                 <button class="btn btn-icon btn-link p-0 me-2" onclick="toggleChanges(${index})">
                                     <i class="bi bi-chevron-right rotate-icon" id="toggle-icon-${index}"></i>
                                 </button>
                             </td>
-                            <td>${new Date(change.timestamp).toLocaleString()}</td>
+                            <td>${new Date(
+                              change.timestamp
+                            ).toLocaleString()}</td>
                             <td>${change.page_id}</td>
-                            <td>${change.type || 'structural'}</td>
+                            <td>${change.type || "structural"}</td>
                             <td>${change.changes?.length || 0}</td>
-                            <td>${change.gstin || 'N/A'}</td>
-                            <td>${change.pnr || 'N/A'}</td>
+                            <td>${change.gstin || "N/A"}</td>
+                            <td>${change.pnr || "N/A"}</td>
                             <td>
                                 <button class="btn btn-sm btn-primary" onclick="showChangeDetails(${index})">
                                     View Details
                                 </button>
                             </td>
                         `;
-                        tableBody.appendChild(row);
-                        
-                        // Create expandable details row with formatted changes
-                        const detailsRow = document.createElement('tr');
-                        detailsRow.className = 'change-details-row';
-                        detailsRow.id = `details-${index}`;
-                        detailsRow.innerHTML = `
+                tableBody.appendChild(row);
+
+                // Create expandable details row with formatted changes
+                const detailsRow = document.createElement("tr");
+                detailsRow.className = "change-details-row";
+                detailsRow.id = `details-${index}`;
+                detailsRow.innerHTML = `
                             <td colspan="8">
                                 <div class="change-details-content">
                                     <h6 class="mb-3">Changes:</h6>
                                     <div class="changes-list">
-                                        ${change.changes?.map(formatChange).join('') || 'No changes available'}
+                                        ${
+                                          change.changes
+                                            ?.map(formatChange)
+                                            .join("") || "No changes available"
+                                        }
                                     </div>
                                 </div>
                             </td>
                         `;
-                        tableBody.appendChild(detailsRow);
-                    });
-                    
-                    window.domChangesData = result.data;
-                }
-            })
-            .catch(error => {
-                console.error('Error loading DOM changes:', error);
-            });
-    }
+                tableBody.appendChild(detailsRow);
+              });
 
-    function toggleChanges(index) {
+              window.domChangesData = result.data;
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading DOM changes:", error);
+          });
+      }
+
+      function toggleChanges(index) {
         const detailsRow = document.getElementById(`details-${index}`);
         const icon = document.getElementById(`toggle-icon-${index}`);
 
@@ -875,108 +920,131 @@
           change.changes.length;
 
         const changesContainer = document.getElementById("detailChanges");
-        changesContainer.innerHTML = change.changes.map(formatChange).join('');
-        
+        changesContainer.innerHTML = change.changes.map(formatChange).join("");
+
         modal.show();
       }
 
       function loadSchedulerSettings() {
-        fetch('/scraper/settings')
-          .then(response => response.json())
-          .then(data => {
+        fetch("/scraper/settings")
+          .then((response) => response.json())
+          .then((data) => {
             if (data.success) {
-              document.getElementById('autoRunEnabled').checked = data.settings.auto_run || false;
-              document.getElementById('runInterval').value = data.settings.interval || 60;
+              document.getElementById("autoRunEnabled").checked =
+                data.settings.auto_run || false;
+              document.getElementById("runInterval").value =
+                data.settings.interval || 60;
               updateNextRunDisplay(data.settings.next_run);
             }
           })
-          .catch(err => console.error('Error loading scheduler settings:', err));
+          .catch((err) =>
+            console.error("Error loading scheduler settings:", err)
+          );
       }
 
       function saveSchedulerSettings(event) {
         event.preventDefault();
         const button = event.submitter;
         button.disabled = true;
-        button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+        button.innerHTML =
+          '<span class="spinner-border spinner-border-sm"></span> Saving...';
 
         const settings = {
-          auto_run: document.getElementById('autoRunEnabled').checked,
-          interval: parseInt(document.getElementById('runInterval').value)
+          auto_run: document.getElementById("autoRunEnabled").checked,
+          interval: parseInt(document.getElementById("runInterval").value),
         };
 
-        fetch('/scraper/settings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(settings)
+        fetch("/scraper/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(settings),
         })
-          .then(response => response.json())
-          .then(data => {
+          .then((response) => response.json())
+          .then((data) => {
             if (data.success) {
               // Next run time will be updated via socket event
-              showToast('Settings saved successfully', 'success');
+              showToast("Settings saved successfully", "success");
             } else {
-              showToast('Failed to save settings', 'error');
+              showToast("Failed to save settings", "error");
             }
           })
-          .catch(err => {
-            console.error('Error saving settings:', err);
-            showToast('Error saving settings', 'error');
+          .catch((err) => {
+            console.error("Error saving settings:", err);
+            showToast("Error saving settings", "error");
           })
           .finally(() => {
             button.disabled = false;
-            button.innerHTML = 'Save Settings';
+            button.innerHTML = "Save Settings";
           });
       }
 
       function updateNextRunDisplay(nextRun) {
-        const display = document.getElementById('nextRunTime');
+        const display = document.getElementById("nextRunTime");
         if (nextRun) {
           const nextRunDate = new Date(nextRun);
           display.textContent = nextRunDate.toLocaleString();
         } else {
-          display.textContent = 'Not scheduled';
+          display.textContent = "Not scheduled";
         }
       }
 
       // Load scheduler settings on page load
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener("DOMContentLoaded", () => {
         loadSchedulerSettings();
       });
 
-      socket.on('update_last_run_status', function(data) {
+      socket.on("update_last_run_status", function (data) {
         const statusDiv = document.getElementById("lastRunStatus");
         const timestamp = new Date(data.last_run).toLocaleString();
-        
+
         let statusHtml = `
             <div class="row">
                 <div class="col-md-6">
                     <p><strong>Last Run:</strong> ${timestamp}</p>
                     <p><strong>Status:</strong> 
-                        <span class="${data.state === 'failed' ? 'text-danger' : 'text-success'}">
+                        <span class="${
+                          data.state === "failed"
+                            ? "text-danger"
+                            : "text-success"
+                        }">
                             ${data.state}
                         </span>
                     </p>
-                    <p><strong>PNR:</strong> ${data.pnr || 'N/A'}</p>
-                    <p><strong>GSTIN:</strong> ${data.gstin || 'N/A'}</p>
+                    <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
+                    <p><strong>GSTIN:</strong> ${data.gstin || "N/A"}</p>
                 </div>
                 <div class="col-md-6">
-                    ${data.next_run ? `<p><strong>Next Run:</strong> ${new Date(data.next_run).toLocaleString()}</p>` : ''}
-                    ${data.auto_run ? `<p><strong>Auto Run:</strong> Enabled</p>` : ''}
-                    ${data.error ? `
+                    ${
+                      data.next_run
+                        ? `<p><strong>Next Run:</strong> ${new Date(
+                            data.next_run
+                          ).toLocaleString()}</p>`
+                        : ""
+                    }
+                    ${
+                      data.auto_run
+                        ? `<p><strong>Auto Run:</strong> Enabled</p>`
+                        : ""
+                    }
+                    ${
+                      data.error
+                        ? `
                         <div class="alert alert-danger">
                             <strong>Error:</strong> ${data.error}
                         </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                 </div>
             </div>
         `;
-        
+
         statusDiv.innerHTML = statusHtml;
 
         // Also update the scrapper status
         const scrapperStatus = document.getElementById("scrapperStatus");
         if (data.error) {
-            scrapperStatus.innerHTML = `
+          scrapperStatus.innerHTML = `
                 <div class="alert alert-danger">
                     <strong>Error:</strong> ${data.error}
                     <br>
@@ -984,31 +1052,34 @@
                 </div>
             `;
         }
-    });
+      });
 
-    socket.on('scraper_error', function(data) {
+      socket.on("scraper_error", function (data) {
+        console.log("Socket event: scraper_error", data);
         // Show error in event log
         addEventLog({
-            type: 'error',
-            message: data.message
+          type: "error",
+          message: data.message,
         });
-        
+
         // Update both status displays
         const scrapperStatus = document.getElementById("scrapperStatus");
         scrapperStatus.innerHTML = `
             <div class="alert alert-danger">
                 <strong>Error:</strong> ${data.message}
                 <br>
-                <small class="text-muted">${new Date(data.timestamp).toLocaleString()}</small>
+                <small class="text-muted">${new Date(
+                  data.timestamp
+                ).toLocaleString()}</small>
             </div>
         `;
 
         // Update last run status if GSTIN and PNR are provided
         if (data.gstin && data.pnr) {
-            const statusDiv = document.getElementById("lastRunStatus");
-            const timestamp = new Date(data.timestamp).toLocaleString();
-            
-            statusDiv.innerHTML = `
+          const statusDiv = document.getElementById("lastRunStatus");
+          const timestamp = new Date(data.timestamp).toLocaleString();
+
+          statusDiv.innerHTML = `
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Last Run:</strong> ${timestamp}</p>
@@ -1024,7 +1095,7 @@
                 </div>
             `;
         }
-    });
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>

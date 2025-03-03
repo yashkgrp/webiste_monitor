@@ -330,10 +330,11 @@ class FirestoreDB:
                 # Query directly with timestamp ordering
                 if status_type == 'down':
                     query = doc_ref.collection('history')\
-                        .where('status', '==', 'Down')\
-                        .order_by('status')\
-                        .order_by('timestamp', direction=Query.DESCENDING)\
-                        .limit(1)
+                                            .where('status', '>=', 'Down')\
+                                            .where('status', '<', 'Down' + '\uf8ff')\
+                                            .order_by('status')\
+                                            .order_by('timestamp', direction=Query.DESCENDING)\
+                                            .limit(1)
                 else:  # For slow status
                     query = doc_ref.collection('history')\
                         .where('status', '==', 'Slow')\

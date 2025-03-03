@@ -12,6 +12,7 @@ import os
 from email_utils import send_email, generate_status_email  # New import
 from fcm.server_routes import init_fcm_routes
 from alliance_copy.server_routes import init_alliance_routes  # Add Alliance import
+from indigo.server_routes import init_indigo_routes
 from socket_logger import SocketLogger
 import pdfkit
 from bs4 import BeautifulSoup
@@ -50,7 +51,7 @@ app.config['SECRET_KEY'] = 'secret!'
 CORS(app, resources={
     r"/*": {
         "origins": "*",
-        "allow_headers": ["Content-Type"],
+        "allow_headers": ["*"],
         "methods": ["GET", "POST", "OPTIONS"]
     }
 })
@@ -541,7 +542,9 @@ def airindiaexpress_scraper_page():
 @app.route('/qatar')
 def qatar_page():
     return render_template('portal.html')
-
+@app.route('/indigo')
+def indigo_page():
+    return render_template('indigo.html')
 
 @app.route('/alliance')
 def alliance_page():
@@ -2008,7 +2011,12 @@ def portal_page():
 def handle_disconnect():
     logger.info("Client disconnected")
     # Clean up any Akasa-specific resources if needed
-
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
 if __name__ == '__main__':
     # Initialize scheduler with thread pool
     scheduler.configure(thread_pool_size=4)
@@ -2024,6 +2032,7 @@ if __name__ == '__main__':
     initialize_portal_scheduler(portal_db, socketio)
     # app = init_fcm_routes(app, db, socketio)  # Replace old init_portal_routes call
     app = init_alliance_routes(app, db, socketio)  # Add Alliance routes initialization
+    app=init_indigo_routes(app,db,socketio)
     # fcm_db = PortalFirestoreDB(db, 'fcm')  # Use fcm as collection name
     # initialize_portal_scheduler(portal_db, socketio)
     
