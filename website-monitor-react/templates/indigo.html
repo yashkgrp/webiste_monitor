@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Indigo Air Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+      .stage {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: all 0.3s;
+        min-height: 120px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Changed to space-between for better content distribution */
+        overflow: visible; /* Changed to visible to prevent content cutoff */
+      }
+
+      /* Stage content wrapper to maintain height */
+      .stage-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .stage-label {
+        margin: 0;
+        font-weight: bold;
+        color: #495057;
+      }
+
+      .stage p {
+        margin: 0;
+        word-wrap: break-word;
+        flex-grow: 1; /* Allow message to take available space */
+      }
+
+      .stage small {
+        margin-top: auto;
+        color: #6c757d;
+        font-size: 0.875em;
+      }
+
+      /* Stage state colors with opacity for better visibility */
+      .stage.active {
+        background: rgba(255, 243, 205, 0.9);
+        border-color: #ffeeba;
+      }
+
+      .stage.progress {
+        background: rgba(255, 243, 205, 0.9);
+        border-color: #ffeeba;
+      }
+
+      .stage.completed {
+        background: rgba(212, 237, 218, 0.9);
+        border-color: #c3e6cb;
+      }
+
+      .stage.error {
+        background: rgba(248, 215, 218, 0.9);
+        border-color: #f5c6cb;
+      }
+
+      /* Preserve stage height and visibility when completed */
+      .stage.completed p,
+      .stage.error p {
+        opacity: 1;
+        height: auto;
+        min-height: 20px;
+      }
+
+      /* Progress stages container */
+      .progress-stages {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .progress-stages {
+          grid-template-columns: 1fr;
+        }
+      }
+      .event-log {
+        height: 400px; /* Increased height */
+        overflow-y: auto;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-top: 15px;
+        border: 1px solid #dee2e6;
+      }
+      .event-item {
+        padding: 8px;
+        margin: 5px 0;
+        border-left: 3px solid #007bff;
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .event-item.error {
+        border-left-color: #dc3545;
+        background: #fff8f8;
+      }
+      .event-item.warning {
+        border-left-color: #ffc107;
+        background: #fffdf7;
+      }
+      .event-item.success {
+        border-left-color: #28a745;
+        background: #f8fff9;
+      }
+      .last-run-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      .last-run-info {
+        min-width: 250px;
+      }
+      .error-details {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-top: 1rem;
+        word-break: break-word;
+      }
+      .toast-container {
+        z-index: 1050;
+      }
+      @media (max-width: 768px) {
+        .last-run-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-4">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Website Monitor</a>
+          <a class="btn btn-outline-primary" href="/">Back to Dashboard</a>
+        </div>
+      </nav>
+
+      <!-- Last Run Status section -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">Last Run Status</h5>
+        </div>
+        <div class="card-body">
+          <div id="lastRunStatus">
+            <div class="alert alert-info">Loading last run status...</div>
+          </div>
+        </div>
+      </div>
+
+      <h1 class="mb-4">Indigo Air Scraper</h1>
+
+      <div class="row">
+        <!-- Scraper Form -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Start Scraper</h5>
+            </div>
+            <div class="card-body">
+              <form id="scraperForm" onsubmit="startScraper(event)">
+                <div class="mb-3">
+                  <label for="pnr" class="form-label">PNR Number</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="pnr"
+                    placeholder="Enter PNR"
+                    pattern="[A-Za-z0-9]{6}"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide a valid 6-character PNR.
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="ssrEmail" class="form-label">SSR Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="ssrEmail"
+                    placeholder="Enter SSR Email"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide a valid email address.
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Start Scraper
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Scheduler Settings -->
+          <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Scheduler Settings</h5>
+            </div>
+            <div class="card-body">
+              <form id="schedulerForm" onsubmit="saveSchedulerSettings(event)">
+                <div class="mb-3">
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="autoRunEnabled"
+                    />
+                    <label class="form-check-label" for="autoRunEnabled"
+                      >Enable Auto Run</label
+                    >
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="runInterval" class="form-label"
+                    >Run Interval (minutes)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="runInterval"
+                    value="60"
+                    min="1"
+                    max="1440"
+                  />
+                  <div class="form-text">
+                    Interval between 1 and 1440 minutes (24 hours)
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Next Scheduled Run:</label>
+                  <p id="nextRunTime" class="mb-0 text-primary">
+                    Not scheduled
+                  </p>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Save Settings
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Display -->
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Scraper Progress</h5>
+            </div>
+            <div class="card-body">
+              <div id="scrapperStatus" class="mb-3">
+                <p class="text-muted">Waiting to start...</p>
+              </div>
+              <div class="progress-stages">
+                <div id="initialization-stage" class="stage">
+                  <div class="stage-content">
+                    <h5 class="stage-label">Session Initialization</h5>
+                    <p>Not started</p>
+                    <small></small>
+                  </div>
+                </div>
+                <div id="request-stage" class="stage">
+                  <div class="stage-content">
+                    <h5 class="stage-label">Invoice Request</h5>
+                    <p>Not started</p>
+                    <small></small>
+                  </div>
+                </div>
+                <div id="processing-stage" class="stage">
+                  <div class="stage-content">
+                    <h5 class="stage-label">Invoice Processing</h5>
+                    <p>Not started</p>
+                    <small></small>
+                  </div>
+                </div>
+              </div>
+              <div class="event-log-container">
+                <h5>Event Log</h5>
+                <div id="eventLog" class="event-log"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Container -->
+      <div
+        id="toastContainer"
+        class="toast-container position-fixed top-0 end-0 p-3"
+      ></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const socket = io();
+
+      // Define stage configuration for Indigo
+      const stageConfig = {
+        initialization: {
+          name: "Session Initialization",
+          steps: ["proxy_setup", "session_setup", "environment_check"],
+          next: "request",
+          required: true,
+        },
+        request: {
+          name: "Invoice Request",
+          steps: [
+            "prepare_request",
+            "get_invoice_ids",
+            "validate_invoice_ids",
+            "get_auth_token",
+          ],
+          next: "processing",
+          required: true,
+        },
+        processing: {
+          name: "Invoice Processing",
+          steps: ["fetch_invoice", "format_html", "save_file"],
+          next: null,
+          required: true,
+        },
+      };
+
+      // API endpoints
+      const API_ENDPOINTS = {
+        START_SCRAPING: "/indigo/start_scraping",
+        LAST_STATE: "/indigo/last_state",
+        SETTINGS: "/indigo/settings",
+      };
+
+      // Socket Event Handlers
+      socket.on("connect", function () {
+        console.log("Socket connected");
+        showToast("Connected to server", "success");
+        Promise.all([loadInitialState(), loadSchedulerSettings()]);
+      });
+
+      socket.on("indigo_scraper_status", function (data) {
+        console.log("Status update:", data);
+        updateStatus(data.message, data.status === "error" ? "error" : "info");
+
+        if (data.stage && data.status) {
+          updateStageStatus(data.stage, data.status, data.message, data.timing);
+        }
+      });
+
+      socket.on("indigo_scraper_progress", function (data) {
+        console.log("Progress update:", data);
+        if (!data) return;
+
+        if (data.stage && data.step) {
+          updateStageStatus(
+            data.stage,
+            data.status,
+            `${data.step}: ${data.message || "In progress..."}`,
+            data.data?.timing
+          );
+
+          addEventLog({
+            type: data.status,
+            message: data.message,
+            stage: data.stage,
+            step: data.step,
+            timing: data.data?.timing,
+            timestamp: data.timestamp,
+          });
+        }
+      });
+
+      socket.on("indigo_scraper_event", function (data) {
+        console.log("Event:", data);
+        if (!data) return;
+
+        if (data.type || data.important) {
+          addEventLog({
+            type: data.type || "info",
+            message: data.message,
+            stage: data.stage,
+            step: data.step,
+            timestamp: data.timestamp,
+            timing: data.timing,
+          });
+        }
+      });
+
+      socket.on("indigo_auto_scrape_complete", function (data) {
+        console.log("Auto-scrape completed:", data);
+        if (data.success) {
+          showToast("Auto-scrape completed successfully", "success");
+          updateStatus("Auto-scrape completed successfully", "success");
+        } else {
+          showToast(data.message || "Auto-scrape failed", "error");
+          updateStatus(data.message || "Auto-scrape failed", "error");
+        }
+        updateNextRunDisplay(data.next_run);
+      });
+
+      // Form Handlers
+      async function startScraper(event) {
+        event.preventDefault();
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const form = event.target;
+
+        try {
+          submitBtn.disabled = true;
+          form.classList.add("was-validated");
+
+          if (!form.checkValidity()) {
+            throw new Error("Please fill all required fields correctly");
+          }
+
+          const formData = {
+            "Ticket/PNR": document.getElementById("pnr").value.toUpperCase(),
+            SSR_Email: document.getElementById("ssrEmail").value,
+            Vendor: "INDIGO AIR",
+          };
+
+          resetUI();
+          showProgressTracker();
+
+          const response = await fetch(API_ENDPOINTS.START_SCRAPING, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+
+          updateStatus("Scraper started successfully", "info");
+        } catch (error) {
+          showToast(error.message, "error");
+          updateStatus(error.message, "error");
+        } finally {
+          submitBtn.disabled = false;
+        }
+      }
+
+      async function saveSchedulerSettings(event) {
+        event.preventDefault();
+        const button = event.submitter;
+        button.disabled = true;
+
+        try {
+          const settings = {
+            auto_run: document.getElementById("autoRunEnabled").checked,
+            interval: parseInt(document.getElementById("runInterval").value),
+          };
+
+          if (settings.interval < 1 || settings.interval > 1440) {
+            throw new Error("Interval must be between 1 and 1440 minutes");
+          }
+
+          const response = await fetch(API_ENDPOINTS.SETTINGS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(settings),
+          });
+
+          const result = await response.json();
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+
+          updateSchedulerUI(result.data);
+          showToast("Settings updated successfully", "success");
+        } catch (error) {
+          showToast(error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      // State Loading Functions
+      async function loadInitialState() {
+        try {
+          const response = await fetch(API_ENDPOINTS.LAST_STATE);
+          const data = await response.json();
+
+          if (data.success) {
+            updateLastRunStatus(data.data || {});
+            prefillForm(data.data);
+          } else {
+            throw new Error(data.message || "Failed to load state");
+          }
+        } catch (error) {
+          console.error("Error loading initial state:", error);
+          updateLastRunStatus({});
+          showToast("Failed to load initial state", "error");
+        }
+      }
+
+      async function loadSchedulerSettings() {
+        try {
+          const response = await fetch(API_ENDPOINTS.SETTINGS);
+          const data = await response.json();
+          if (data.success) {
+            updateSchedulerUI(
+              data.data || { auto_run: false, interval: 60, next_run: null }
+            );
+          } else {
+            throw new Error(data.message);
+          }
+        } catch (error) {
+          console.error("Error loading scheduler settings:", error);
+          updateSchedulerUI({ auto_run: false, interval: 60, next_run: null });
+        }
+      }
+
+      // UI Update Functions
+      function updateLastRunStatus(data = {}) {
+        const statusDiv = document.getElementById("lastRunStatus");
+        const statusClass = getStatusClass(data.state);
+
+        statusDiv.innerHTML = `
+                <div class="alert alert-${statusClass}">
+                    <div class="last-run-container">
+                        <div class="last-run-info">
+                            <p><strong>Last Run:</strong> ${formatTimestamp(
+                              data.timestamp
+                            )}</p>
+                            <p><strong>Status:</strong> ${
+                              data.state || "Never run"
+                            }</p>
+                            <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
+                            <p><strong>SSR Email:</strong> ${
+                              data.ssr_email || "N/A"
+                            }</p>
+                            <p><strong>Auto Run:</strong> ${
+                              data.auto_run ? "Enabled" : "Disabled"
+                            }</p>
+                            <p><strong>Next Run:</strong> ${formatTimestamp(
+                              data.next_run
+                            )}</p>
+                        </div>
+                        ${
+                          data.state === "failed" && data.message
+                            ? createErrorDetails(data)
+                            : ""
+                        }
+                    </div>
+                </div>`;
+      }
+
+      function updateSchedulerUI(settings) {
+        document.getElementById("autoRunEnabled").checked = settings.auto_run;
+        document.getElementById("runInterval").value = settings.interval;
+
+        updateNextRunDisplay(settings.next_run, settings.auto_run);
+      }
+
+      function updateNextRunDisplay(nextRun, autoRun) {
+        const displayText = nextRun
+          ? new Date(nextRun).toLocaleString()
+          : "Not scheduled";
+        const displayClass = autoRun ? "text-success" : "text-muted";
+
+        const displays = ["nextRunDisplay", "nextRunTime"];
+        displays.forEach((id) => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.textContent = displayText;
+            element.className = displayClass;
+          }
+        });
+      }
+
+      // Enhanced stage status handling
+      function updateStageStatus(stage, status, message, timing) {
+        const stageElement = document.getElementById(`${stage}-stage`);
+        if (!stageElement) return;
+
+        const messageEl = stageElement.querySelector("p");
+        const timingEl = stageElement.querySelector("small");
+
+        if (messageEl) messageEl.textContent = message || "In progress...";
+        if (timingEl && timing) timingEl.textContent = `${timing}s`;
+
+        // Remove all status classes
+        stageElement.classList.remove(
+          "progress",
+          "completed",
+          "error",
+          "active"
+        );
+
+        // Add appropriate class based on status
+        switch (status) {
+          case "starting":
+          case "progress":
+            stageElement.classList.add("progress");
+            break;
+          case "completed":
+            stageElement.classList.add("completed");
+            break;
+          case "error":
+            stageElement.classList.add("error");
+            break;
+          case "active":
+            stageElement.classList.add("active");
+            break;
+        }
+      }
+
+      function updateStatus(message, type = "info") {
+        const statusElement = document.getElementById("scrapperStatus");
+        if (statusElement) {
+          const statusClasses = {
+            info: "text-info",
+            error: "text-danger",
+            success: "text-success",
+            warning: "text-warning",
+          };
+          statusElement.innerHTML = `<p class="${
+            statusClasses[type] || "text-info"
+          }">${message}</p>`;
+        }
+      }
+
+      // Utility Functions
+      function resetUI() {
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.className = "stage";
+          stage.querySelector("p").textContent = "Not started";
+          stage.querySelector("small").textContent = "";
+        });
+        document.getElementById("eventLog").innerHTML = "";
+        document.getElementById("scrapperStatus").innerHTML =
+          '<p class="text-muted">Starting...</p>';
+      }
+
+      function showProgressTracker() {
+        Object.entries(stageConfig).forEach(([stageId, config], index) => {
+          const stage = document.getElementById(`${stageId}-stage`);
+          if (stage) {
+            if (index === 0) {
+              updateStageStatus(stageId, "starting", "Initializing...");
+            } else {
+              stage.classList.add("disabled");
+            }
+
+            const label = stage.querySelector(".stage-label");
+            if (label && config.required) {
+              label.textContent = `${config.name} (Required)`;
+            }
+          }
+        });
+      }
+
+      function formatTimestamp(timestamp) {
+        if (!timestamp) return "Not scheduled";
+        try {
+          return new Date(timestamp).toLocaleString();
+        } catch (e) {
+          console.error("Invalid timestamp:", e);
+          return "Invalid date";
+        }
+      }
+
+      function getStatusClass(state) {
+        const statusMap = {
+          completed: "success",
+          failed: "danger",
+          error: "danger",
+          running: "warning",
+          starting: "info",
+        };
+        return statusMap[state] || "info";
+      }
+
+      function createErrorDetails(data) {
+        if (!data.message) return "";
+        return `
+                <div class="error-details">
+                    <h6 class="text-danger">Error Details</h6>
+                    <p class="mb-0">${data.message}</p>
+                </div>`;
+      }
+
+      function showToast(message, type = "info") {
+        const toastContainer = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast show bg-${
+          type === "error" ? "danger" : "success"
+        } text-white`;
+        toast.innerHTML = `
+                <div class="toast-body">
+                    ${message}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      // Enhanced event log handling
+      function addEventLog(data) {
+        const eventLogDiv = document.getElementById("eventLog");
+        if (!eventLogDiv) return;
+
+        const eventItem = document.createElement("div");
+        eventItem.className = `event-item ${data.type}`;
+
+        const timestamp = data.timestamp || new Date().toLocaleTimeString();
+        const timingStr = data.timing ? ` (${data.timing}s)` : "";
+        const stageStr = data.stage ? `[${data.stage}] ` : "";
+        const stepStr = data.step ? `[${data.step}] ` : "";
+
+        eventItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <strong class="text-muted">${timestamp}</strong>
+                    ${
+                      data.timing
+                        ? `<span class="text-muted">${timingStr}</span>`
+                        : ""
+                    }
+                </div>
+                <div class="mt-1">
+                    <strong>${stageStr}${stepStr}</strong>${data.message}
+                </div>
+            `;
+
+        // Insert at the top for newest first
+        eventLogDiv.insertBefore(eventItem, eventLogDiv.firstChild);
+
+        // Keep max 100 items for performance
+        while (eventLogDiv.children.length > 100) {
+          eventLogDiv.removeChild(eventLogDiv.lastChild);
+        }
+      }
+
+      function prefillForm(data) {
+        if (!data || !data.pnr) return;
+
+        const pnrField = document.getElementById("pnr");
+        const ssrEmailField = document.getElementById("ssrEmail");
+
+        if (pnrField && data.pnr) {
+          pnrField.value = data.pnr;
+        }
+
+        if (ssrEmailField && data.ssr_email) {
+          ssrEmailField.value = data.ssr_email;
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", async function () {
+        try {
+          await Promise.all([loadInitialState(), loadSchedulerSettings()]);
+        } catch (error) {
+          console.error("Initialization error:", error);
+          showToast("Failed to initialize application", "error");
+        }
+      });
+      socket.on("indigo_scrapper_run_completed", async function () {
+        console.log("indigo_scrapper_run_completed_called");
+        try {
+          await Promise.all([loadInitialState(), loadSchedulerSettings()]);
+          console.log("indigo_scrapper_run_completed_no error");
+        } catch (error) {
+          console.error("Initialization error:", error);
+          showToast("Failed to initialize application", "error");
+        }
+      });
+    </script>
+  </body>
+</html>

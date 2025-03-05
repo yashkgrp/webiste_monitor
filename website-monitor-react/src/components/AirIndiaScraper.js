@@ -6,53 +6,46 @@ import Tabs from "./Tabs";
 import { API_BASE_URL } from "../config";
 
 const API_ENDPOINTS = {
-  START_SCRAPING: `${API_BASE_URL}/run_starair_scraper`,
-  LAST_STATE: `${API_BASE_URL}/scraper/last_state`,
-  SETTINGS: `${API_BASE_URL}/scraper/settings`,
-  CHANGES: `${API_BASE_URL}/scraper/dom_changes`,
+  START_SCRAPING: `${API_BASE_URL}/air_india/start_scraping`,
+  LAST_STATE: `${API_BASE_URL}/air_india/last_state`,
+  SETTINGS: `${API_BASE_URL}/air_india/settings`,
+  CHANGES: `${API_BASE_URL}/air_india/dom_changes`,
 };
 
-// Updated stage configuration for Star Air scraper
+// Stage configuration for Air India scraper
 const stageConfig = {
   initialization: {
-    name: "Initialization",
-    steps: ["browser_setup", "components_init"],
-    next: "login",
+    name: "Session Initialization",
+    steps: ["browser_setup"],
+    next: "request",
     required: true,
   },
-  login: {
-    name: "Login",
-    steps: ["prepare_request", "submit_login"],
-    next: "navigation",
+  request: {
+    name: "Invoice Request",
+    steps: ["page_load", "form_fill", "captcha_solving", "submission"],
+    next: "processing",
     required: true,
   },
-  navigation: {
-    name: "Navigation",
-    steps: ["find_invoices", "extract_links"],
-    next: "download",
-    required: true,
-  },
-  download: {
-    name: "Download",
-    steps: ["process_invoices", "download_files", "verify_files"],
-
+  processing: {
+    name: "Invoice Processing",
+    steps: ["download", "verify_files", "save_files"],
+    next: null,
     required: true,
   },
 };
 
-const StarAirScraper = ({ socket }) => {
+const AirIndiaScraper = ({ socket }) => {
   const [lastRunState, setLastRunState] = useState({});
   const [settings, setSettings] = useState({
     auto_run: false,
     interval: 60,
     next_run: null,
   });
-  const [formData, setFormData] = useState({ pnr: "", gstin: "" });
+  const [formData, setFormData] = useState({ pnr: "", origin: "", vendor: "" });
   const [stages, setStages] = useState({
     initialization: { status: "not yet started", message: "", timing: "" },
-    login: { status: "not yet started", message: "", timing: "" },
-    navigation: { status: "not yet started", message: "", timing: "" },
-    download: { status: "not yet started", message: "", timing: "" },
+    request: { status: "not yet started", message: "", timing: "" },
+    processing: { status: "not yet started", message: "", timing: "" },
   });
   const [status, setStatus] = useState({
     message: "Waiting to start...",
@@ -85,134 +78,44 @@ const StarAirScraper = ({ socket }) => {
     }
   }, []);
 
-  const updateStageStatus = useCallback(
-    (data, stage, status, message, timing) => {
-      if (data.status === "debug") return;
-      console.log("updating stage", data);
-      console.log("changing status of ", data.stage, " to ", data.status);
-      setStages((prev) => {
-        const newStages = { ...prev };
-        const stageOrder = Object.keys(stageConfig);
-        if (stage === "initialization") {
-          console.log("received status for initialization", data.status);
-        }
-
-        // Special handling for download completion
-        if (stage === "download" && status === "success") {
-          // Mark all stages as completed when download succeeds
-          Object.keys(stageConfig).forEach((key) => {
-            newStages[key] = {
-              status: "completed",
-              message: key === "download" ? message : "Completed",
-              timing: key === "download" ? `${timing}s` : prev[key].timing,
-            };
-          });
-          return newStages;
-        }
-
-        // Regular stage update
-        newStages[stage] = {
-          status: status === "success" ? "completed" : status,
-          message: message || "In progress...",
-          timing: timing ? `${timing}s` : "",
-        };
-
-        // If status is completed/success, ensure proper stage progression
-        if (status === "completed" || status === "success") {
-          const currentIndex = stageOrder.indexOf(stage);
-
-          // Mark all previous stages as completed
-          for (let i = 0; i <= currentIndex; i++) {
-            const stageKey = stageOrder[i];
-            if (newStages[stageKey].status !== "completed") {
-              newStages[stageKey] = {
-                ...newStages[stageKey],
-                status: "completed",
-              };
-            }
-          }
-
-          // If current stage completed and not the last stage, mark next stage as active
-        }
-
-        return newStages;
-      });
-    },
-    []
-  );
-
-  const normalizeMessage = (message) => {
-    // Remove redundant stage prefixes if they exist in square brackets
-    const withoutBrackets = message.replace(
-      /^\[(initialization|login|navigation|download|completion)\]\s+/i,
-      ""
-    );
-
-    // Remove the stage name if it starts with it and a colon
-    return withoutBrackets.replace(
-      /^(Initialization|Login|Navigation|Download|Completion):\s+/i,
-      ""
-    );
-  };
-
-  const normalizeStage = (stage) => {
-    // Convert stage names to lowercase and remove square brackets if present
-    if (!stage) return "";
-    return stage.toLowerCase().replace(/^\[|\]$/g, "");
-  };
-
-  const getMessageIdentifier = (message) => {
-    // Create a unique identifier for logically equivalent messages
-    return message
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .replace(/[\d.]+\s*seconds?/, "X seconds")
-      .replace(/\d{4}_\d{2}_\d{5}/, "XXXXX")
-      .replace(/\\temp.*\.pdf/, "temp/file.pdf");
-  };
+  const updateStageStatus = useCallback((stage, status, message, timing) => {
+    setStages((prev) => ({
+      ...prev,
+      [stage]: {
+        status,
+        message: message || "In progress...",
+        timing: timing ? `${timing}s` : "",
+      },
+    }));
+  }, []);
 
   const addEventLog = useCallback((data) => {
-    // Only process events that have a stage property
-    if (!data.stage) return;
-
+    if (data.stage === "info") {
+      return;
+    }
     setEventLogs((prev) => {
       const timestamp = data.timestamp ? new Date(data.timestamp) : new Date();
-      const normalizedStage = normalizeStage(data.stage);
-      const normalizedMessage = normalizeMessage(data.message);
-      const messageIdentifier = getMessageIdentifier(normalizedMessage);
-
       const newLog = {
-        id: `${normalizedStage}-${timestamp.getTime()}-${messageIdentifier}`,
-        timestamp,
+        id: `${data.stage}-${data.step}-${timestamp.getTime()}`,
+        timestamp: timestamp,
         displayTime: timestamp.toLocaleTimeString(),
         timing: data.timing,
-        stage: normalizedStage,
-        message: normalizedMessage,
-        type: data.status || "info",
+        stage: data.stage,
+        step: data.step,
+        message: data.message,
+        type: data.type || data.status || "info",
       };
 
-      return [newLog, ...prev]
-        .filter((log, index, self) => {
-          const isDuplicate =
-            self.findIndex(
-              (t) =>
-                getMessageIdentifier(t.message) ===
-                  getMessageIdentifier(log.message) &&
-                Math.abs(t.timestamp - log.timestamp) < 2000
-            ) === index;
-          return isDuplicate;
-        })
-        .sort((a, b) => b.timestamp - a.timestamp)
-        .slice(0, 100);
+      const nextLogs = [newLog, ...prev].slice(0, 100);
+      return nextLogs;
     });
   }, []);
 
   const resetUI = useCallback(() => {
     setStages({
       initialization: { status: "not yet started", message: "", timing: "" },
-      login: { status: "not yet started", message: "", timing: "" },
-      navigation: { status: "not yet started", message: "", timing: "" },
-      download: { status: "not yet started", message: "", timing: "" },
+      request: { status: "not yet started", message: "", timing: "" },
+      processing: { status: "not yet started", message: "", timing: "" },
     });
     setStatus({ message: "Initializing scraper...", type: "info" });
     setEventLogs([]);
@@ -227,7 +130,8 @@ const StarAirScraper = ({ socket }) => {
         if (data.data?.pnr) {
           setFormData({
             pnr: data.data.pnr,
-            gstin: data.data.gstin || "",
+            origin: data.data.origin || "",
+            vendor: data.data.vendor || "",
           });
         }
       }
@@ -242,11 +146,13 @@ const StarAirScraper = ({ socket }) => {
       const response = await fetch(API_ENDPOINTS.SETTINGS);
       const data = await response.json();
       if (data.success) {
-        setSettings({
-          auto_run: data.auto_run || false,
-          interval: data.interval || 60,
-          next_run: data.next_run || null,
-        });
+        setSettings(
+          data.settings || {
+            auto_run: false,
+            interval: 60,
+            next_run: null,
+          }
+        );
       }
     } catch (error) {
       console.error("Error loading scheduler settings:", error);
@@ -259,7 +165,7 @@ const StarAirScraper = ({ socket }) => {
       const response = await fetch(API_ENDPOINTS.CHANGES);
       const data = await response.json();
       if (data.success) {
-        setDomChanges(data.data || []);
+        setDomChanges(data.data.changes || []);
       }
     } catch (error) {
       console.error("Error loading DOM changes:", error);
@@ -280,28 +186,22 @@ const StarAirScraper = ({ socket }) => {
 
       resetUI();
 
-      const scraperState = {
+      const scraperData = {
         pnr: formData.pnr.toUpperCase(),
-        gstin: formData.gstin,
+        origin: formData.origin.toUpperCase(),
+        vendor: formData.vendor || "AIR INDIA",
       };
-
-      const formDat = new FormData();
-      formDat.append("pnr", formData.pnr.toUpperCase());
-      formDat.append("gstin", formData.gstin);
-      formDat.append("frontend_state", JSON.stringify(scraperState));
 
       const response = await fetch(API_ENDPOINTS.START_SCRAPING, {
         method: "POST",
-        body: formDat,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(scraperData),
       });
 
       const result = await response.json();
       if (!result.success) {
         throw new Error(result.message);
       }
-      loadInitialState();
-      loadDOMChanges();
-      loadSchedulerSettings();
 
       updateStatus("Scraper started successfully", "info");
     } catch (error) {
@@ -331,7 +231,7 @@ const StarAirScraper = ({ socket }) => {
 
       const result = await response.json();
       if (!result.success) {
-        throw new Error(result.message);
+        throw new Error(result.message || "Failed to save settings");
       }
 
       // Update settings directly from result since the settings are in the root object
@@ -362,59 +262,48 @@ const StarAirScraper = ({ socket }) => {
 
   useEffect(() => {
     const handlers = {
-      scraper_stage: (data) => {
+      air_scraper_status: (data) => {
         updateStatus(data.message, data.status === "error" ? "error" : "info");
-        if (data.stage) {
-          updateStageStatus(
-            data,
-            data.stage,
-            data.status,
-            data.message,
-            data.timing
-          );
+        if (data.stage && data.status) {
+          updateStageStatus(data.stage, data.status, data.message, data.timing);
         }
       },
-      scraper_status: (data) => {
-        if (data.status === "debug" && data.stage) {
-          addEventLog(data);
-        }
-      },
+      air_scraper_progress: (data) => {
+        if (!data || !data.stage || !data.step) return;
 
-      scraper_event: (data) => {
-        if (!data || !data.stage) return;
+        updateStageStatus(
+          data.stage,
+          data.status,
+          `${data.step}: ${data.message || "In progress..."}`,
+          data.data?.timing
+        );
+
         addEventLog(data);
       },
-      scraper_auto_run_complete: (data) => {
-        if (data.success) {
-          showToast("Auto-scrape completed successfully", "success");
-          updateStatus("Auto-scrape completed successfully", "success");
-          // Mark all stages as completed
-          Object.keys(stageConfig).forEach((stage) => {
-            updateStageStatus(stage, "completed");
-          });
-        } else {
-          showToast(data.message || "Auto-scrape failed", "error");
-          updateStatus(data.message || "Auto-scrape failed", "error");
-        }
+      air_scraper_event: (data) => {
+        if (!data) return;
+        addEventLog({
+          ...data,
+          stage: data.stage || "info",
+          step: data.step || "system",
+          message: data.message,
+          type: data.type || "info",
+        });
       },
-      scraper_state_updated: (data) => {
+      air_scraper_state_updated: (data) => {
         setLastRunState(data);
       },
-      settings_updated: (data) => {
+      air_scraper_settings_updated: (data) => {
         setSettings(data);
       },
-      scraper_error: (data) => {
+      air_scraper_error: (data) => {
         showToast(data.message, "error");
         updateStatus(data.message, "error");
         if (data.stage) {
-          updateStageStatus(data, data.stage, "error", data.message);
+          updateStageStatus(data.stage, "error", data.message);
         }
       },
-      scraper_run_completed: () => {
-        // Mark all stages as completed when scraper finishes
-        Object.keys(stageConfig).forEach((stage) => {
-          updateStageStatus(stage, "completed");
-        });
+      air_scraper_completed: () => {
         loadInitialState();
         loadDOMChanges();
       },
@@ -465,7 +354,7 @@ const StarAirScraper = ({ socket }) => {
                 <strong>Status:</strong>{" "}
                 <StatusBadge
                   type={
-                    lastRunState.state === "success"
+                    lastRunState.state === "completed"
                       ? "success"
                       : lastRunState.state === "failed"
                       ? "error"
@@ -483,10 +372,10 @@ const StarAirScraper = ({ socket }) => {
                   <p className="mb-2">
                     <strong>Error:</strong>{" "}
                     <span className="error-text">
-                      {lastRunState.error
-                        ? lastRunState.error.length > 50
-                          ? lastRunState.error.substring(0, 50) + "..."
-                          : lastRunState.error
+                      {lastRunState.message
+                        ? lastRunState.message.length > 50
+                          ? lastRunState.message.substring(0, 50) + "..."
+                          : lastRunState.message
                         : "None"}
                     </span>
                   </p>
@@ -541,26 +430,44 @@ const StarAirScraper = ({ socket }) => {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="gstin" className="form-label">
-                    GSTIN
+                  <label htmlFor="origin" className="form-label">
+                    Origin
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    id="gstin"
-                    value={formData.gstin}
+                    id="origin"
+                    value={formData.origin}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        gstin: e.target.value,
+                        origin: e.target.value,
                       }))
                     }
-                    pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}"
+                    pattern="[A-Za-z]{3}"
                     required
                   />
                   <div className="invalid-feedback">
-                    Please provide a valid GSTIN.
+                    Please provide a valid 3-letter origin code.
                   </div>
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="vendor" className="form-label">
+                    Vendor
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="vendor"
+                    value={formData.vendor}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        vendor: e.target.value,
+                      }))
+                    }
+                    placeholder="AIR INDIA"
+                  />
                 </div>
               </div>
               <button type="submit" className="btn btn-primary w-100">
@@ -622,10 +529,10 @@ const StarAirScraper = ({ socket }) => {
                 <label className="form-label">Next Scheduled Run:</label>
                 <p
                   className={`mb-0 ${
-                    settings.auto_run ? "text-success" : "text-muted"
+                    settings?.auto_run ? "text-success" : "text-muted"
                   }`}
                 >
-                  {formatTimestamp(settings.next_run)}
+                  {formatTimestamp(settings?.next_run)}
                 </p>
               </div>
               <button type="submit" className="btn btn-primary w-100">
@@ -732,7 +639,7 @@ const StarAirScraper = ({ socket }) => {
                 <tr>
                   <th>Timestamp</th>
                   <th>PNR</th>
-                  <th>GSTIN</th>
+                  <th>Origin</th>
                   <th>Changes</th>
                   <th>Page</th>
                   <th>Status</th>
@@ -743,21 +650,21 @@ const StarAirScraper = ({ socket }) => {
                 {domChanges.map((change, index) => (
                   <tr key={change.timestamp}>
                     <td>{new Date(change.timestamp).toLocaleString()}</td>
-                    <td>{change.pnr || "N/A"}</td>
-                    <td>{change.gstin || "N/A"}</td>
+                    <td>{change.metadata?.pnr || "N/A"}</td>
+                    <td>{change.metadata?.origin || "N/A"}</td>
                     <td>{change.changes?.length || 0} change(s)</td>
                     <td>{change.page_id || "N/A"}</td>
                     <td>
                       <span
                         className={`badge ${
-                          change.type === "structural_change"
+                          change.metadata?.has_changes
                             ? "bg-warning"
                             : "bg-success"
                         }`}
                       >
-                        {change.type === "structural_change"
-                          ? "Structure Changed"
-                          : "Content Changed"}
+                        {change.metadata?.has_changes
+                          ? "Changes Detected"
+                          : "No Changes"}
                       </span>
                     </td>
                     <td>
@@ -812,31 +719,30 @@ const StarAirScraper = ({ socket }) => {
                   <strong>Timestamp:</strong>{" "}
                   {new Date(selectedChange.timestamp).toLocaleString()}
                   <br />
-                  <strong>Page:</strong> {selectedChange.page_id || "Unknown"}
+                  <strong>Page:</strong>{" "}
+                  {selectedChange.metadata?.page_id || "Unknown"}
                   <br />
-                  <strong>PNR:</strong> {selectedChange.pnr || "N/A"}
+                  <strong>PNR:</strong> {selectedChange.metadata?.pnr || "N/A"}
                   <br />
-                  <strong>GSTIN:</strong> {selectedChange.gstin || "N/A"}
+                  <strong>Origin:</strong>{" "}
+                  {selectedChange.metadata?.origin || "N/A"}
                 </div>
                 <div className="changes-list">
                   {selectedChange.changes.map((change, idx) => (
                     <div key={idx} className="card mb-2">
                       <div
-                        className={`card-header ${
-                          change.type === "removed"
-                            ? "bg-danger text-white"
-                            : change.type === "added"
-                            ? "bg-success text-white"
-                            : "bg-warning"
-                        }`}
+                        className={`card-header ${getChangeHeaderClass(
+                          change.type
+                        )}`}
                       >
                         {change.type.charAt(0).toUpperCase() +
                           change.type.slice(1)}
+                        {change.description && `: ${change.description}`}
                       </div>
                       <div className="card-body">
                         <p>
                           <strong>Element Type:</strong>{" "}
-                          {change.attributes?.tag || "Unknown"}
+                          {change.element_type || "Unknown"}
                         </p>
                         {change.element && (
                           <div className="mb-3">
@@ -852,13 +758,6 @@ const StarAirScraper = ({ socket }) => {
                             <code className="d-block bg-light p-2 rounded mt-1">
                               {change.path}
                             </code>
-                          </p>
-                        )}
-                        {change.description && (
-                          <p className="mb-0 mt-2">
-                            <strong>Description:</strong>
-                            <br />
-                            {change.description}
                           </p>
                         )}
                       </div>
@@ -894,13 +793,28 @@ const StarAirScraper = ({ socket }) => {
     </div>
   );
 
+  const getChangeHeaderClass = (type) => {
+    switch (type.toLowerCase()) {
+      case "addition":
+        return "bg-success text-white";
+      case "removal":
+        return "bg-danger text-white";
+      case "content_change":
+        return "bg-warning";
+      case "structure_change":
+        return "bg-info text-white";
+      default:
+        return "bg-secondary text-white";
+    }
+  };
+
   return (
     <>
       <div className="custom-card-scrapper">
         <div className="content-header">
           <div className="container">
             <div className="d-flex justify-content-between align-items-center">
-              <h1 className="content-title">Star Air Scraper</h1>
+              <h1 className="content-title">Air India Scraper</h1>
               <Link to="/scrapers" className="btn btn-outline-primary">
                 Back to Scrapers
               </Link>
@@ -947,4 +861,4 @@ const StarAirScraper = ({ socket }) => {
   );
 };
 
-export default StarAirScraper;
+export default AirIndiaScraper;

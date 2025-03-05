@@ -319,7 +319,7 @@ const Scrapers = ({ socket }) => {
         navigate("/scrapers/star-air");
         break;
       case "airIndia":
-        showToast("This scraper page is not yet implemented", "info");
+        navigate("/scrapers/air-india");
         break;
       default:
         showToast("Unknown scraper type", "error");

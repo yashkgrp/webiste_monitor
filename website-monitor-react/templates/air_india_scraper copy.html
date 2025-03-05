@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Air India Express Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <style>
+      .stage {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: all 0.3s;
+      }
+      .stage.active {
+        background: #fff3cd;
+        border-color: #ffeeba;
+      }
+      .stage.completed {
+        background: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .stage.error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .event-log {
+        height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-top: 15px;
+      }
+      .event-item {
+        padding: 5px;
+        margin: 5px 0;
+        border-left: 3px solid #007bff;
+      }
+      .event-item.error {
+        border-left-color: #dc3545;
+      }
+      .last-run-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      .last-run-info {
+        min-width: 250px;
+      }
+      .error-details {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-top: 1rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+      .change-item {
+        margin: 5px 0;
+        padding: 5px;
+        border-left: 3px solid #007bff;
+      }
+      .change-addition {
+        border-left-color: #28a745;
+      }
+      .change-removal {
+        border-left-color: #dc3545;
+      }
+      .toast-container {
+        z-index: 1050;
+      }
+      @media (max-width: 768px) {
+        .last-run-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-4">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">
+            <img
+              src="/static/air_india_logo.png"
+              height="30"
+              class="d-inline-block align-top"
+              alt="Air India Express"
+            />
+            Website Monitor
+          </a>
+          <a class="btn btn-outline-primary" href="/">Back to Dashboard</a>
+        </div>
+      </nav>
+
+      <!-- Last Run Status section -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">Last Run Status</h5>
+        </div>
+        <div class="card-body">
+          <div id="lastRunStatus">
+            <div class="alert alert-info">
+              <div class="last-run-container">
+                <div class="last-run-info">
+                  <p>
+                    <strong>Last Run:</strong>
+                    <span id="lastRunTime">Loading...</span>
+                  </p>
+                  <p>
+                    <strong>Status:</strong>
+                    <span id="lastRunStatus">Loading...</span>
+                  </p>
+                  <p>
+                    <strong>PNR:</strong>
+                    <span id="lastRunPNR">Loading...</span>
+                  </p>
+                  <p>
+                    <strong>Origin:</strong>
+                    <span id="lastRunOrigin">Loading...</span>
+                  </p>
+                  <p>
+                    <strong>Vendor:</strong>
+                    <span id="lastRunVendor">Loading...</span>
+                  </p>
+                  <p>
+                    <strong>Auto Run:</strong>
+                    <span id="autoRunStatus">Loading...</span>
+                  </p>
+                  <p>
+                    <strong>Next Run:</strong>
+                    <span id="nextRunDisplay" class="text-primary"
+                      >Not scheduled</span
+                    >
+                  </p>
+                </div>
+                <div
+                  id="errorDetails"
+                  class="error-details"
+                  style="display: none"
+                >
+                  <h6 class="text-danger mb-2">Error Details</h6>
+                  <div id="errorMessage"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h1 class="mb-4">Air India Express Scraper</h1>
+
+      <div class="row">
+        <!-- Scraper Form -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Start New Scrape</h5>
+            </div>
+            <div class="card-body">
+              <form id="scraperForm" onsubmit="startScraper(event)">
+                <div class="mb-3">
+                  <label for="pnr" class="form-label">PNR/Booking Code *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="pnr"
+                    required
+                    pattern="[A-Z0-9]{6}"
+                    title="6 characters alphanumeric code"
+                  />
+                  <div class="form-text">Enter your 6-character PNR code</div>
+                </div>
+                <div class="mb-3">
+                  <label for="origin" class="form-label"
+                    >Origin Airport Code *</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="origin"
+                    required
+                    pattern="[A-Z]{3}"
+                    title="3 letter airport code"
+                  />
+                  <div class="form-text">
+                    Enter 3-letter airport code (e.g., BLR, DEL)
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="vendor" class="form-label">Vendor *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="vendor"
+                    required
+                    placeholder="Enter vendor name"
+                  />
+                  <div class="form-text">
+                    Enter the vendor name (e.g., Air India Express)
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="bi bi-search"></i> Start Scraping
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Scheduler Settings -->
+          <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Scheduler Settings</h5>
+            </div>
+            <div class="card-body">
+              <form id="schedulerForm" onsubmit="saveSchedulerSettings(event)">
+                <div class="mb-3">
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="autoRunEnabled"
+                    />
+                    <label class="form-check-label" for="autoRunEnabled"
+                      >Enable Auto Run</label
+                    >
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="runInterval" class="form-label"
+                    >Run Interval (minutes)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="runInterval"
+                    value="60"
+                  />
+                  <div class="form-text">Minimum interval: 1 minutes</div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Next Scheduled Run:</label>
+                  <p id="nextRunTime" class="mb-0 text-primary">
+                    Not scheduled
+                  </p>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="bi bi-save"></i> Save Settings
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Display -->
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">Scraper Status</h5>
+            </div>
+            <div class="card-body">
+              <div id="scrapperStatus">
+                <p class="text-muted">Waiting to start...</p>
+              </div>
+
+              <!-- Progress Stages -->
+              <div class="progress-stages mt-4">
+                <div class="stage" id="initialization-stage">
+                  <h6>Session Initialization</h6>
+                  <p id="initialization-status">not yet started</p>
+                  <small id="initialization-timing"></small>
+                </div>
+                <div class="stage" id="request-stage">
+                  <h6>API Request</h6>
+                  <p id="request-status">not yet started</p>
+                  <small id="request-timing"></small>
+                </div>
+                <div class="stage" id="processing-stage">
+                  <h6>Invoice Processing</h6>
+                  <p id="processing-status">not yet started</p>
+                  <small id="processing-timing"></small>
+                </div>
+              </div>
+
+              <!-- Event Log -->
+              <div class="event-log mt-4">
+                <h6 class="text-primary">Event Log</h6>
+                <div id="eventLog"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="card mt-4" id="resultsSection" style="display: none">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Downloaded Files</h5>
+        </div>
+        <div class="card-body">
+          <div id="filesList" class="table-responsive">
+            <!-- Files will be listed here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Container -->
+      <div
+        id="toastContainer"
+        class="toast-container position-fixed top-0 end-0 p-3"
+      ></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const socket = io();
+
+      // Add connection status handlers
+      socket.on("connect", () => {
+        console.log("Socket connected");
+        showToast("Connected to server", "success");
+      });
+
+      let currentStage = "";
+      let tooltipList = [];
+
+      // Define stage colors for consistent UI feedback
+      const stageColors = {
+        starting: "#fff3cd", // Light yellow
+        progress: "#fff3cd", // Light yellow
+        completed: "#d4edda", // Light green
+        error: "#f8d7da", // Light red
+      };
+
+      // Add safe data handling helper
+      function safeGet(obj, path, defaultValue = "N/A") {
+        try {
+          return (
+            path.split(".").reduce((acc, part) => acc && acc[part], obj) ??
+            defaultValue
+          );
+        } catch (e) {
+          return defaultValue;
+        }
+      }
+
+      // Socket event handlers for Air India Express
+      socket.on("air_scraper_status", function (data) {
+        if (!data) {
+          console.error("Received empty status data");
+          return;
+        }
+
+        const stage = safeGet(data, "stage", "unknown");
+        const status = safeGet(data, "status", "error");
+        const message = safeGet(data, "message", "No details available");
+        const timing = safeGet(data, "timing");
+
+        // Add visual delay for better UX
+        setTimeout(() => {
+          // Complete previous stages when a new stage starts
+          const stages = ["initialization", "request", "processing"];
+          const currentIndex = stages.indexOf(stage);
+
+          if (currentIndex > 0) {
+            stages.slice(0, currentIndex).forEach((prevStage) => {
+              updateStageStatus(
+                prevStage,
+                "completed",
+                document.getElementById(`${prevStage}-status`).textContent,
+                document
+                  .getElementById(`${prevStage}-timing`)
+                  .textContent?.replace("Time: ", "")
+                  ?.replace("s", "")
+              );
+            });
+          }
+
+          // Update current stage with color
+          updateStageStatus(stage, status, message, timing);
+
+          // Add to event log
+          addEventLog({
+            type: status === "error" ? "error" : "info",
+            message: `${stage.toUpperCase()}: ${message}`,
+            elapsed: timing,
+          });
+        }, 300);
+      });
+
+      socket.on("air_scraper_event", function (data) {
+        console.log("Air India event:", data);
+
+        // Show event in UI with appropriate styling
+        const eventLogDiv = document.getElementById("eventLog");
+        const eventItem = document.createElement("div");
+        eventItem.className = `event-item ${
+          data.type === "error" ? "error" : ""
+        }`;
+
+        const timestamp = new Date().toLocaleTimeString();
+        eventItem.innerHTML = `
+                <small class="text-muted">${timestamp}</small>
+                <span class="ms-2 ${
+                  data.type === "error" ? "text-danger" : ""
+                }">${data.message}</span>
+            `;
+
+        eventLogDiv.appendChild(eventItem);
+        eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
+
+        // Update general status if needed
+        if (data.type === "error") {
+          updateStatus(data.message, "error");
+        }
+      });
+
+      socket.on("air_scraper_stage", function (data) {
+        console.log("Air India stage change:", data);
+
+        // Update stage visualization
+        const stages = document.querySelectorAll(".stage");
+        stages.forEach((stage) => {
+          stage.classList.remove("active");
+          stage.style.backgroundColor = "#ffffff";
+
+          if (stage.id === `${data.stage}-stage`) {
+            stage.classList.add("active");
+            stage.style.backgroundColor =
+              stageColors[data.status] || stageColors.progress;
+          }
+        });
+      });
+
+      socket.on("air_scraper_progress", function (data) {
+        console.log("Air India progress:", data);
+
+        // Update progress indicators
+        const stageElement = document.getElementById(`${data.stage}-stage`);
+        if (stageElement) {
+          // Update step progress
+          const progressText = `Step ${data.step_index + 1}/${
+            data.total_steps
+          }: ${data.message}`;
+          stageElement.querySelector("p").textContent = progressText;
+
+          // Update timing if available
+          if (data.timing) {
+            stageElement.querySelector(
+              "small"
+            ).textContent = `Time: ${data.timing}s`;
+          }
+
+          // Update colors based on status
+          stageElement.style.backgroundColor =
+            stageColors[data.status] || stageColors.progress;
+        }
+      });
+
+      socket.on("air_scraper_error", function (data) {
+        console.log("Air India error:", data);
+
+        // Show error in UI
+        const errorDetails = document.getElementById("errorDetails");
+        const errorMessage = document.getElementById("errorMessage");
+
+        errorDetails.style.display = "block";
+        errorMessage.innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <h6 class="alert-heading">Error in ${data.stage}</h6>
+                    <p class="mb-0">${data.message}</p>
+                    ${
+                      data.details
+                        ? `<hr><small class="mb-0">${JSON.stringify(
+                            data.details
+                          )}</small>`
+                        : ""
+                    }
+                </div>
+            `;
+
+        // Update stage status to error
+        updateStageStatus(data.stage, "error", data.message);
+      });
+
+      // Handle settings updates
+      socket.on("air_india_settings_updated", function (data) {
+        console.log("Settings updated:", data);
+        updateSchedulerUI(data);
+        loadInitialState();
+
+        // Update scheduler UI
+      });
+
+      // Helper functions
+      function updateStageStatus(stage, status, message, timing = null) {
+        const stageElement = document.getElementById(`${stage}-stage`);
+        const statusElement = document.getElementById(`${stage}-status`);
+        const timingElement = document.getElementById(`${stage}-timing`);
+
+        if (stageElement && statusElement) {
+          // Update stage styling
+          stageElement.classList.remove("active", "completed", "error");
+          stageElement.classList.add(status);
+          stageElement.style.backgroundColor = stageColors[status];
+
+          // Update status text
+          statusElement.textContent = message || "In progress...";
+          statusElement.className = status === "error" ? "text-danger" : "";
+
+          // Update timing if provided
+          if (timing) {
+            timingElement.textContent = `Time: ${timing}s`;
+          }
+        }
+      }
+
+      function updateStatus(message, type = "info") {
+        const statusDiv = document.getElementById("scrapperStatus");
+        const alertClass =
+          type === "error" ? "danger" : type === "success" ? "success" : "info";
+
+        statusDiv.innerHTML = `
+                <div class="alert alert-${alertClass}">
+                    ${message}
+                    <small class="d-block text-muted">${new Date().toLocaleString()}</small>
+                </div>
+            `;
+      }
+
+      function addEventLog(data) {
+        const eventLogDiv = document.getElementById("eventLog");
+        const eventItem = document.createElement("div");
+        eventItem.className = `event-item ${
+          data.type === "error" ? "error" : ""
+        }`;
+
+        const timestamp = new Date().toLocaleTimeString();
+        const timingStr = data.elapsed ? ` (${data.elapsed}s)` : "";
+
+        eventItem.innerHTML = `
+                <small class="text-muted">${timestamp}</small>
+                <span class="ms-2">${data.message}${timingStr}</span>
+            `;
+
+        eventLogDiv.appendChild(eventItem);
+        eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
+      }
+
+      // Form Handlers for Air India Express
+      async function startScraper(event) {
+        event.preventDefault(); // Prevent form submission from reloading page
+        console.log("Start scraper called"); // Debug log
+
+        if (!validateForm()) {
+          showToast("Please fill all required fields correctly", "error");
+          return;
+        }
+
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const inputs = event.target.querySelectorAll("input");
+
+        try {
+          submitBtn.disabled = true;
+          inputs.forEach((input) => (input.disabled = true));
+          submitBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Starting...';
+
+          resetUI();
+
+          const formData = {
+            pnr: document.getElementById("pnr").value.toUpperCase(),
+            origin: document.getElementById("origin").value.toUpperCase(),
+            vendor: document.getElementById("vendor").value,
+          };
+
+          console.log("Sending request with data:", formData); // Debug log
+
+          const response = await fetch("/air_india/start_scraping", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+
+          console.log("Received response status:", response.status); // Debug log
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+          console.log("Response data:", result); // Debug log
+
+          if (!result.success) {
+            throw new Error(result.message || "Failed to start scraping");
+          }
+
+          showProgressTracker();
+          updateStatus("Scraper started successfully", "info");
+
+          // Add this block to refresh states after successful run
+          setTimeout(async () => {
+            await Promise.all([loadInitialState(), loadSchedulerSettings()]);
+          }, 2000); // Give a small delay for backend to update
+        } catch (error) {
+          console.error("Error starting scraper:", error);
+          showToast(error.message || "Failed to start scraper", "error");
+          updateStatus(
+            "Error: " + (error.message || "Failed to start scraper"),
+            "error"
+          );
+
+          // Add this block to refresh states after error
+          setTimeout(async () => {
+            await Promise.all([loadInitialState(), loadSchedulerSettings()]);
+          }, 2000);
+        } finally {
+          submitBtn.disabled = false;
+          inputs.forEach((input) => (input.disabled = false));
+          submitBtn.innerHTML = '<i class="bi bi-search"></i> Start Scraping';
+        }
+      }
+
+      async function saveSchedulerSettings(event) {
+        event.preventDefault();
+        const button = event.submitter;
+        button.disabled = true;
+
+        try {
+          const settings = {
+            auto_run: document.getElementById("autoRunEnabled").checked,
+            interval: parseInt(document.getElementById("runInterval").value),
+          };
+
+          if (settings.interval < 1) {
+            throw new Error("Minimum interval is 1 minutes");
+          }
+
+          // Save to backend and update DB
+          const response = await fetch("/air_india/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(settings),
+          });
+
+          const result = await response.json();
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+
+          // Update UI with the latest settings
+          updateSchedulerUI(result);
+          showToast("Settings saved successfully", "success");
+
+          // Refresh last run status to show updated auto-run state
+          await loadInitialState();
+        } catch (error) {
+          console.error("Error saving settings:", error);
+          showToast(error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      function updateSchedulerUI(data) {
+        // Guard against missing data
+        if (!data) {
+          console.warn("No data provided to updateSchedulerUI");
+          return;
+        }
+
+        // Set default values if properties are missing
+        const settings = {
+          auto_run: data.auto_run || false,
+          interval: data.interval || 60,
+          next_run: data.next_run || null,
+        };
+
+        // Safely update form elements with null checks
+        const autoRunElement = document.getElementById("autoRunEnabled");
+        const intervalElement = document.getElementById("runInterval");
+        const nextRunTimeElement = document.getElementById("nextRunTime");
+        const nextRunDisplayElement = document.getElementById("nextRunDisplay");
+
+        if (autoRunElement) {
+          autoRunElement.checked = settings.auto_run;
+        }
+
+        if (intervalElement) {
+          intervalElement.value = settings.interval;
+        }
+
+        // Format next run time
+        const nextRunTime = settings.next_run
+          ? new Date(settings.next_run).toLocaleString()
+          : "Not scheduled";
+
+        // Update next run displays with null checks
+        if (nextRunTimeElement) {
+          nextRunTimeElement.textContent = nextRunTime;
+        }
+
+        if (nextRunDisplayElement) {
+          nextRunDisplayElement.textContent = nextRunTime;
+          nextRunDisplayElement.className = settings.auto_run
+            ? "text-success"
+            : "text-muted";
+        }
+      }
+
+      // Add this new function
+      function updateLastRunStatus(data) {
+        const statusDiv = document.getElementById("lastRunStatus");
+
+        // Handle empty or null data
+        if (!data || Object.keys(data).length === 0) {
+          statusDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <div class="last-run-container">
+                        <div class="last-run-info">
+                            <p><strong>Last Run:</strong> Never</p>
+                            <p><strong>Status:</strong> No runs yet</p>
+                            <p><strong>PNR:</strong> N/A</p>
+                            <p><strong>Origin:</strong> N/A</p>
+                            <p><strong>Vendor:</strong> N/A</p>
+                            <p><strong>Auto Run:</strong> Disabled</p>
+                            <p><strong>Next Run:</strong> <span class="text-muted">Not scheduled</span></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+          return;
+        }
+
+        const statusClass =
+          data.state === "completed"
+            ? "success"
+            : data.state === "failed"
+            ? "danger"
+            : data.state === "new"
+            ? "info"
+            : "warning";
+
+        const nextRunTime = data.next_run
+          ? new Date(data.next_run).toLocaleString()
+          : "Not scheduled";
+
+        statusDiv.innerHTML = `
+            <div class="alert alert-${statusClass}">
+                <div class="last-run-container">
+                    <div class="last-run-info">
+                        <p><strong>Last Run:</strong> ${
+                          data.last_run
+                            ? new Date(data.last_run).toLocaleString()
+                            : "Never"
+                        }</p>
+                        <p><strong>Status:</strong> ${
+                          data.state === "new"
+                            ? "No previous runs"
+                            : data.state || "N/A"
+                        }</p>
+                        <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
+                        <p><strong>Origin:</strong> ${data.origin || "N/A"}</p>
+                        <p><strong>Vendor:</strong> ${data.vendor || "N/A"}</p>
+                        <p><strong>Auto Run:</strong> ${
+                          data.auto_run ? "Enabled" : "Disabled"
+                        }</p>
+                        <p><strong>Next Run:</strong> <span class="next-run ${
+                          data.auto_run ? "text-success" : "text-muted"
+                        }">${nextRunTime}</span></p>
+                    </div>
+                    ${
+                      data.state === "failed" && data.message
+                        ? `
+                        <div class="error-details">
+                            <h6 class="text-danger mb-2">Error Details</h6>
+                            <div class="error-message">
+                                ${data.message
+                                  .split("\n")
+                                  .map((line) => `<p class="mb-1">${line}</p>`)
+                                  .join("")}
+                            </div>
+                        </div>
+                    `
+                        : ""
+                    }
+                </div>
+            </div>
+        `;
+
+        // Only pre-fill form if we have valid data and state is not 'new'
+        if (data.state !== "new") {
+          if (data.pnr && data.pnr !== "N/A") {
+            document.getElementById("pnr").value = data.pnr;
+          }
+          if (data.origin && data.origin !== "N/A") {
+            document.getElementById("origin").value = data.origin;
+          }
+          if (data.vendor && data.vendor !== "N/A") {
+            document.getElementById("vendor").value = data.vendor;
+          }
+        }
+      }
+
+      // Helper function to show toast notifications
+      function showToast(message, type = "info") {
+        const toastContainer =
+          document.getElementById("toastContainer") || createToastContainer();
+        const toast = document.createElement("div");
+        toast.className = `toast show bg-${
+          type === "error" ? "danger" : "success"
+        } text-white`;
+        toast.innerHTML = `
+                <div class="toast-body">
+                    ${message}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      function createToastContainer() {
+        const container = document.createElement("div");
+        container.id = "toastContainer";
+        container.className = "toast-container position-fixed top-0 end-0 p-3";
+        document.body.appendChild(container);
+        return container;
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log("Initializing application"); // Debug log
+
+        // Setup socket listeners
+        setupSocketListeners();
+
+        // Load initial state
+        try {
+          const response = await fetch("/air_india/last_state");
+          const data = await response.json();
+
+          if (data.success) {
+            // Update UI with state
+            updateLastRunStatus(data.data);
+            console.log("Initial state loaded:", data.data);
+
+            // Pre-fill form if data exists
+            if (data.data.pnr && data.data.pnr !== "N/A") {
+              document.getElementById("pnr").value = data.data.pnr;
+            }
+            if (data.data.origin && data.data.origin !== "N/A") {
+              document.getElementById("origin").value = data.data.origin;
+            }
+            if (data.data.vendor && data.data.vendor !== "N/A") {
+              document.getElementById("vendor").value = data.data.vendor;
+            }
+
+            // Load scheduler settings if auto_run is enabled
+            if (data.data.auto_run) {
+              loadSchedulerSettings();
+            }
+          }
+        } catch (error) {
+          console.error("Error loading initial state:", error);
+        }
+
+        // Initialize UI components
+        initUI();
+      });
+
+      // Simplified UI initialization
+      function initUI() {
+        // Initialize form validation listeners
+        document.getElementById("pnr").addEventListener("input", function () {
+          this.value = this.value.toUpperCase();
+          validateForm();
+        });
+
+        document
+          .getElementById("origin")
+          .addEventListener("input", function () {
+            this.value = this.value.toUpperCase();
+            validateForm();
+          });
+
+        document
+          .getElementById("vendor")
+          .addEventListener("input", validateForm);
+
+        // Initialize form validation
+        document
+          .getElementById("scraperForm")
+          .addEventListener("input", validateForm);
+      }
+
+      // Simplified socket event listeners
+      function setupSocketListeners() {
+        socket.on("air_scraper_status", function (data) {
+          updateStatus(
+            data.message,
+            data.status === "error" ? "error" : "info"
+          );
+          if (data.stage && data.status) {
+            updateStageStatus(
+              data.stage,
+              data.status,
+              data.message,
+              data.timing
+            );
+          }
+        });
+
+        socket.on("update_last_run_status", function (data) {
+          
+        });
+      }
+
+      // Simplified loadSchedulerSettings function
+      async function loadSchedulerSettings() {
+        try {
+          console.log("Loading scheduler settings...");
+          const response = await fetch("/air_india/settings");
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Received scheduler settings:", data);
+
+          // Handle empty or invalid settings
+          if (!data || !data.settings) {
+            console.log("No settings found, using defaults");
+            // Use default values if no settings exist
+            updateSchedulerUI({
+              auto_run: false,
+              interval: 60,
+              next_run: null,
+            });
+            return;
+          }
+
+          // Update UI with settings data
+          updateSchedulerUI(data.settings);
+
+          // Update next run display if auto run is enabled
+          if (data.settings.auto_run && data.settings.next_run) {
+            updateNextRunDisplay(data.settings.next_run, true);
+          } else {
+            updateNextRunDisplay(null, false);
+          }
+        } catch (error) {
+          console.error("Error loading scheduler settings:", error);
+          // Use default values on error
+          updateSchedulerUI({
+            auto_run: false,
+            interval: 60,
+            next_run: null,
+          });
+          showToast("Using default scheduler settings", "warning");
+        }
+      }
+
+      // UI Update Functions
+      function resetUI() {
+        // Reset progress tracker
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.classList.remove("active", "completed", "error");
+          stage.style.backgroundColor = "#ffffff";
+          stage.querySelector("p").textContent = "not yet started";
+          stage.querySelector("small").textContent = "";
+        });
+
+        // Clear event log
+        document.getElementById("eventLog").innerHTML = "";
+
+        // Reset error display
+        const errorDetails = document.getElementById("errorDetails");
+        if (errorDetails) {
+          errorDetails.style.display = "none";
+        }
+
+        // Reset status display
+        document.getElementById("scrapperStatus").innerHTML =
+          '<p class="text-muted">Waiting to start...</p>';
+
+        // Hide results section
+        document.getElementById("resultsSection").style.display = "none";
+      }
+
+      function showProgressTracker() {
+        document.querySelectorAll(".stage").forEach((stage) => {
+          stage.classList.remove("d-none");
+        });
+
+        // Show initial status
+        updateStatus("Starting scraper...", "info");
+
+        // Update first stage
+        updateStageStatus("initialization", "starting", "Initializing session");
+      }
+
+      function handleScraperCompletion(result) {
+        if (result.success) {
+          // Show success message
+          updateStatus("Scraping completed successfully", "success");
+
+          // Mark all stages as completed
+          document.querySelectorAll(".stage").forEach((stage) => {
+            updateStageStatus(
+              stage.id.replace("-stage", ""),
+              "completed",
+              "Completed"
+            );
+          });
+
+          // Show results if any
+          if (result.data?.files?.length > 0) {
+            showResults(result.data);
+          }
+
+          // Refresh last run status
+          loadInitialState();
+        } else {
+          // Show error message
+          updateStatus(`Scraping failed: ${result.message}`, "error");
+
+          // Update UI to show error state
+          const currentStage = document.querySelector(".stage.active");
+          if (currentStage) {
+            updateStageStatus(
+              currentStage.id.replace("-stage", ""),
+              "error",
+              result.message
+            );
+          }
+
+          // Show error details
+          showError(result.message);
+        }
+      }
+
+      // Add robust results display
+      function showResults(data) {
+        if (!data || !Array.isArray(data.files)) {
+          console.error("Invalid results data received:", data);
+          showToast(
+            "Failed to display results: Invalid data received",
+            "error"
+          );
+          return;
+        }
+
+        const resultsSection = document.getElementById("resultsSection");
+        const filesList = document.getElementById("filesList");
+
+        if (!resultsSection || !filesList) return;
+
+        resultsSection.style.display = "block";
+        filesList.innerHTML =
+          data.files.length === 0
+            ? '<div class="alert alert-info">No files were generated</div>'
+            : `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.files
+                          .map(
+                            (file) => `
+                            <tr>
+                                <td>${safeGet(
+                                  file,
+                                  "name",
+                                  "Unnamed File"
+                                )}</td>
+                                <td>${safeGet(file, "type", "Invoice")}</td>
+                                <td>
+                                    ${
+                                      file.path
+                                        ? `
+                                        <a href="${file.path}" 
+                                           class="btn btn-sm btn-primary" 
+                                           target="_blank">
+                                            Download
+                                        </a>
+                                    `
+                                        : '<span class="text-muted">No file available</span>'
+                                    }
+                                </td>
+                            </tr>
+                        `
+                          )
+                          .join("")}
+                    </tbody>
+                </table>
+                `;
+      }
+
+      function showError(message, details = null) {
+        const errorDetails = document.getElementById("errorDetails");
+        const errorMessage = document.getElementById("errorMessage");
+
+        errorDetails.style.display = "block";
+        errorMessage.innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <h6 class="alert-heading">Error Details</h6>
+                    <p class="mb-0">${message}</p>
+                    ${
+                      details
+                        ? `<hr><small class="text-muted">${details}</small>`
+                        : ""
+                    }
+                </div>
+            `;
+      }
+
+      function updateNextRunDisplay(nextRun, autoRun) {
+        const displays = [
+          document.getElementById("nextRunDisplay"),
+          document.getElementById("nextRunTime"),
+        ];
+
+        const formattedTime = nextRun
+          ? new Date(nextRun).toLocaleString()
+          : "Not scheduled";
+
+        const displayClass = autoRun ? "text-success" : "text-muted";
+
+        displays.forEach((display) => {
+          if (display) {
+            display.textContent = formattedTime;
+            display.className = displayClass;
+          }
+        });
+      }
+
+      // Add event listeners for UI interactions
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+        tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Add input validation listeners
+        document.getElementById("pnr").addEventListener("input", function () {
+          this.value = this.value.toUpperCase();
+          validateForm();
+        });
+
+        document
+          .getElementById("origin")
+          .addEventListener("input", function () {
+            this.value = this.value.toUpperCase();
+            validateForm();
+          });
+
+        // Add form validation
+        document
+          .getElementById("scraperForm")
+          .addEventListener("input", validateForm);
+      });
+
+      function validateForm() {
+        const pnr = document.getElementById("pnr").value;
+        const origin = document.getElementById("origin").value;
+        const vendor = document.getElementById("vendor").value;
+        const submitBtn = document.querySelector(
+          '#scraperForm button[type="submit"]'
+        );
+
+        const pnrValid = /^[A-Z0-9]{6}$/.test(pnr);
+        const originValid = /^[A-Z]{3}$/.test(origin);
+        const vendorValid = vendor.length > 0; // Just check if vendor is not empty
+
+        // Update validation states
+        document.getElementById("pnr").classList.toggle("is-valid", pnrValid);
+        document
+          .getElementById("pnr")
+          .classList.toggle("is-invalid", pnr && !pnrValid);
+
+        document
+          .getElementById("origin")
+          .classList.toggle("is-valid", originValid);
+        document
+          .getElementById("origin")
+          .classList.toggle("is-invalid", origin && !originValid);
+
+        document
+          .getElementById("vendor")
+          .classList.toggle("is-valid", vendorValid);
+        document
+          .getElementById("vendor")
+          .classList.toggle("is-invalid", vendor && !vendorValid);
+
+        // Enable/disable submit button based on all validations
+        submitBtn.disabled = !(pnrValid && originValid && vendorValid);
+
+        return pnrValid && originValid && vendorValid;
+      }
+
+      // Add vendor input event listener
+      document.getElementById("vendor").addEventListener("input", function () {
+        validateForm();
+      });
+
+      // Add this function to handle socket events
+
+      socket.on("air_scraper_status", function (data) {
+        console.log("Received status update:", data);
+        updateStatus(data.message, data.status === "error" ? "error" : "info");
+        if (data.stage && data.status) {
+          updateStageStatus(data.stage, data.status, data.message, data.timing);
+        }
+      });
+
+      socket.on("air_scraper_error", function (data) {
+        console.log("Received error:", data);
+        showError(data.message, data.error);
+      });
+
+      socket.on("update_last_run_status", function (data) {
+        console.log("Received last run update:", data);
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log("Page loaded, initializing application..."); // Debug log
+
+        try {
+          // Setup socket connection first
+
+          console.log("Socket listeners setup complete");
+
+          // Load initial state
+          await loadInitialState();
+
+          // Load scheduler settings
+          await loadSchedulerSettings();
+
+          // Initialize UI components
+          initializeUI();
+        } catch (error) {
+          console.error("Error during initialization:", error);
+          showToast("Failed to initialize application", "error");
+          updateStatus("Failed to initialize application", "error");
+        }
+      });
+
+      // Clean up the loadInitialState function
+      async function loadInitialState() {
+        try {
+          console.log("Fetching initial state...");
+          const response = await fetch("/air_india/last_state");
+          console.log("Initial state response:", response.status);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Initial state data:", data);
+
+          if (data.success) {
+            // Handle empty or new state
+            if (!data.data || Object.keys(data.data).length === 0) {
+              updateLastRunStatus(null);
+              return;
+            }
+            updateLastRunStatus(data.data);
+            // Only prefill if there's actual data
+            if (data.data.state !== "new") {
+              prefillForm(data.data);
+            }
+          } else {
+            throw new Error(data.message || "Failed to load state");
+          }
+        } catch (error) {
+          console.error("Error loading initial state:", error);
+          showToast("Failed to load initial state", "error");
+          // Show empty state on error
+          updateLastRunStatus(null);
+        }
+      }
+
+      // Clean up the loadSchedulerSettings function
+      async function loadSchedulerSettings() {
+        try {
+          console.log("Loading scheduler settings...");
+          const response = await fetch("/air_india/settings");
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Received scheduler settings:", data);
+
+          // Handle empty or invalid settings
+          if (!data || !data.settings) {
+            console.log("No settings found, using defaults");
+            // Use default values if no settings exist
+            updateSchedulerUI({
+              auto_run: false,
+              interval: 60,
+              next_run: null,
+            });
+            return;
+          }
+
+          // Update UI with settings data
+          updateSchedulerUI(data.settings);
+
+          // Update next run display if auto run is enabled
+          if (data.settings.auto_run && data.settings.next_run) {
+            const nextRunDisplayElement =
+              document.getElementById("nextRunDisplay");
+            if (nextRunDisplayElement) {
+              updateNextRunDisplay(data.settings.next_run, true);
+            }
+          }
+        } catch (error) {
+          console.error("Error loading scheduler settings:", error);
+          // Use default values on error
+          const defaultSettings = {
+            auto_run: false,
+            interval: 60,
+            next_run: null,
+          };
+          updateSchedulerUI(defaultSettings);
+          showToast("Using default scheduler settings", "warning");
+        }
+      }
+
+      // Add helper function to prefill form
+      function prefillForm(data) {
+        if (data.pnr && data.pnr !== "N/A") {
+          document.getElementById("pnr").value = data.pnr;
+        }
+        if (data.origin && data.origin !== "N/A") {
+          document.getElementById("origin").value = data.origin;
+        }
+        if (data.vendor && data.vendor !== "N/A") {
+          document.getElementById("vendor").value = data.vendor;
+        }
+        console.log("Form pre-filled with existing data");
+      }
+
+      // Add helper function to initialize UI components
+      function initializeUI() {
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+        tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Add input validation listeners
+        document.getElementById("pnr").addEventListener("input", function () {
+          this.value = this.value.toUpperCase();
+          validateForm();
+        });
+
+        document
+          .getElementById("origin")
+          .addEventListener("input", function () {
+            this.value = this.value.toUpperCase();
+            validateForm();
+          });
+
+        document
+          .getElementById("vendor")
+          .addEventListener("input", validateForm);
+
+        // Add form validation
+        document
+          .getElementById("scraperForm")
+          .addEventListener("input", validateForm);
+      }
+
+      // ...rest of existing code...
+
+      // Add these inside the existing script tag
+      socket.on("air_india_status_update", function (data) {
+        updateLastRunStatus(data.state);
+      });
+
+      socket.on("air_india_progress_update", function (data) {
+        updateProgressDisplay(data.progress);
+      });
+
+      socket.on("air_india_error", function (data) {
+        showError(data.message);
+      });
+
+      // Add function to handle form submission
+      function startScraper(event) {
+        event.preventDefault();
+
+        const pnr = document.getElementById("pnr").value;
+        const origin = document.getElementById("origin").value;
+        const vendor = document.getElementById("vendor").value;
+
+        if (!validateForm()) {
+          showToast("Please fill all required fields correctly", "error");
+          return;
+        }
+
+        fetch("/air_india/start_scraping", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pnr: pnr,
+            origin: origin,
+            vendor: vendor,
+          }),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.success) {
+              showToast("Scraper started successfully", "success");
+              // Request initial status
+              socket.emit("air_india_status_request");
+            } else {
+              showToast(result.message || "Failed to start scraper", "error");
+            }
+          })
+          .catch((error) => {
+            showToast("Error starting scraper: " + error.message, "error");
+          });
+      }
+
+      // Add socket event listener for scraper completion
+      socket.on("air_scraper_completed", function (data) {
+        console.log("Scraper completed:", data);
+        // Refresh both states
+        Promise.all([loadInitialState(), loadSchedulerSettings()]).catch(
+          (error) => {
+            console.error("Error refreshing states:", error);
+          }
+        );
+      });
+
+      // Update loadInitialState to properly handle vendor
+      async function loadInitialState() {
+        try {
+          console.log("Fetching initial state...");
+          const response = await fetch("/air_india/last_state");
+          console.log("Initial state response:", response.status);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Initial state data:", data);
+
+          if (data.success) {
+            // Handle empty or new state
+            if (!data.data || Object.keys(data.data).length === 0) {
+              updateLastRunStatus(null);
+              return;
+            }
+
+            updateLastRunStatus(data.data);
+
+            // Only prefill form if there's actual data and state isn't 'new'
+            if (data.data.state !== "new") {
+              prefillForm(data.data);
+
+              // Ensure vendor is always set if available
+              if (data.data.vendor) {
+                document.getElementById("vendor").value = data.data.vendor;
+              }
+            }
+          } else {
+            throw new Error(data.message || "Failed to load state");
+          }
+        } catch (error) {
+          console.error("Error loading initial state:", error);
+          showToast("Failed to load initial state", "error");
+          updateLastRunStatus(null);
+        }
+      }
+    </script>
+  </body>
+</html>

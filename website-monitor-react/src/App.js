@@ -17,6 +17,8 @@ import IndigoScraper from "./components/IndigoScraper";
 import AkasaScraper from "./components/AkasaScraper";
 import AllianceScraper from "./components/AllianceScraper";
 import StarAirScraper from "./components/StarAirScraper";
+import AirIndiaScraper from "./components/AirIndiaScraper";
+import Portals from "./components/Portals";
 import { API_BASE_URL } from "./config";
 
 // Initialize socket connection with config
@@ -25,7 +27,13 @@ const socket = io(API_BASE_URL);
 function NavContent() {
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   const location = useLocation();
-  const activeSection = location.pathname === "/" ? "urlMonitor" : "scrapers";
+  const activeSection = location.pathname === "/" 
+    ? "urlMonitor" 
+    : location.pathname === "/scrapers" 
+      ? "scrapers" 
+      : location.pathname === "/portals" 
+        ? "portals" 
+        : "";
 
   useEffect(() => {
     // Socket event listeners
@@ -85,6 +93,15 @@ function NavContent() {
             <i className="bi bi-robot"></i>
             <span>Scrapers</span>
           </Link>
+          <Link
+            to="/portals"
+            className={`nav-item ${
+              activeSection === "portals" ? "active" : ""
+            }`}
+          >
+            <i className="bi bi-grid-3x3-gap"></i>
+            <span>Portals</span>
+          </Link>
         </div>
         <div className="nav-footer">
           <div
@@ -121,6 +138,11 @@ function NavContent() {
             path="/scrapers/star-air"
             element={<StarAirScraper socket={socket} />}
           />
+          <Route
+            path="/scrapers/air-india"
+            element={<AirIndiaScraper socket={socket} />}
+          />
+          <Route path="/portals" element={<Portals />} />
         </Routes>
       </main>
     </>
