@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import StatusBadge from './StatusBadge';
-import './IndigoScraper.css';
+import React, { useState, useEffect } from "react";
+import StatusBadge from "./StatusBadge";
+import "./IndigoScraper.css";
 
 const Portals = () => {
   // Demo data for the portals
   const [portalData] = useState([
     {
-      name: 'Portal 1',
-      lastAccessed: '2024-01-20 10:30:00',
-      currentUser: 'John Doe',
-      domain: 'portal1.example.com',
-      status: 'active',
+      name: "Portal 1",
+      lastAccessed: "2024-01-20 10:30:00",
+      currentUser: "John Doe",
+      domain: "portal1.example.com",
+      status: "active",
       autoLogin: true,
-      lastSync: '2024-01-20 10:25:00'
+      lastSync: "2024-01-20 10:25:00",
     },
     {
-      name: 'Portal 2',
-      lastAccessed: '2024-01-20 09:15:00',
-      currentUser: 'Jane Smith',
-      domain: 'portal2.example.com',
-      status: 'inactive',
+      name: "Portal 2",
+      lastAccessed: "2024-01-20 09:15:00",
+      currentUser: "Jane Smith",
+      domain: "portal2.example.com",
+      status: "inactive",
       autoLogin: false,
-      lastSync: '2024-01-20 09:10:00'
+      lastSync: "2024-01-20 09:10:00",
     },
     {
-      name: 'Portal 3',
-      lastAccessed: '2024-01-20 11:45:00',
-      currentUser: 'Mike Johnson',
-      domain: 'portal3.example.com',
-      status: 'maintenance',
+      name: "Portal 3",
+      lastAccessed: "2024-01-20 11:45:00",
+      currentUser: "Mike Johnson",
+      domain: "portal3.example.com",
+      status: "maintenance",
       autoLogin: true,
-      lastSync: '2024-01-20 11:40:00'
-    }
+      lastSync: "2024-01-20 11:40:00",
+    },
   ]);
 
   const renderStatusBadge = (status) => (
@@ -43,8 +43,8 @@ const Portals = () => {
 
   const renderAutoLoginBadge = (isEnabled) => (
     <StatusBadge
-      type={isEnabled ? 'enabled' : 'disabled'}
-      label={isEnabled ? 'Enabled' : 'Disabled'}
+      type={isEnabled ? "enabled" : "disabled"}
+      label={isEnabled ? "Enabled" : "Disabled"}
     />
   );
 
@@ -81,10 +81,7 @@ const Portals = () => {
                   <td>{portal.lastSync}</td>
                   <td>
                     <div className="action-icons">
-                      <button
-                        className="btn btn-icon"
-                        title="Open Portal"
-                      >
+                      <button className="btn btn-icon" title="Open Portal">
                         <i className="bi bi-box-arrow-up-right"></i>
                       </button>
                     </div>

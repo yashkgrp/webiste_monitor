@@ -27,13 +27,14 @@ const socket = io(API_BASE_URL);
 function NavContent() {
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   const location = useLocation();
-  const activeSection = location.pathname === "/" 
-    ? "urlMonitor" 
-    : location.pathname === "/scrapers" 
-      ? "scrapers" 
-      : location.pathname === "/portals" 
-        ? "portals" 
-        : "";
+  const activeSection =
+    location.pathname === "/"
+      ? "urlMonitor"
+      : location.pathname === "/scrapers"
+      ? "scrapers"
+      : location.pathname === "/portals"
+      ? "portals"
+      : "";
 
   useEffect(() => {
     // Socket event listeners
