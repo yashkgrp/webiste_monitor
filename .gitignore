@@ -39,3 +39,19 @@ dist/
 build/
 *.egg-info/
 .vercel
+# Large files and logs
+*.log
+**/*.log
+alliance_scraper.log
+**/alliance_scraper.log
+*.gz
+*.tar
+*.zip
+*.7z
+*.rar
+*.mp4
+*.iso
+*.bin
+
+# Specific large files
+c89e6d97a445e5cf80650d8cc64ca19a31a865c3
