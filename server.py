@@ -100,8 +100,9 @@ EMAIL_CONFIG = {
 scheduler = BackgroundScheduler(
     job_defaults={
         'coalesce': False,  # Allow multiple instances of the same job
-        'max_instances': 3   # Allow multiple instances to run simultaneously
-    }
+        'max_instances': 12   # Allow multiple instances to run simultaneously
+    },
+    timezone=pytz.UTC 
 )
 
 def initialize_scheduler():
@@ -535,7 +536,9 @@ def scraper_page():
 @app.route('/akasa_scraper')
 def akasa_scraper_page():
     return render_template('akasa_scraper.html')
-
+@app.route('/fcm')
+def fcm_page():
+    return render_template('fcm.html')
 @app.route('/airindiaexpress_scraper')
 def airindiaexpress_scraper_page():
     return render_template('air_india_scraper.html')
@@ -996,7 +999,7 @@ def fetch_invoices(gstin, book_code, airline, db_ops, socketio=None):
         # Create temp directory if it doesn't exist
         if not os.path.exists('temp'):
             os.makedirs('temp')
-        
+        emit_status(current_stage, 'success', 'Initialisation completed')
         current_stage = 'login'
         emit_status(current_stage, 'starting', 'Preparing login request')
         
@@ -2030,7 +2033,7 @@ if __name__ == '__main__':
     app = init_portal_routes(app, db, socketio)  # Make sure this returns app
     portal_db = PortalFirestoreDB(db, 'default_portal')
     initialize_portal_scheduler(portal_db, socketio)
-    # app = init_fcm_routes(app, db, socketio)  # Replace old init_portal_routes call
+    app = init_fcm_routes(app, db, socketio)  # Replace old init_portal_routes call
     app = init_alliance_routes(app, db, socketio)  # Add Alliance routes initialization
     app=init_indigo_routes(app,db,socketio)
     # fcm_db = PortalFirestoreDB(db, 'fcm')  # Use fcm as collection name

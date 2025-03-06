@@ -1,0 +1,33 @@
+# Firebase credentials
+firebase-adminsdk.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Virtual Environment
+venv/
+env/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Downloaded files and temp directories
+downloads/
+temp/
+downloaded_tickets/
+screenshots/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.vercel

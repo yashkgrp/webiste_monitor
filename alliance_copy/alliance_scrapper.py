@@ -51,7 +51,6 @@ class AllianceScraper:
         self.scraper_name = 'Alliance Air'
         self.download_folder = os.path.join(os.getcwd(), "downloads")
         self.temp_dir = os.path.join(os.getcwd(), "temp")
-        self.screenshots_folder = os.path.join(os.getcwd(), "screenshots")
         self.current_step = None  # Add current step tracking
         self.driver = None
         self.chrome_version = None
@@ -62,7 +61,7 @@ class AllianceScraper:
         self.debug_logs = []
         
         # Create required directories
-        for dir_path in [self.download_folder, self.temp_dir, self.screenshots_folder]:
+        for dir_path in [self.download_folder, self.temp_dir]:
             os.makedirs(dir_path, exist_ok=True)
 
         # Simplified page tracking - only GST portal page needed
@@ -392,16 +391,6 @@ class AllianceScraper:
             self.emit_stage_progress('request', 'captcha_solving', 'error', error_msg)
             return '000000'
 
-    def take_screenshot(self, name):
-        """Take screenshot with specified name"""
-        try:
-            screenshot_path = os.path.join(self.screenshots_folder, f"{name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
-            self.driver.save_screenshot(screenshot_path)
-            return screenshot_path
-        except Exception as e:
-            logging.error(f"Failed to take screenshot: {e}")
-            return None
-
     def store_dom_snapshot(self, html_content, context=None):
         """Store DOM snapshot with context"""
         if not self.debug_mode:  # Only store if not in debug mode
@@ -451,7 +440,7 @@ class AllianceScraper:
         start_time = time.time()
         self.current_stage = 'request'
         self.current_step = 'page_load'
-        error_screenshot = None
+        filename = None
         
         try:
             # Validate inputs
@@ -511,15 +500,12 @@ class AllianceScraper:
 
             captcha_result = self.get_captcha_base64(base64_image)
             
-            if captcha_result == '000000':
-                error_screenshot = self.take_screenshot(f"captcha_error_{pnr}")
-                
-                # Track error state in DOM
-                
-                raise Exception(f"CAPTCHA unsolvable, screenshot saved: {error_screenshot}")
+            if not isinstance(captcha_result, tuple):  # Check if captcha_result is valid
+                raise Exception("CAPTCHA solving failed - invalid response")
                 
             captcha_id, captcha_text = captcha_result
-            captcha_text = captcha_text.upper()
+            if not captcha_text or captcha_text == '000000':
+                raise Exception("CAPTCHA could not be solved")
 
             elapsed_captcha = round(time.time() - captcha_start, 2)
             self.emit_stage_progress('request', 'captcha_solving', 'completed', 
@@ -555,10 +541,6 @@ class AllianceScraper:
                 if error_element:
                     error_text = error_element[0].text
                     self.mark_captcha(captcha_id, False)
-                    error_screenshot = self.take_screenshot(f"error_message_{pnr}")
-                    
-                    # Track error state
-                    
                     raise Exception(f"Error after submission: {error_text}")
 
                 # Check for invoice download link
@@ -568,37 +550,58 @@ class AllianceScraper:
                 if filename:
                     self.mark_captcha(captcha_id, True)
                     self.emit_stage_progress('request', 'submission', 'completed', 'Form submitted successfully')
-                    return True, filename, error_screenshot
+                    return True, filename
                 else:
                     self.mark_captcha(captcha_id, False)
-                    error_screenshot = self.take_screenshot(f"no_filename_{pnr}")
                     raise Exception("Invoice filename not found")
 
             except TimeoutException:
                 self.mark_captcha(captcha_id, False)
-                error_screenshot = self.take_screenshot(f"no_download_link_{pnr}")
-                
-                # Track timeout state
-                
                 raise Exception("Download link not found after form submission")
 
         except Exception as e:
             elapsed = round(time.time() - start_time, 2)
-            self.emit_stage_progress(self.current_stage, self.current_step or 'unknown', 
-                                     'error', str(e), {'timing': elapsed})
-            error_screenshot = self.take_screenshot(f"error_{pnr}")
-            error_msg = self.handle_error('processing', self.current_step or 'unknown', e, {
-                'filename': filename,
+            error_context = {
+                'pnr': pnr,
+                'stage': self.current_stage,
+                'step': self.current_step,
                 'elapsed': elapsed
-            })
-            raise Exception(f"error in fetching invoice data{error_msg}")
+            }
             
-            # Track final error state
-            
-            
+            # Send error notification
+            if self.db_ops:
+                try:
+                    from notification_handler import NotificationHandler
+                    notification_handler = NotificationHandler(self.db_ops)
+                    notification_data = {
+                        'Ticket/PNR': pnr,
+                        'Traveller Name': date,
+                        'Stage': self.current_stage,
+                        'Step': self.current_step,
+                        
+                    }
+                    notification_handler.send_scraper_notification(
+                        str(e), 
+                        notification_data, 
+                        f"{self.current_stage}/{self.current_step}", 
+                        airline="Alliance Air"
+                    )
+                except Exception as notify_error:
+                    logging.error(f"Failed to send error notification: {notify_error}")
+
+            # Log detailed error
+            logging.error(f"Alliance Scraper Error in {self.current_stage}/{self.current_step}:")
+            logging.error(f"Original error: {str(e)}")
+            logging.error(f"Context: {error_context}")
+            logging.error(traceback.format_exc())  # Log full stack trace
+
+            # Raise with complete context
+            raise Exception(f"Error in {self.current_stage}/{self.current_step}: {str(e)}") from e
 
     def process_invoice(self, pnr, filename):
-        """Enhanced invoice processing with retries and validation"""
+        if not filename:
+            raise Exception("No filename provided to process_invoice")
+            
         start_time = time.time()
         self.current_stage = 'processing'
         self.current_step = 'download'
@@ -682,11 +685,42 @@ class AllianceScraper:
 
         except Exception as e:
             elapsed = round(time.time() - start_time, 2)
-            error_msg = self.handle_error(self.current_stage or 'unknown', self.current_step or 'unknown', e, {
-                'filename':None,
+            error_context = {
+                'pnr': pnr,
+                'filename': filename,
+                'stage': self.current_stage,
+                'step': self.current_step,
                 'elapsed': elapsed
-            })
-            raise Exception(error_msg)
+            }
+
+            # Send error notification
+            if self.db_ops:
+                try:
+                    from notification_handler import NotificationHandler
+                    notification_handler = NotificationHandler(self.db_ops)
+                    notification_data = {
+                        'Ticket/PNR': pnr,
+                        'Filename': filename,
+                        'Stage': self.current_stage,
+                        'Step': self.current_step
+                    }
+                    notification_handler.send_scraper_notification(
+                        str(e), 
+                        notification_data, 
+                        f"{self.current_stage}/{self.current_step}", 
+                        airline="Alliance Air"
+                    )
+                except Exception as notify_error:
+                    logging.error(f"Failed to send error notification: {notify_error}")
+
+            # Log detailed error
+            logging.error(f"Alliance Scraper Error in {self.current_stage}/{self.current_step}:")
+            logging.error(f"Original error: {str(e)}")
+            logging.error(f"Context: {error_context}")
+            logging.error(traceback.format_exc())  # Log full stack trace
+
+            # Raise with complete context
+            raise Exception(f"Error processing invoice: {str(e)}") from e
 
     def cleanup(self):
         """Enhanced cleanup with state management"""
@@ -710,7 +744,7 @@ class AllianceScraper:
 
             # Clean up temporary files if not in debug mode
             if not self.debug_mode:
-                for folder in [self.temp_dir, self.screenshots_folder]:
+                for folder in [self.temp_dir]:
                     if os.path.exists(folder):
                         try:
                             shutil.rmtree(folder)
@@ -729,7 +763,7 @@ class AllianceScraper:
             logging.error(f"Error during cleanup: {e}")
 
     def handle_error(self, stage, step, error, context=None):
-        """Comprehensive error handler specific to Alliance Air scraper"""
+        print('Comprehensive error handler specific to Alliance Air scraper')
         try:
             # Format base error message
             error_msg = str(error)
@@ -754,25 +788,10 @@ class AllianceScraper:
             if error_details:
                 error_msg += f" ({' | '.join(error_details)})"
 
-            # Take error screenshot
-            screenshot_path = None
-            if hasattr(self, 'driver'):
-                try:
-                    screenshot_name = f"error_{stage}_{step}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                    screenshot_path = os.path.join(self.screenshots_folder, f"{screenshot_name}.png")
-                    self.driver.save_screenshot(screenshot_path)
-                    logging.info(f"Error screenshot saved: {screenshot_path}")
-                except Exception as e:
-                    logging.error(f"Failed to take error screenshot: {e}")
-
             # Add debug logging
             logging.error(f"Alliance Scraper Error: {error_msg}")
             if context:
                 logging.error(f"Error Context: {json.dumps(context, indent=2)}")
-
-            # Add screenshot path to error context
-            if screenshot_path:
-                context['screenshot_path'] = screenshot_path
 
             # Emit error status
             self.emit_status(stage, 'error', error_msg)
@@ -797,7 +816,6 @@ class AllianceScraper:
                     'step': step,
                     'pnr': getattr(self, 'current_pnr', None),
                     'vendor': 'ALLIANCE AIR',
-                    'screenshot': screenshot_path,
                     'context': context
                 }
                 self.db_ops.log_error(
@@ -858,7 +876,7 @@ def run_scraper(data, db_ops=None, socketio=None):
         
         for attempt in range(max_attempts):
             try:
-                status, filename, screenshot_path = scraper.fetch_invoice_data(pnr, date)
+                status, filename = scraper.fetch_invoice_data(pnr, date)
                 if status:
                     break
                 if attempt < max_attempts - 1:
@@ -894,7 +912,6 @@ def run_scraper(data, db_ops=None, socketio=None):
             "data": {
                 'files': processed_files,
                 'airline': 'alliance',
-                'screenshot_path': screenshot_path,
                 'processing_time': round(time.time() - start_time, 2),
                 'timing_data': scraper.timing_data
             }
@@ -970,3 +987,4 @@ if __name__ == '__main__':
         traceback.print_exc()
     
     print("\n" + "="*50)
+

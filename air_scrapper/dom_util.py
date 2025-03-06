@@ -216,15 +216,15 @@ class AirIndiaDOMTracker:
             new_clean = BeautifulSoup(self.clean_html(new_content), 'html.parser')
 
             # Add test div to old content before comparison
-            body_tag = old_clean.find('body')
-            if (body_tag):
-                test_div = old_clean.new_tag('div')
-                # Use a regular, non-tracking like ID/class
-                test_div['id'] = 'content-test-div'  
-                test_div['class'] = 'content-monitor'
-                test_div.string = "Content monitoring test element"
-                body_tag.append(test_div)
-                logging.info(f"Added test div: {str(test_div)}")
+            # body_tag = old_clean.find('body')
+            # if (body_tag):
+            #     test_div = old_clean.new_tag('div')
+            #     # Use a regular, non-tracking like ID/class
+            #     test_div['id'] = 'content-test-div'  
+            #     test_div['class'] = 'content-monitor'
+            #     test_div.string = "Content monitoring test element"
+            #     body_tag.append(test_div)
+            #     logging.info(f"Added test div: {str(test_div)}")
 
             changes = []
 

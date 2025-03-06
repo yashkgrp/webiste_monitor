@@ -345,9 +345,9 @@ class IndigoFirestoreDB:
             if data:
                 progress_data['data'] = self.format_for_json(data)
                 
-            self.scraper_state_ref.document(pnr).set({
-                'current_progress': progress_data
-            }, merge=True)
+            # self.scraper_state_ref.document(pnr).set({
+            #     'current_progress': progress_data
+            # }, merge=True)
             
             self.scraper_history_ref.add(progress_data)
             return True

@@ -87,7 +87,7 @@
         font-size: 0.9em;
         word-break: break-all;
       }
-      
+
       .element-path code {
         border: 1px solid #dee2e6;
         border-radius: 4px;
@@ -167,7 +167,7 @@
             </div>
           </div>
         </div>
-              </div>
+      </div>
 
       <h1 class="mb-4">Air India Express Scraper</h1>
 
@@ -415,6 +415,7 @@
           console.error("Received empty status data");
           return;
         }
+        console.log("socket-air_scraper_status", data);
 
         const stage = safeGet(data, "stage", "unknown");
         const status = safeGet(data, "status", "error");
@@ -454,7 +455,7 @@
       });
 
       socket.on("air_scraper_event", function (data) {
-        console.log("Air India event:", data);
+        console.log("socket-air_scraper_event", data);
 
         // Add event to log with appropriate styling
         const eventLogDiv = document.getElementById("eventLog");
@@ -474,11 +475,11 @@
 
         const timestamp = new Date().toLocaleTimeString();
         eventItem.innerHTML = `
-            <small class="text-muted">${timestamp}</small>
-            <span class="ms-2 ${getEventTextClass(data.type)}">${
+              <small class="text-muted">${timestamp}</small>
+              <span class="ms-2 ${getEventTextClass(data.type)}">${
           data.message
         }</span>
-        `;
+          `;
 
         eventLogDiv.appendChild(eventItem);
         eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
@@ -501,20 +502,20 @@
       // Add styles for new event types
       const styleSheet = document.createElement("style");
       styleSheet.textContent = `
-          .event-item.success {
-              border-left-color: #28a745;
-          }
-          .event-item.status {
-              border-left-color: #007bff;
-          }
-          .event-item.info {
-              border-left-color: #17a2b8;
-          }
-      `;
+            .event-item.success {
+                border-left-color: #28a745;
+            }
+            .event-item.status {
+                border-left-color: #007bff;
+            }
+            .event-item.info {
+                border-left-color: #17a2b8;
+            }
+        `;
       document.head.appendChild(styleSheet);
 
       socket.on("air_scraper_stage", function (data) {
-        console.log("Air India stage change:", data);
+        console.log("socket-air_scraper_stage", data);
 
         // Update stage visualization
         const stages = document.querySelectorAll(".stage");
@@ -531,7 +532,7 @@
       });
 
       socket.on("air_scraper_progress", function (data) {
-        console.log("Air India progress:", data);
+        console.log("socket-air_scraper_progress", data);
 
         // Update progress indicators
         const stageElement = document.getElementById(`${data.stage}-stage`);
@@ -564,18 +565,18 @@
 
         errorDetails.style.display = "block";
         errorMessage.innerHTML = `
-                <div class="alert alert-danger mb-0">
-                    <h6 class="alert-heading">Error in ${data.stage}</h6>
-                    <p class="mb-0">${data.message}</p>
-                    ${
-                      data.details
-                        ? `<hr><small class="mb-0">${JSON.stringify(
-                            data.details
-                          )}</small>`
-                        : ""
-                    }
-                </div>
-            `;
+                  <div class="alert alert-danger mb-0">
+                      <h6 class="alert-heading">Error in ${data.stage}</h6>
+                      <p class="mb-0">${data.message}</p>
+                      ${
+                        data.details
+                          ? `<hr><small class="mb-0">${JSON.stringify(
+                              data.details
+                            )}</small>`
+                          : ""
+                      }
+                  </div>
+              `;
 
         // Update stage status to error
         updateStageStatus(data.stage, "error", data.message);
@@ -583,7 +584,7 @@
 
       // Handle settings updates
       socket.on("air_india_settings_updated", function (data) {
-        console.log("Settings updated:", data);
+        console.log("socket-air_india_settings_updated", data);
         updateSchedulerUI(data);
         loadInitialState();
 
@@ -619,11 +620,11 @@
           type === "error" ? "danger" : type === "success" ? "success" : "info";
 
         statusDiv.innerHTML = `
-                <div class="alert alert-${alertClass}">
-                    ${message}
-                    <small class="d-block text-muted">${new Date().toLocaleString()}</small>
-                </div>
-            `;
+                  <div class="alert alert-${alertClass}">
+                      ${message}
+                      <small class="d-block text-muted">${new Date().toLocaleString()}</small>
+                  </div>
+              `;
       }
 
       function addEventLog(data) {
@@ -637,9 +638,9 @@
         const timingStr = data.elapsed ? ` (${data.elapsed}s)` : "";
 
         eventItem.innerHTML = `
-                <small class="text-muted">${timestamp}</small>
-                <span class="ms-2">${data.message}${timingStr}</span>
-            `;
+                  <small class="text-muted">${timestamp}</small>
+                  <span class="ms-2">${data.message}${timingStr}</span>
+              `;
 
         eventLogDiv.appendChild(eventItem);
         eventLogDiv.scrollTop = eventLogDiv.scrollHeight;
@@ -816,20 +817,20 @@
         // Handle empty or null data
         if (!data || Object.keys(data).length === 0) {
           statusDiv.innerHTML = `
-                <div class="alert alert-info">
-                    <div class="last-run-container">
-                        <div class="last-run-info">
-                            <p><strong>Last Run:</strong> Never</p>
-                            <p><strong>Status:</strong> No runs yet</p>
-                            <p><strong>PNR:</strong> N/A</p>
-                            <p><strong>Origin:</strong> N/A</p>
-                            <p><strong>Vendor:</strong> N/A</p>
-                            <p><strong>Auto Run:</strong> Disabled</p>
-                            <p><strong>Next Run:</strong> <span class="text-muted">Not scheduled</span></p>
-                        </div>
-                    </div>
-                </div>
-            `;
+                  <div class="alert alert-info">
+                      <div class="last-run-container">
+                          <div class="last-run-info">
+                              <p><strong>Last Run:</strong> Never</p>
+                              <p><strong>Status:</strong> No runs yet</p>
+                              <p><strong>PNR:</strong> N/A</p>
+                              <p><strong>Origin:</strong> N/A</p>
+                              <p><strong>Vendor:</strong> N/A</p>
+                              <p><strong>Auto Run:</strong> Disabled</p>
+                              <p><strong>Next Run:</strong> <span class="text-muted">Not scheduled</span></p>
+                          </div>
+                      </div>
+                  </div>
+              `;
           return;
         }
 
@@ -847,47 +848,53 @@
           : "Not scheduled";
 
         statusDiv.innerHTML = `
-            <div class="alert alert-${statusClass}">
-                <div class="last-run-container">
-                    <div class="last-run-info">
-                        <p><strong>Last Run:</strong> ${
-                          data.last_run
-                            ? new Date(data.last_run).toLocaleString()
-                            : "Never"
-                        }</p>
-                        <p><strong>Status:</strong> ${
-                          data.state === "new"
-                            ? "No previous runs"
-                            : data.state || "N/A"
-                        }</p>
-                        <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
-                        <p><strong>Origin:</strong> ${data.origin || "N/A"}</p>
-                        <p><strong>Vendor:</strong> ${data.vendor || "N/A"}</p>
-                        <p><strong>Auto Run:</strong> ${
-                          data.auto_run ? "Enabled" : "Disabled"
-                        }</p>
-                        <p><strong>Next Run:</strong> <span class="next-run ${
-                          data.auto_run ? "text-success" : "text-muted"
-                        }">${nextRunTime}</span></p>
-                    </div>
-                    ${
-                      data.state === "failed" && data.message
-                        ? `
-                        <div class="error-details">
-                            <h6 class="text-danger mb-2">Error Details</h6>
-                            <div class="error-message">
-                                ${data.message
-                                  .split("\n")
-                                  .map((line) => `<p class="mb-1">${line}</p>`)
-                                  .join("")}
-                            </div>
-                        </div>
-                    `
-                        : ""
-                    }
-                </div>
-            </div>
-        `;
+              <div class="alert alert-${statusClass}">
+                  <div class="last-run-container">
+                      <div class="last-run-info">
+                          <p><strong>Last Run:</strong> ${
+                            data.last_run
+                              ? new Date(data.last_run).toLocaleString()
+                              : "Never"
+                          }</p>
+                          <p><strong>Status:</strong> ${
+                            data.state === "new"
+                              ? "No previous runs"
+                              : data.state || "N/A"
+                          }</p>
+                          <p><strong>PNR:</strong> ${data.pnr || "N/A"}</p>
+                          <p><strong>Origin:</strong> ${
+                            data.origin || "N/A"
+                          }</p>
+                          <p><strong>Vendor:</strong> ${
+                            data.vendor || "N/A"
+                          }</p>
+                          <p><strong>Auto Run:</strong> ${
+                            data.auto_run ? "Enabled" : "Disabled"
+                          }</p>
+                          <p><strong>Next Run:</strong> <span class="next-run ${
+                            data.auto_run ? "text-success" : "text-muted"
+                          }">${nextRunTime}</span></p>
+                      </div>
+                      ${
+                        data.state === "failed" && data.message
+                          ? `
+                          <div class="error-details">
+                              <h6 class="text-danger mb-2">Error Details</h6>
+                              <div class="error-message">
+                                  ${data.message
+                                    .split("\n")
+                                    .map(
+                                      (line) => `<p class="mb-1">${line}</p>`
+                                    )
+                                    .join("")}
+                              </div>
+                          </div>
+                      `
+                          : ""
+                      }
+                  </div>
+              </div>
+          `;
 
         // Only pre-fill form if we have valid data and state is not 'new'
         if (data.state !== "new") {
@@ -912,11 +919,11 @@
           type === "error" ? "danger" : "success"
         } text-white`;
         toast.innerHTML = `
-                <div class="toast-body">
-                    ${message}
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-                </div>
-            `;
+                  <div class="toast-body">
+                      ${message}
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                  </div>
+              `;
         toastContainer.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
       }
@@ -1138,16 +1145,16 @@
 
         errorDetails.style.display = "block";
         errorMessage.innerHTML = `
-                <div class="alert alert-danger mb-0">
-                    <h6 class="alert-heading">Error Details</h6>
-                    <p class="mb-0">${message}</p>
-                    ${
-                      details
-                        ? `<hr><small class="text-muted">${details}</small>`
-                        : ""
-                    }
-                </div>
-            `;
+                  <div class="alert alert-danger mb-0">
+                      <h6 class="alert-heading">Error Details</h6>
+                      <p class="mb-0">${message}</p>
+                      ${
+                        details
+                          ? `<hr><small class="text-muted">${details}</small>`
+                          : ""
+                      }
+                  </div>
+              `;
       }
 
       function updateNextRunDisplay(nextRun, autoRun) {
@@ -1258,6 +1265,7 @@
       });
 
       socket.on("update_last_run_status", function (data) {
+        "socket-update_last_run_status", data;
         console.log("Received last run update:", data);
       });
 
@@ -1421,14 +1429,17 @@
 
       // Add these inside the existing script tag
       socket.on("air_india_status_update", function (data) {
+        "socket-air_india_status_update", data;
         updateLastRunStatus(data.state);
       });
 
       socket.on("air_india_progress_update", function (data) {
+        console.log("socket-air_india_progress_update", data);
         updateProgressDisplay(data.progress);
       });
 
       socket.on("air_india_error", function (data) {
+        console.log("socket-air_india_error", data);
         showError(data.message);
       });
 
@@ -1563,40 +1574,48 @@
             tbody.innerHTML = data.changes
               .map(
                 (change) => `
-                    <tr>
-                        <td>${new Date(change.timestamp).toLocaleString()}</td>
-                        <td>
-                            <span class="badge bg-info">
-                                ${change.page_type || change.page_id || "N/A"}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge ${getChangeTypeBadgeClass(
-                              change.type
-                            )}">
-                                ${change.type || "structural"}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge bg-${
-                              change.changes?.length > 0 ? "danger" : "success"
-                            }">
-                                ${change.changes?.length || 0}
-                            </span>
-                        </td>
-                        <td>${change.pnr || "N/A"}</td>
-                        <td>${change.origin || "N/A"}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info" 
-                                    onclick="viewChanges('${change.timestamp}')"
-                                    ${
-                                      !change.changes?.length ? "disabled" : ""
-                                    }>
-                                View Details
-                            </button>
-                        </td>
-                    </tr>
-                `
+                      <tr>
+                          <td>${new Date(
+                            change.timestamp
+                          ).toLocaleString()}</td>
+                          <td>
+                              <span class="badge bg-info">
+                                  ${change.page_type || change.page_id || "N/A"}
+                              </span>
+                          </td>
+                          <td>
+                              <span class="badge ${getChangeTypeBadgeClass(
+                                change.type
+                              )}">
+                                  ${change.type || "structural"}
+                              </span>
+                          </td>
+                          <td>
+                              <span class="badge bg-${
+                                change.changes?.length > 0
+                                  ? "danger"
+                                  : "success"
+                              }">
+                                  ${change.changes?.length || 0}
+                              </span>
+                          </td>
+                          <td>${change.pnr || "N/A"}</td>
+                          <td>${change.origin || "N/A"}</td>
+                          <td>
+                              <button class="btn btn-sm btn-info"
+                                      onclick="viewChanges('${
+                                        change.timestamp
+                                      }')"
+                                      ${
+                                        !change.changes?.length
+                                          ? "disabled"
+                                          : ""
+                                      }>
+                                  View Details
+                              </button>
+                          </td>
+                      </tr>
+                  `
               )
               .join("");
 
@@ -1618,52 +1637,68 @@
           return;
         }
 
-        const changesHtml = change.changes.map(c => `
-        <div class="card mb-2">
-            <div class="card-header ${getChangeHeaderClass(c.type)}">
-                <strong>${c.type.toUpperCase()}</strong>
-            </div>
-            <div class="card-body">
-                ${c.path ? `
-                    <div class="element-path mb-2">
-                        <strong>Path:</strong> 
-                        <code class="d-block mt-1 p-2 bg-light text-dark">
-                            ${c.path}
-                        </code>
-                        <strong>Element:</strong>
-                        <pre class="bg-light p-2 rounded mt-1"><code>${escapeHtml(c.element)}</code></pre>
-                    </div>
-                ` : ''}
-                <p>${c.description}</p>
-                ${c.diff ? `
-                    <div class="mt-2">
-                        <strong>Changes:</strong>
-                        <pre class="bg-light p-2 rounded"><code>${escapeHtml(c.diff)}</code></pre>
-                    </div>
-                ` : ''}
-            </div>
-        </div>
-    `).join('');
-    
+        const changesHtml = change.changes
+          .map(
+            (c) => `
+          <div class="card mb-2">
+              <div class="card-header ${getChangeHeaderClass(c.type)}">
+                  <strong>${c.type.toUpperCase()}</strong>
+              </div>
+              <div class="card-body">
+                  ${
+                    c.path
+                      ? `
+                      <div class="element-path mb-2">
+                          <strong>Path:</strong>
+                          <code class="d-block mt-1 p-2 bg-light text-dark">
+                              ${c.path}
+                          </code>
+                          <strong>Element:</strong>
+                          <pre class="bg-light p-2 rounded mt-1"><code>${escapeHtml(
+                            c.element
+                          )}</code></pre>
+                      </div>
+                  `
+                      : ""
+                  }
+                  <p>${c.description}</p>
+                  ${
+                    c.diff
+                      ? `
+                      <div class="mt-2">
+                          <strong>Changes:</strong>
+                          <pre class="bg-light p-2 rounded"><code>${escapeHtml(
+                            c.diff
+                          )}</code></pre>
+                      </div>
+                  `
+                      : ""
+                  }
+              </div>
+          </div>
+      `
+          )
+          .join("");
+
         document.getElementById("changesDetails").innerHTML = `
-        <div class="mb-3">
-            <strong>Timestamp:</strong> ${new Date(
-              change.timestamp
-            ).toLocaleString()}<br>
-            <strong>Page:</strong> ${
-              change.metadata?.page_id || change.page_id || "Unknown"
-            }<br>
-            <strong>PNR:</strong> ${
-              change.metadata?.pnr || change.pnr || "N/A"
-            }<br>
-            <strong>Origin:</strong> ${
-              change.metadata?.origin || change.origin || "N/A"
-            }
-        </div>
-        <div class="changes-list">
-            ${changesHtml}
-        </div>
-    `;
+          <div class="mb-3">
+              <strong>Timestamp:</strong> ${new Date(
+                change.timestamp
+              ).toLocaleString()}<br>
+              <strong>Page:</strong> ${
+                change.metadata?.page_id || change.page_id || "Unknown"
+              }<br>
+              <strong>PNR:</strong> ${
+                change.metadata?.pnr || change.pnr || "N/A"
+              }<br>
+              <strong>Origin:</strong> ${
+                change.metadata?.origin || change.origin || "N/A"
+              }
+          </div>
+          <div class="changes-list">
+              ${changesHtml}
+          </div>
+      `;
 
         const modal = new bootstrap.Modal(
           document.getElementById("changesModal")
@@ -1732,16 +1767,15 @@
 
           // Load DOM changes table
           console.log("Loading DOM changes...");
-          await loadDOMChangesTable();  // Changed from updateDOMChangesTable
+          await loadDOMChangesTable(); // Changed from updateDOMChangesTable
 
           // Setup auto-refresh for DOM changes
-          setInterval(loadDOMChangesTable, 30000);  // Changed from updateDOMChangesTable
+          setInterval(loadDOMChangesTable, 30000); // Changed from updateDOMChangesTable
 
           // Setup socket connections after data is loaded
           setupSocketListeners();
 
           console.log("Initialization complete");
-
         } catch (error) {
           console.error("Error during initialization:", error);
           showToast("Failed to initialize application", "error");
@@ -1863,36 +1897,38 @@
           tbody.innerHTML = data.changes
             .map(
               (change) => `
-            <tr>
-                <td>${new Date(change.timestamp).toLocaleString()}</td>
-                <td>
-                    <span class="badge bg-info">
-                        ${change.page_type || change.page_id || "N/A"}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge ${getChangeTypeBadgeClass(change.type)}">
-                        ${change.type || "structural"}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge bg-${
-                      change.changes?.length > 0 ? "danger" : "success"
-                    }">
-                        ${change.changes?.length || 0}
-                    </span>
-                </td>
-                <td>${change.pnr || "N/A"}</td>
-                <td>${change.origin || "N/A"}</td>
-                <td>
-                    <button class="btn btn-sm btn-info" 
-                            onclick="viewChanges('${change.timestamp}')"
-                            ${!change.changes?.length ? "disabled" : ""}>
-                        View Details
-                    </button>
-                </td>
-            </tr>
-        `
+              <tr>
+                  <td>${new Date(change.timestamp).toLocaleString()}</td>
+                  <td>
+                      <span class="badge bg-info">
+                          ${change.page_type || change.page_id || "N/A"}
+                      </span>
+                  </td>
+                  <td>
+                      <span class="badge ${getChangeTypeBadgeClass(
+                        change.type
+                      )}">
+                          ${change.type || "structural"}
+                      </span>
+                  </td>
+                  <td>
+                      <span class="badge bg-${
+                        change.changes?.length > 0 ? "danger" : "success"
+                      }">
+                          ${change.changes?.length || 0}
+                      </span>
+                  </td>
+                  <td>${change.pnr || "N/A"}</td>
+                  <td>${change.origin || "N/A"}</td>
+                  <td>
+                      <button class="btn btn-sm btn-info"
+                              onclick="viewChanges('${change.timestamp}')"
+                              ${!change.changes?.length ? "disabled" : ""}>
+                          View Details
+                      </button>
+                  </td>
+              </tr>
+          `
             )
             .join("");
         } catch (error) {
@@ -1912,15 +1948,15 @@
 
         // Show loading state
         tableBody.innerHTML = `
-        <tr>
-            <td colspan="7" class="text-center">
-                <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                Loading changes...
-            </td>
-        </tr>
-    `;
+          <tr>
+              <td colspan="7" class="text-center">
+                  <div class="spinner-border spinner-border-sm" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                  </div>
+                  Loading changes...
+              </td>
+          </tr>
+      `;
 
         fetch("/air_india/dom_changes")
           .then((response) => response.json())
@@ -1956,44 +1992,48 @@
                 const changeCount = hasChanges ? change.changes.length : 0;
 
                 return `
-                    <tr>
-                        <td>${new Date(change.timestamp).toLocaleString()}</td>
-                        <td>
-                            <span class="badge bg-info">
-                                ${
-                                  metadata.page_id ||
-                                  change.page_id ||
-                                  "Unknown"
-                                }
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge ${
-                              hasChanges ? "bg-warning" : "bg-success"
-                            }">
-                                ${
-                                  hasChanges ? "Changes Detected" : "No Changes"
-                                }
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge bg-${
-                              changeCount > 0 ? "danger" : "success"
-                            }">
-                                ${changeCount}
-                            </span>
-                        </td>
-                        <td>${metadata.pnr || change.pnr || "N/A"}</td>
-                        <td>${metadata.origin || change.origin || "N/A"}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info" 
-                                    onclick="viewChanges(${index})"
-                                    ${!hasChanges ? "disabled" : ""}>
-                                View Details
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                      <tr>
+                          <td>${new Date(
+                            change.timestamp
+                          ).toLocaleString()}</td>
+                          <td>
+                              <span class="badge bg-info">
+                                  ${
+                                    metadata.page_id ||
+                                    change.page_id ||
+                                    "Unknown"
+                                  }
+                              </span>
+                          </td>
+                          <td>
+                              <span class="badge ${
+                                hasChanges ? "bg-warning" : "bg-success"
+                              }">
+                                  ${
+                                    hasChanges
+                                      ? "Changes Detected"
+                                      : "No Changes"
+                                  }
+                              </span>
+                          </td>
+                          <td>
+                              <span class="badge bg-${
+                                changeCount > 0 ? "danger" : "success"
+                              }">
+                                  ${changeCount}
+                              </span>
+                          </td>
+                          <td>${metadata.pnr || change.pnr || "N/A"}</td>
+                          <td>${metadata.origin || change.origin || "N/A"}</td>
+                          <td>
+                              <button class="btn btn-sm btn-info"
+                                      onclick="viewChanges(${index})"
+                                      ${!hasChanges ? "disabled" : ""}>
+                                  View Details
+                              </button>
+                          </td>
+                      </tr>
+                  `;
               })
               .join("");
 
@@ -2009,12 +2049,12 @@
             console.error("Error loading DOM changes:", error);
             noChangesMsg.classList.add("d-none");
             tableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center text-danger">
-                        Error loading changes: ${error.message}
-                    </td>
-                </tr>
-            `;
+                  <tr>
+                      <td colspan="7" class="text-center text-danger">
+                          Error loading changes: ${error.message}
+                      </td>
+                  </tr>
+              `;
           });
       }
 
@@ -2029,53 +2069,65 @@
         const changesHtml = change.changes
           .map(
             (c) => `
-        <div class="card mb-2">
-            <div class="card-header ${getChangeHeaderClass(c.type)}">
-                <strong>${c.type.toUpperCase()}</strong>
-            </div>
-            <div class="card-body">
-                ${c.path ? `
-                    <div class="element-path mb-2">
-                        <strong>Path:</strong> 
-                        <code class="d-block mt-1 p-2 bg-light text-dark">
-                            ${c.path}
-                        </code>
-                        <strong>Element:</strong>
-                        <pre class="bg-light p-2 rounded mt-1"><code>${escapeHtml(c.element)}</code></pre>
-                    </div>
-                ` : ''}
-                <p>${c.description}</p>
-                ${c.diff ? `
-                    <div class="mt-2">
-                        <strong>Changes:</strong>
-                        <pre class="bg-light p-2 rounded"><code>${escapeHtml(c.diff)}</code></pre>
-                    </div>
-                ` : ''}
-            </div>
-        </div>
-    `
+          <div class="card mb-2">
+              <div class="card-header ${getChangeHeaderClass(c.type)}">
+                  <strong>${c.type.toUpperCase()}</strong>
+              </div>
+              <div class="card-body">
+                  ${
+                    c.path
+                      ? `
+                      <div class="element-path mb-2">
+                          <strong>Path:</strong>
+                          <code class="d-block mt-1 p-2 bg-light text-dark">
+                              ${c.path}
+                          </code>
+                          <strong>Element:</strong>
+                          <pre class="bg-light p-2 rounded mt-1"><code>${escapeHtml(
+                            c.element
+                          )}</code></pre>
+                      </div>
+                  `
+                      : ""
+                  }
+                  <p>${c.description}</p>
+                  ${
+                    c.diff
+                      ? `
+                      <div class="mt-2">
+                          <strong>Changes:</strong>
+                          <pre class="bg-light p-2 rounded"><code>${escapeHtml(
+                            c.diff
+                          )}</code></pre>
+                      </div>
+                  `
+                      : ""
+                  }
+              </div>
+          </div>
+      `
           )
           .join("");
 
         document.getElementById("changesDetails").innerHTML = `
-        <div class="mb-3">
-            <strong>Timestamp:</strong> ${new Date(
-              change.timestamp
-            ).toLocaleString()}<br>
-            <strong>Page:</strong> ${
-              change.metadata?.page_id || change.page_id || "Unknown"
-            }<br>
-            <strong>PNR:</strong> ${
-              change.metadata?.pnr || change.pnr || "N/A"
-            }<br>
-            <strong>Origin:</strong> ${
-              change.metadata?.origin || change.origin || "N/A"
-            }
-        </div>
-        <div class="changes-list">
-            ${changesHtml}
-        </div>
-    `;
+          <div class="mb-3">
+              <strong>Timestamp:</strong> ${new Date(
+                change.timestamp
+              ).toLocaleString()}<br>
+              <strong>Page:</strong> ${
+                change.metadata?.page_id || change.page_id || "Unknown"
+              }<br>
+              <strong>PNR:</strong> ${
+                change.metadata?.pnr || change.pnr || "N/A"
+              }<br>
+              <strong>Origin:</strong> ${
+                change.metadata?.origin || change.origin || "N/A"
+              }
+          </div>
+          <div class="changes-list">
+              ${changesHtml}
+          </div>
+      `;
 
         const modal = new bootstrap.Modal(
           document.getElementById("changesModal")
@@ -2130,37 +2182,37 @@
             }
 
             return `
-            <div class="card mb-2 ${changeClass}">
-                <div class="card-body">
-                    <h6 class="card-title">
-                        <i class="bi bi-${icon}"></i> 
-                        ${change.type.replace("_", " ").toUpperCase()}
-                    </h6>
-                    <p class="card-text">${change.description}</p>
-                    ${
-                      change.element
-                        ? `
-                        <pre class="bg-light text-dark p-2 rounded"><code>${escapeHtml(
-                          change.element
-                        )}</code></pre>
-                    `
-                        : ""
-                    }
-                    ${
-                      change.diff
-                        ? `
-                        <div class="mt-2">
-                            <strong>Changes:</strong>
-                            <pre class="bg-light text-dark p-2 rounded"><code>${escapeHtml(
-                              change.diff
-                            )}</code></pre>
-                        </div>
-                    `
-                        : ""
-                    }
-                </div>
-            </div>
-        `;
+              <div class="card mb-2 ${changeClass}">
+                  <div class="card-body">
+                      <h6 class="card-title">
+                          <i class="bi bi-${icon}"></i>
+                          ${change.type.replace("_", " ").toUpperCase()}
+                      </h6>
+                      <p class="card-text">${change.description}</p>
+                      ${
+                        change.element
+                          ? `
+                          <pre class="bg-light text-dark p-2 rounded"><code>${escapeHtml(
+                            change.element
+                          )}</code></pre>
+                      `
+                          : ""
+                      }
+                      ${
+                        change.diff
+                          ? `
+                          <div class="mt-2">
+                              <strong>Changes:</strong>
+                              <pre class="bg-light text-dark p-2 rounded"><code>${escapeHtml(
+                                change.diff
+                              )}</code></pre>
+                          </div>
+                      `
+                          : ""
+                      }
+                  </div>
+              </div>
+          `;
           })
           .join("");
       }
@@ -2170,20 +2222,20 @@
         const statusDiv = document.createElement("div");
         statusDiv.className = "alert alert-info mt-3";
         statusDiv.innerHTML = `
-        <h6 class="alert-heading">Current Status</h6>
-        <p class="mb-0">
-            <strong>Last Check:</strong> ${new Date(
-              status.timestamp
-            ).toLocaleString()}<br>
-            <strong>Changes Detected:</strong> ${status.changes_count}<br>
-            <strong>Status:</strong> 
-            <span class="badge ${
-              status.has_changes ? "bg-warning" : "bg-success"
-            }">
-                ${status.has_changes ? "Changes Detected" : "No Changes"}
-            </span>
-        </p>
-    `;
+          <h6 class="alert-heading">Current Status</h6>
+          <p class="mb-0">
+              <strong>Last Check:</strong> ${new Date(
+                status.timestamp
+              ).toLocaleString()}<br>
+              <strong>Changes Detected:</strong> ${status.changes_count}<br>
+              <strong>Status:</strong>
+              <span class="badge ${
+                status.has_changes ? "bg-warning" : "bg-success"
+              }">
+                  ${status.has_changes ? "Changes Detected" : "No Changes"}
+              </span>
+          </p>
+      `;
 
         // Find or create status container
         let container = document.getElementById("currentStatus");
@@ -2210,11 +2262,11 @@
 
       // Add helper for path truncation
       function truncatePath(path, maxLength) {
-        if (!path || path === 'N/A') return path;
+        if (!path || path === "N/A") return path;
         if (path.length <= maxLength) return path;
-        
-        const start = path.substr(0, maxLength/2 - 3);
-        const end = path.substr(path.length - maxLength/2 + 3);
+
+        const start = path.substr(0, maxLength / 2 - 3);
+        const end = path.substr(path.length - maxLength / 2 + 3);
         return `${start}...${end}`;
       }
 

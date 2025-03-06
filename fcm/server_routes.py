@@ -16,7 +16,8 @@ scheduler = BackgroundScheduler(
     job_defaults={
         'coalesce': False,
         'max_instances': 3
-    }
+    },
+    timezone=pytz.UTC 
 )
 scheduler.start()
 
@@ -271,17 +272,16 @@ def portal_scheduler_settings():
 
 
 def init_fcm_routes(app, db, socketio):
-    """Initialize routes with dependencies"""
+    """Initialize portal routes with dependencies"""
 
     def initialize_context():
         if not hasattr(g, 'db_ops'):
-            g.db_ops = PortalFirestoreDB(db,'fcm')
+            g.db_ops = PortalFirestoreDB(db, 'portal')
         if not hasattr(g, 'socketio'):
             g.socketio = socketio
 
-    # Register middleware for all fcm routes
     @portal_routes.before_request
-    def before_portal_request():
+    def before_request():
         try:
             initialize_context()
         except Exception as e:
@@ -292,27 +292,10 @@ def init_fcm_routes(app, db, socketio):
                 'error': str(e)
             }), 500
 
-        # Register blueprint with url_prefix to ensure middleware only runs for fcm routes
-        app.register_blueprint(portal_routes, url_prefix='/fcm')
+    # Register blueprint without prefix since these are default routes
+    app.register_blueprint(portal_routes,url_prefix='/fcm')
 
-
-
-
-    
-    
-    # Add dependencies to request context
-    
-        # g.file_handler = file_handler
-    
     # Initialize scheduler
     initialize_portal_scheduler(PortalFirestoreDB(db, 'portal'), socketio)
-    
-    # Schedule cleanup of old files
-    # scheduler.add_job(
-    #     file_handler.cleanup_old_files,
-    #     'interval',
-    #     hours=24,
-    #     id='file_cleanup'
-    # )
-    
+
     return app

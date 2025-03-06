@@ -14,7 +14,8 @@ scheduler = BackgroundScheduler(
     job_defaults={
         'coalesce': False,
         'max_instances': 3
-    }
+    },
+    timezone=pytz.UTC 
 )
 
 __all__ = ['portal_routes', 'init_portal_routes', 'initialize_portal_scheduler']

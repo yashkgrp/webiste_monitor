@@ -17,7 +17,8 @@ scheduler = BackgroundScheduler(
     job_defaults={
         'coalesce': False,
         'max_instances': 3
-    }
+    },
+    timezone=pytz.UTC 
 )
 scheduler.start()
 

@@ -191,7 +191,7 @@ class StarAirScraper:
 
             download_end = time.time()
             self.timing_data['download_time'] = round(download_end - download_start, 3)
-            self.emit_status(self.current_stage, 'success', 'All invoices processed', self.timing_data['download_time'])
+            self.emit_status('download', 'success', 'All invoices processed', self.timing_data['download_time'])
             self.emit_status(self.current_stage, 'debug', f'Total download time: {self.timing_data["download_time"]} seconds')
             return pdf_s3links
 
@@ -282,7 +282,7 @@ def run_scraper(data, db_ops, socketio=None):
         # Initialize with explicit status
         start_time = time.time()
         scraper.emit_status('initialization', 'starting', 'Initializing scraper components')
-        scraper.emit_status('initialization', 'debug', 'Scraper components initialized successfully')
+        scraper.emit_status('initialization', 'success', 'Scraper components initialized successfully')
         
         # Add delay for UI update
         time.sleep(1)
