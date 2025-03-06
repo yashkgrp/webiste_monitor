@@ -8,6 +8,14 @@ __pycache__/
 
 # Logs
 *.log
+# Ignore all log files in any directory
+*.log
+
+# Ignore specific log files or directories
+logs/
+*.logs
+alliance_copy/*.log
+/logs/*.log
 
 # Environment variables
 .env
