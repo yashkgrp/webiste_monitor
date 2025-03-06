@@ -54,4 +54,9 @@ alliance_scraper.log
 *.bin
 
 # Specific large files
-c89e6d97a445e5cf80650d8cc64ca19a31a865c3
+
+*.log
+**/*.log
+alliance_scraper.log
+**/alliance_scraper.log
+logs/
