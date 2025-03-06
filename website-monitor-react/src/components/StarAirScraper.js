@@ -243,9 +243,9 @@ const StarAirScraper = ({ socket }) => {
       const data = await response.json();
       if (data.success) {
         setSettings({
-          auto_run: data.auto_run || false,
-          interval: data.interval || 60,
-          next_run: data.next_run || null,
+          auto_run: data.settings.auto_run || false,
+          interval: data.settings.interval || 60,
+          next_run: data.settings.next_run || null,
         });
       }
     } catch (error) {
@@ -482,7 +482,12 @@ const StarAirScraper = ({ socket }) => {
                 lastRunState.state !== "success" && (
                   <p className="mb-2">
                     <strong>Error:</strong>{" "}
-                    <span className="error-text">
+                    <span
+                      className="error-text"
+                      onClick={() =>
+                        showToast(lastRunState.message, "error", 0)
+                      }
+                    >
                       {lastRunState.error
                         ? lastRunState.error.length > 50
                           ? lastRunState.error.substring(0, 50) + "..."

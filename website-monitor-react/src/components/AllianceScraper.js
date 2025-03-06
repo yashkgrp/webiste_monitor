@@ -361,7 +361,9 @@ const AllianceScraper = ({ socket }) => {
                 lastRunState.state !== "success" && (
                   <p className="mb-2">
                     <strong>Error:</strong>{" "}
-                    <span className="error-text">
+                    <span className="error-text"  onClick={() =>
+                            showToast(lastRunState.message, "error", 0)
+                          }>
                       {lastRunState.message
                         ? lastRunState.message.length > 50
                           ? lastRunState.message.substring(0, 50) + "..."

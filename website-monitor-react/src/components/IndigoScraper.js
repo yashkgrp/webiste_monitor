@@ -417,9 +417,9 @@ const IndigoScraper = ({ socket }) => {
                         <span
                           className="error-text"
                           style={{ cursor: "pointer" }}
-                          onClick={() =>
-                            showToast(lastRunState.message, "error", 0)
-                          }
+                            onClick={() =>
+                              showToast(lastRunState.message, "error", 0)
+                            }
                         >
                           {lastRunState.message
                             ? lastRunState.message.length > 50
