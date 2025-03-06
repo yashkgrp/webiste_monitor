@@ -30,6 +30,7 @@ from notification_handler import NotificationHandler
 from dom_utils import DOMChangeTracker
 from portal_base.server_routes import portal_routes, init_portal_routes, initialize_portal_scheduler
 from portal_base.db_util import PortalFirestoreDB
+import sys
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -2052,7 +2053,13 @@ if __name__ == '__main__':
     # s.start()
     
     try:
-        socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+        if len(sys.argv)<=1:
+            print("system exited due to port not specified")
+            exit()
+        
+        else:
+
+            socketio.run(app, debug=True, host='0.0.0.0', port=int(sys.argv[1]))
     finally:
         scheduler.shutdown()
         scheduler.shutdown()
