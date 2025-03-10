@@ -2045,7 +2045,7 @@ if __name__ == '__main__':
     # Only start the URL monitoring thread
     t = threading.Thread(target=monitor_urls)
     t.daemon = True
-    # t.start()
+    t.start()
     
     # Remove the automated scraper thread - it will be handled by the scheduler
     # s = threading.Thread(target=run_automated_scraper)
