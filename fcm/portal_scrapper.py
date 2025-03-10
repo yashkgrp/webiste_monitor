@@ -477,28 +477,73 @@ class PortalScraper:
             return False
 
     def handle_error(self, stage, step, error):
-        """Handle errors during scraping"""
-        # Format error message consistently
-        error_message = str(error)
-        formatted_message = f"[{stage.title()}{' - ' + step if step else ''}] {error_message}"
-        
-        logger.error(f"Error in {stage} - {step}: {error_message}")
-        
-        self.emit_status(stage, 'error', formatted_message)
-        
-        if self.debug_mode:
-            self.debug_log('ERROR', formatted_message)
-        
-        if hasattr(self, 'driver'):
-            try:
-                screenshot_path = os.path.join(self.temp_dir, f"error_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
-                self.driver.save_screenshot(screenshot_path)
-            except:
-                pass
-        
-        # Update current stage and step for error tracking
-        self.current_stage = stage
-        self.current_step = step
+        """Handle errors with detailed frontend messages and proper notification format"""
+        try:
+            import traceback
+            stack_trace = traceback.format_exc()
+            
+            # Get stage description
+            stage_info = get_stage_description(stage, step)
+            
+            # Create detailed frontend-friendly error message
+            frontend_message = (
+                f"Error during {stage_info}\n"
+                f"Type: {type(error).__name__}\n"
+                f"Details: {str(error)}\n"
+                f"Location: {stage}/{step}"
+            )
+            
+            # Log the error
+            logger.error(f"{frontend_message}\n{stack_trace}")
+            
+            # Emit frontend status with detailed message
+            self.emit_status(stage, 'error', frontend_message)
+            
+            # Send notification if DB ops available
+            if hasattr(self, 'db_ops') and self.db_ops:
+                try:
+                    from notification_handler import NotificationHandler
+                    notification_handler = NotificationHandler(self.db_ops)
+                    
+                    # Format notification data according to handler's expected format
+                    notification_data = {
+                        'Ticket/PNR': self.current_username or 'Unknown',
+                        'Traveller Name': self.current_portal or 'FCM Portal',
+                    }
+                    
+                    # Send notification with proper format
+                    notification_handler.send_scraper_notification(
+                        error=str(error),  # Original error message
+                        data=notification_data,
+                        stage=f"{stage}/{step}",
+                        airline="FCM Portal"
+                    )
+                    
+                except Exception as notify_error:
+                    logger.error(f"Failed to send notification: {notify_error}")
+            
+            # Store error state with detailed message for frontend
+            if hasattr(self, 'db_ops') and self.db_ops:
+                try:
+                    self.db_ops.store_scraper_state(
+                        username=self.current_username,
+                        state='error',
+                        message=frontend_message,  # Use detailed message for frontend
+                        data={
+                            'stage': stage,
+                            'step': step,
+                            'error': str(error),
+                            'stack_trace': stack_trace,
+                            'error_type': type(error).__name__
+                        }
+                    )
+                except Exception as db_error:
+                    logger.error(f"Failed to store error state: {db_error}")
+                    
+        except Exception as handler_error:
+            logger.critical(f"Error handler failed: {handler_error}")
+            # Ensure frontend gets some error message even if handler fails
+            self.emit_status(stage, 'error', f"Critical error in {stage}/{step}: {str(error)}")
 
     def cleanup(self):
         """Cleanup resources"""
@@ -532,6 +577,38 @@ class PortalScraper:
 
         except Exception as e:
             logger.error(f"Cleanup error: {e}")
+
+def get_stage_description(stage, step=None):
+    """Get human-readable stage and step description"""
+    stage_descriptions = {
+        'initialization': {
+            'name': 'System Initialization',
+            'browser_setup': 'Setting up Chrome browser',
+            'session_creation': 'Creating browser session'
+        },
+        'authentication': {
+            'name': 'Portal Authentication',
+            'load_login': 'Loading login page',
+            'enter_email': 'Entering email address',
+            'enter_password': 'Entering password',
+            'verify_login': 'Verifying login success'
+        },
+        'member_management': {
+            'name': 'Member Management',
+            'navigate_members': 'Navigating to members section',
+            'add_member': 'Adding new member',
+            'assign_workspace': 'Assigning workspace to member'
+        },
+        'workspace_navigation': {
+            'name': 'Workspace Management',
+            'navigate_flights': 'Navigating to flights section',
+            'select_workspace': 'Selecting workspace'
+        }
+    }
+    
+    if step:
+        return f"{stage_descriptions.get(stage, {}).get('name', stage)} - {stage_descriptions.get(stage, {}).get(step, step)}"
+    return stage_descriptions.get(stage, {}).get('name', stage)
 
 def serialize_state(state):
     """Helper function to make state JSON serializable, including nested objects"""
@@ -645,15 +722,15 @@ def run_scraper(data, db_ops=None, socketio=None):
             'password': data['password'],
             'portal': data.get('portal', 'fcm')
         }
-        # login_success = scraper.login_to_portal(credentials)
-        login_success = True  # Skip login for testing
+        login_success = scraper.login_to_portal(credentials)
+        # login_success = True  # Skip login for testing
         if not login_success:
             raise Exception("Login failed - Could not access portal")
         result_data['stages_completed'].append('authentication')
         
         # Always perform member management first
         member_data = data.get('member_data', scraper.CONSTANT_MEMBER_DATA)
-        # scraper.manage_members(member_data)
+        scraper.manage_members(member_data)
         result_data['stages_completed'].append('member_management')
         result_data['member_added'] = member_data['email']
         
@@ -664,7 +741,7 @@ def run_scraper(data, db_ops=None, socketio=None):
             )
         
         # After member management, proceed with workspace navigation
-        # scraper.navigate_to_workspace()
+        scraper.navigate_to_workspace()
         result_data['stages_completed'].append('workspace_navigation')
         
         # Complete processing
@@ -704,7 +781,7 @@ def run_scraper(data, db_ops=None, socketio=None):
         }
         
     except Exception as e:
-        error_msg = str(e)
+        error_msg = f"Error in {scraper.current_stage}/{scraper.current_step}: {str(e)}"
         logger.error(f"Scraper error: {error_msg}")
         
         error_data = serialize_state({
@@ -718,25 +795,29 @@ def run_scraper(data, db_ops=None, socketio=None):
             'stages_completed': result_data.get('stages_completed', [])
         })
         
-        # Send error notification
+        # Send notification with proper format
         if notification_handler:
             try:
-                # Format error data for notification
                 notification_data = {
-                    'Ticket/PNR': data.get('username', 'N/A'),  # Using username as identifier
-                    'Traveller Name': data.get('portal', 'FCM Portal'),  # Using portal as traveler name equivalent
+                    'Ticket/PNR': data.get('username', 'N/A'),
+                    'Traveller Name': data.get('portal', 'FCM Portal'),
                 }
-                stage_info = f"{error_data['stage'].title()}{' - ' + error_data['step'] if error_data['step'] else ''}"
-                notification_handler.send_scraper_notification(error_msg, notification_data, stage_info, airline="FCM Portal")
+                stage_info = f"{scraper.current_stage}/{scraper.current_step}"
+                notification_handler.send_scraper_notification(
+                    error=str(e),
+                    data=notification_data,
+                    stage=stage_info,
+                    airline="FCM Portal"
+                )
             except Exception as notify_error:
                 logger.error(f"Failed to send error notification: {notify_error}")
         
-        # Store error state with stage info
+        # Store error state with detailed message
         if db_ops:
             db_ops.store_scraper_state(
                 username=data.get('username'),
                 state='failed',
-                message=f"[{error_data['stage'].title()}{' - ' + error_data['step'] if error_data['step'] else ''}] {error_msg}",
+                message=error_msg,  # Use detailed message for frontend
                 data=error_data
             )
             
