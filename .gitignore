@@ -6,16 +6,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Logs
-*.log
-# Ignore all log files in any directory
-*.log
-
-# Ignore specific log files or directories
+# Logs - consolidated rules
 logs/
-*.logs
+*.log
+**/*.log
+alliance_scraper.log
 alliance_copy/*.log
-/logs/*.log
 
 # Environment variables
 .env
@@ -39,11 +35,8 @@ dist/
 build/
 *.egg-info/
 .vercel
-# Large files and logs
-*.log
-**/*.log
-alliance_scraper.log
-**/alliance_scraper.log
+
+# Large files
 *.gz
 *.tar
 *.zip
@@ -52,11 +45,3 @@ alliance_scraper.log
 *.mp4
 *.iso
 *.bin
-
-# Specific large files
-
-*.log
-**/*.log
-alliance_scraper.log
-**/alliance_scraper.log
-logs/
